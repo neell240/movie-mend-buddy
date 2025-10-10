@@ -6,33 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTrendingMovies } from "@/hooks/useTMDB";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
   const navigate = useNavigate();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const { data: trendingData, isLoading } = useTrendingMovies();
   
   const genres = ["Romantic", "Thriller", "Comedy", "Action", "Crime", "Spanish"];
-  
-  const recentMovies = [
-    {
-      id: 1,
-      title: "Love in Paris",
-      year: 2023,
-      rating: 8.2,
-      language: "English",
-      genres: ["Romance", "Drama"],
-      poster: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop"
-    },
-    {
-      id: 2,
-      title: "The Silent Witness",
-      year: 2023,
-      rating: 8.4,
-      language: "Spanish",
-      genres: ["Thriller", "Mystery"],
-      poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop"
-    }
-  ];
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres(prev => 
@@ -117,18 +99,26 @@ const Index = () => {
           </div>
         </section>
 
-        {/* AI Response */}
+        {/* Trending Movies */}
         <section>
-          <h3 className="text-sm font-semibold mb-3 text-muted-foreground">AI Response</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {recentMovies.map((movie) => (
-              <MovieCard
-                key={movie.id}
-                {...movie}
-                onClick={() => navigate(`/movie/${movie.id}`)}
-              />
-            ))}
-          </div>
+          <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Trending Now</h3>
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {trendingData?.results?.slice(0, 6).map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  movie={movie}
+                  onClick={() => navigate(`/movie/${movie.id}`)}
+                />
+              ))}
+            </div>
+          )}
         </section>
       </main>
 

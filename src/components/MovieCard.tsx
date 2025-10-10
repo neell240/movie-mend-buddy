@@ -1,26 +1,17 @@
 import { Play, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { TMDBMovie, getTMDBImageUrl } from "@/types/tmdb";
 
 interface MovieCardProps {
-  title: string;
-  year: number;
-  rating: number;
-  language: string;
-  genres: string[];
-  poster: string;
+  movie: TMDBMovie;
   onClick?: () => void;
 }
 
-export const MovieCard = ({ 
-  title, 
-  year, 
-  rating, 
-  language, 
-  genres,
-  poster,
-  onClick 
-}: MovieCardProps) => {
+export const MovieCard = ({ movie, onClick }: MovieCardProps) => {
+  const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
+  const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+  const poster = getTMDBImageUrl(movie.poster_path);
   return (
     <Card 
       className="group relative overflow-hidden bg-card border-border hover:border-primary/50 transition-all cursor-pointer"
@@ -29,7 +20,7 @@ export const MovieCard = ({
       <div className="aspect-[2/3] relative overflow-hidden">
         <img 
           src={poster} 
-          alt={title}
+          alt={movie.title}
           className="w-full h-full object-cover transition-transform group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
@@ -40,7 +31,7 @@ export const MovieCard = ({
                 <span className="text-sm font-semibold">{rating}</span>
               </div>
               <Badge variant="secondary" className="text-xs">
-                {language}
+                {movie.original_language.toUpperCase()}
               </Badge>
             </div>
           </div>
@@ -50,18 +41,15 @@ export const MovieCard = ({
         </button>
       </div>
       <div className="p-3">
-        <h3 className="font-semibold text-sm line-clamp-1 mb-1">{title}</h3>
+        <h3 className="font-semibold text-sm line-clamp-1 mb-1">{movie.title}</h3>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
           <span>{year}</span>
           <span>•</span>
-          <span>{language}</span>
+          <span>{movie.original_language.toUpperCase()}</span>
         </div>
-        <div className="flex flex-wrap gap-1">
-          {genres.slice(0, 2).map((genre) => (
-            <Badge key={genre} variant="outline" className="text-xs">
-              {genre}
-            </Badge>
-          ))}
+        <div className="flex items-center gap-1">
+          <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+          <span className="text-xs font-medium">{rating}</span>
         </div>
       </div>
     </Card>

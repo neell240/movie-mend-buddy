@@ -1,78 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search as SearchIcon, SlidersHorizontal, X, Play } from "lucide-react";
+import { Search as SearchIcon, SlidersHorizontal, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSearchMovies, useDiscoverMovies } from "@/hooks/useTMDB";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getTMDBImageUrl } from "@/types/tmdb";
 
 const Search = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  const { data: searchData, isLoading: isSearching } = useSearchMovies(debouncedQuery);
+  const { data: discoverData, isLoading: isLoadingDiscover } = useDiscoverMovies();
 
   const filters = ["Genre", "Mood", "Language"];
-  
-  const featuredMovies = [
-    {
-      id: 1,
-      title: "The Midnight Bloom",
-      year: 2024,
-      rating: 8.8,
-      language: "English",
-      genres: ["Drama", "Fantasy"],
-      poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop"
-    },
-    {
-      id: 2,
-      title: "Echoes of the Past",
-      year: 2024,
-      rating: 8.6,
-      language: "English",
-      genres: ["Thriller", "Mystery"],
-      poster: "https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=400&h=600&fit=crop"
-    }
-  ];
 
-  const searchResults = [
-    {
-      id: 3,
-      title: "The Last Stand",
-      year: 2024,
-      rating: 8.4,
-      imdb: "8.4",
-      rt: "92%",
-      poster: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=600&fit=crop"
-    },
-    {
-      id: 4,
-      title: "City of Shadows",
-      year: 2024,
-      rating: 8.2,
-      imdb: "8.2",
-      rt: "89%",
-      poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop"
-    },
-    {
-      id: 5,
-      title: "Midnight Pursuit",
-      year: 2023,
-      rating: 8.1,
-      imdb: "8.1",
-      rt: "87%",
-      poster: "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=600&fit=crop"
-    },
-    {
-      id: 6,
-      title: "Crimson Tide",
-      year: 2023,
-      rating: 8.3,
-      imdb: "8.3",
-      rt: "90%",
-      poster: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=400&h=600&fit=crop"
-    }
-  ];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   return (
     <div className="min-h-screen pb-20">
@@ -124,68 +78,53 @@ const Search = () => {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6">
-        {!searchQuery ? (
-          <>
-            {/* Featured Picks */}
-            <section className="mb-8">
-              <h2 className="text-lg font-bold mb-4">Featured Picks</h2>
+        {!debouncedQuery ? (
+          <section className="mb-8">
+            <h2 className="text-lg font-bold mb-4">Popular Movies</h2>
+            {isLoadingDiscover ? (
               <div className="grid grid-cols-2 gap-4">
-                {featuredMovies.map((movie) => (
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {discoverData?.results?.slice(0, 6).map((movie) => (
                   <MovieCard
                     key={movie.id}
-                    {...movie}
+                    movie={movie}
                     onClick={() => navigate(`/movie/${movie.id}`)}
                   />
                 ))}
               </div>
-            </section>
-          </>
+            )}
+          </section>
         ) : (
-          <>
-            {/* Search Results */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold">Results</h2>
-                <span className="text-sm text-muted-foreground">
-                  {searchResults.length} movies
-                </span>
-              </div>
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">Results</h2>
+              <span className="text-sm text-muted-foreground">
+                {searchData?.results?.length || 0} movies
+              </span>
+            </div>
+            {isSearching ? (
               <div className="grid grid-cols-2 gap-4">
-                {searchResults.map((movie) => (
-                  <div 
-                    key={movie.id}
-                    className="group relative aspect-[2/3] rounded-xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all cursor-pointer"
-                    onClick={() => navigate(`/movie/${movie.id}`)}
-                  >
-                    <img 
-                      src={movie.poster} 
-                      alt={movie.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent">
-                      <div className="absolute top-2 right-2 flex flex-col gap-1">
-                        <Badge variant="secondary" className="text-xs bg-black/60 backdrop-blur-sm">
-                          {movie.imdb}
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs bg-black/60 backdrop-blur-sm">
-                          {movie.rt}
-                        </Badge>
-                      </div>
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <h3 className="font-semibold text-sm mb-1 line-clamp-2">
-                          {movie.title}
-                        </h3>
-                        <p className="text-xs text-muted-foreground">{movie.year}</p>
-                      </div>
-                    </div>
-                    <button className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Play className="w-5 h-5 text-primary-foreground fill-current ml-1" />
-                    </button>
-                  </div>
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
                 ))}
               </div>
-            </section>
-          </>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {searchData?.results?.map((movie) => (
+                  <MovieCard
+                    key={movie.id}
+                    movie={movie}
+                    onClick={() => navigate(`/movie/${movie.id}`)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
         )}
       </main>
 

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { TMDBMovie } from "@/types/tmdb";
 import {
   Select,
   SelectContent,
@@ -17,35 +18,53 @@ const Watchlist = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const watchlistMovies = [
+  const watchlistMovies: Array<TMDBMovie & { status: string }> = [
     {
       id: 1,
       title: "The Midnight Bloom",
-      year: 2024,
-      rating: 8.8,
-      language: "English",
-      genres: ["Drama", "Fantasy"],
-      poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
+      original_title: "The Midnight Bloom",
+      overview: "A captivating drama fantasy",
+      poster_path: "/photo-1536440136628",
+      backdrop_path: null,
+      release_date: "2024-01-01",
+      vote_average: 8.8,
+      vote_count: 1200,
+      genre_ids: [18, 14],
+      original_language: "en",
+      popularity: 85.5,
+      adult: false,
       status: "Reminded"
     },
     {
       id: 2,
       title: "Echoes of the Past",
-      year: 2023,
-      rating: 8.6,
-      language: "English",
-      genres: ["Thriller", "Mystery"],
-      poster: "https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=400&h=600&fit=crop",
+      original_title: "Echoes of the Past",
+      overview: "A thrilling mystery",
+      poster_path: "/photo-1594908900066",
+      backdrop_path: null,
+      release_date: "2023-01-01",
+      vote_average: 8.6,
+      vote_count: 980,
+      genre_ids: [53, 9648],
+      original_language: "en",
+      popularity: 78.2,
+      adult: false,
       status: "Reminded"
     },
     {
       id: 3,
       title: "Starlight Serenade",
-      year: 2024,
-      rating: 8.4,
-      language: "English",
-      genres: ["Romance", "Drama"],
-      poster: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop",
+      original_title: "Starlight Serenade",
+      overview: "A romantic drama",
+      poster_path: "/photo-1478720568477",
+      backdrop_path: null,
+      release_date: "2024-01-01",
+      vote_average: 8.4,
+      vote_count: 1100,
+      genre_ids: [10749, 18],
+      original_language: "en",
+      popularity: 82.0,
+      adult: false,
       status: "Reminded"
     }
   ];
@@ -106,17 +125,17 @@ const Watchlist = () => {
 
       <main className="max-w-lg mx-auto px-4 py-6">
         <div className="grid grid-cols-2 gap-4">
-          {watchlistMovies.map((movie) => (
+          {watchlistMovies.map(({ status, ...movie }) => (
             <div key={movie.id} className="space-y-2">
               <MovieCard
-                {...movie}
+                movie={movie}
                 onClick={() => navigate(`/movie/${movie.id}`)}
               />
               <Badge 
-                variant={movie.status === "Reminded" ? "destructive" : "secondary"}
+                variant={status === "Reminded" ? "destructive" : "secondary"}
                 className="w-full justify-center"
               >
-                {movie.status}
+                {status}
               </Badge>
             </div>
           ))}

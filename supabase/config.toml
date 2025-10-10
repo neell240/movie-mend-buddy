@@ -1,1 +1,13 @@
 project_id = "kusgebrwhgfzdztthgmr"
+
+[functions.tmdb-trending]
+verify_jwt = false
+
+[functions.tmdb-search]
+verify_jwt = false
+
+[functions.tmdb-details]
+verify_jwt = false
+
+[functions.tmdb-discover]
+verify_jwt = false

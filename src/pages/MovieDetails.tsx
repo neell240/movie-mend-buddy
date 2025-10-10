@@ -1,52 +1,56 @@
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, Bookmark, Share2, Play } from "lucide-react";
+import { ChevronLeft, Bookmark, Share2, Play, Star } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useMovieDetails } from "@/hooks/useTMDB";
+import { getTMDBImageUrl, TMDB_BACKDROP_SIZE, TMDB_PROFILE_SIZE } from "@/types/tmdb";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { data: movie, isLoading } = useMovieDetails(id);
 
-  const movie = {
-    title: "The Midnight Bloom",
-    year: 2024,
-    genre: "Drama",
-    rating: 4.6,
-    reviews: "1,234 reviews",
-    description: "In a world where dreams and reality intertwine, a young cartographer must navigate through an enchanting landscape, one that confronts her deepest fears and unlocks the power of her imagination.",
-    poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
-    trailer: "https://images.unsplash.com/photo-1574267432644-f74f48827c4e?w=800&h=450&fit=crop",
-    cast: [
-      {
-        name: "Ethan Blake",
-        role: "Actor",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop"
-      },
-      {
-        name: "Olivia Hayes",
-        role: "Actress",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
-      },
-      {
-        name: "Julian Reed",
-        role: "Director",
-        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop"
-      }
-    ],
-    streaming: [
-      { platform: "Prime Video", available: true },
-      { platform: "Hulu", available: false }
-    ],
-    ratingBreakdown: [
-      { stars: 5, percentage: 60 },
-      { stars: 4, percentage: 25 },
-      { stars: 3, percentage: 10 },
-      { stars: 2, percentage: 3 },
-      { stars: 1, percentage: 2 }
-    ]
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pb-20">
+        <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80">
+          <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+          </div>
+        </header>
+        <div className="max-w-lg mx-auto px-4">
+          <Skeleton className="aspect-[2/3] max-w-xs mx-auto rounded-2xl mb-6" />
+          <Skeleton className="h-8 w-3/4 mb-2" />
+          <Skeleton className="h-4 w-1/2 mb-4" />
+          <Skeleton className="h-20 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!movie) {
+    return (
+      <div className="min-h-screen pb-20 flex items-center justify-center">
+        <p>Movie not found</p>
+      </div>
+    );
+  }
+
+  const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
+  const genres = movie.genres?.map(g => g.name).join(', ') || 'N/A';
+  const rating = movie.vote_average ? (movie.vote_average / 2).toFixed(1) : 'N/A';
+  const poster = getTMDBImageUrl(movie.poster_path);
+  const backdrop = getTMDBImageUrl(movie.backdrop_path, TMDB_BACKDROP_SIZE);
+  
+  const trailer = movie.videos?.results?.find(v => v.type === 'Trailer' && v.site === 'YouTube');
+  const trailerUrl = trailer ? `https://img.youtube.com/vi/${trailer.key}/maxresdefault.jpg` : backdrop;
+  
+  const cast = movie.credits?.cast?.slice(0, 10) || [];
+  const director = movie.credits?.crew?.find(c => c.job === 'Director');
 
   return (
     <div className="min-h-screen pb-20">
@@ -76,7 +80,7 @@ const MovieDetails = () => {
         <div className="px-4 mb-6">
           <div className="relative aspect-[2/3] max-w-xs mx-auto rounded-2xl overflow-hidden">
             <img 
-              src={movie.poster} 
+              src={poster} 
               alt={movie.title}
               className="w-full h-full object-cover"
             />
@@ -88,108 +92,115 @@ const MovieDetails = () => {
           <div className="mb-6">
             <h1 className="text-2xl font-bold mb-2">{movie.title}</h1>
             <p className="text-sm text-muted-foreground mb-4">
-              {movie.year} • {movie.genre}
+              {year} • {genres}
             </p>
+            {movie.tagline && (
+              <p className="text-sm italic text-muted-foreground mb-3">"{movie.tagline}"</p>
+            )}
             <p className="text-sm leading-relaxed text-muted-foreground">
-              {movie.description}
+              {movie.overview}
             </p>
           </div>
 
           {/* Ratings */}
           <div className="mb-6 bg-card rounded-2xl p-4 border border-border">
-            <h3 className="font-semibold mb-3">Ratings</h3>
-            <div className="flex items-end gap-2 mb-4">
-              <span className="text-4xl font-bold">{movie.rating}</span>
-              <div className="mb-1">
-                <div className="flex gap-0.5 mb-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <div 
-                      key={star}
-                      className={`w-4 h-4 ${
-                        star <= Math.floor(movie.rating) 
-                          ? "text-yellow-500" 
-                          : "text-muted"
-                      }`}
-                    >
-                      ★
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-muted-foreground">{movie.reviews}</p>
+            <h3 className="font-semibold mb-3">Rating</h3>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Star className="w-8 h-8 fill-yellow-500 text-yellow-500" />
+                <span className="text-4xl font-bold">{rating}</span>
+                <span className="text-sm text-muted-foreground">/ 5</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">
+                  Based on {movie.vote_count?.toLocaleString()} votes
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  TMDB Rating: {movie.vote_average?.toFixed(1)}/10
+                </p>
               </div>
             </div>
-            <div className="space-y-2">
-              {movie.ratingBreakdown.map((rating) => (
-                <div key={rating.stars} className="flex items-center gap-3">
-                  <span className="text-xs w-6">{rating.stars}★</span>
-                  <Progress value={rating.percentage} className="flex-1 h-2" />
-                  <span className="text-xs text-muted-foreground w-8 text-right">
-                    {rating.percentage}%
-                  </span>
-                </div>
-              ))}
-            </div>
+            {movie.runtime && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Runtime: {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Trailer */}
-          <div className="mb-6">
-            <h3 className="font-semibold mb-3">Trailer</h3>
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-card border border-border">
-              <img 
-                src={movie.trailer} 
-                alt="Trailer"
-                className="w-full h-full object-cover"
-              />
-              <button className="absolute inset-0 flex items-center justify-center bg-black/40">
-                <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center">
-                  <Play className="w-7 h-7 text-primary-foreground fill-current ml-1" />
-                </div>
-              </button>
+          {trailer && (
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3">Trailer</h3>
+              <div className="relative aspect-video rounded-2xl overflow-hidden bg-card border border-border">
+                <img 
+                  src={trailerUrl} 
+                  alt="Trailer"
+                  className="w-full h-full object-cover"
+                />
+                <a
+                  href={`https://www.youtube.com/watch?v=${trailer.key}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute inset-0 flex items-center justify-center bg-black/40"
+                >
+                  <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center">
+                    <Play className="w-7 h-7 text-primary-foreground fill-current ml-1" />
+                  </div>
+                </a>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Cast & Crew */}
-          <div className="mb-6">
-            <h3 className="font-semibold mb-3">Cast & Crew</h3>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {movie.cast.map((person) => (
-                <div key={person.name} className="flex-shrink-0 text-center">
-                  <div className="w-20 h-20 rounded-full overflow-hidden mb-2 border-2 border-border">
-                    <img 
-                      src={person.image} 
-                      alt={person.name}
-                      className="w-full h-full object-cover"
-                    />
+          {(cast.length > 0 || director) && (
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3">Cast & Crew</h3>
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                {director && (
+                  <div className="flex-shrink-0 text-center">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mb-2 border-2 border-primary">
+                      <img 
+                        src={getTMDBImageUrl(director.profile_path, TMDB_PROFILE_SIZE)} 
+                        alt={director.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <p className="text-xs font-medium line-clamp-1 w-20">{director.name}</p>
+                    <p className="text-xs text-muted-foreground">Director</p>
                   </div>
-                  <p className="text-xs font-medium line-clamp-1">{person.name}</p>
-                  <p className="text-xs text-muted-foreground">{person.role}</p>
-                </div>
-              ))}
+                )}
+                {cast.map((person) => (
+                  <div key={person.id} className="flex-shrink-0 text-center">
+                    <div className="w-20 h-20 rounded-full overflow-hidden mb-2 border-2 border-border">
+                      <img 
+                        src={getTMDBImageUrl(person.profile_path, TMDB_PROFILE_SIZE)} 
+                        alt={person.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <p className="text-xs font-medium line-clamp-1 w-20">{person.name}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1 w-20">{person.character}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Streaming */}
-          <div className="mb-6">
-            <h3 className="font-semibold mb-3">Streaming</h3>
-            <div className="space-y-2">
-              {movie.streaming.map((service) => (
-                <div 
-                  key={service.platform}
-                  className="flex items-center justify-between p-3 bg-card rounded-xl border border-border"
-                >
-                  <div className="flex items-center gap-3">
-                    <Play className="w-5 h-5 text-primary" />
-                    <span className="text-sm font-medium">{service.platform}</span>
-                  </div>
-                  {service.available && (
-                    <Badge variant="default" className="text-xs">
-                      Stream on {service.platform}
-                    </Badge>
-                  )}
-                </div>
-              ))}
+          {/* Production */}
+          {movie.production_companies && movie.production_companies.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3">Production</h3>
+              <div className="flex flex-wrap gap-2">
+                {movie.production_companies.slice(0, 4).map((company) => (
+                  <Badge key={company.id} variant="secondary">
+                    {company.name}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 
