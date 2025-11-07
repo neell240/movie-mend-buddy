@@ -14,14 +14,18 @@ serve(async (req) => {
   }
 
   try {
-    const { genres, sortBy = 'popularity.desc', page = 1 } = await req.json();
+    const { genres, sortBy = 'popularity.desc', page = 1, watchProviders, region = 'US' } = await req.json();
 
-    console.log('Discovering movies with filters:', { genres, sortBy, page });
+    console.log('Discovering movies with filters:', { genres, sortBy, page, watchProviders, region });
 
-    let url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&sort_by=${sortBy}&page=${page}&include_adult=false`;
+    let url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&sort_by=${sortBy}&page=${page}&include_adult=false&watch_region=${region}`;
     
     if (genres && genres.length > 0) {
       url += `&with_genres=${genres.join(',')}`;
+    }
+
+    if (watchProviders && watchProviders.length > 0) {
+      url += `&with_watch_providers=${watchProviders.join(',')}`;
     }
 
     const response = await fetch(url, {

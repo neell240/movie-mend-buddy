@@ -1,28 +1,25 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTrendingMovies } from "@/hooks/useTMDB";
+import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
+import { usePreferences } from "@/hooks/usePreferences";
+import { AIChat } from "@/components/AIChat";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const { data: trendingData, isLoading } = useTrendingMovies();
+  const { preferences } = usePreferences();
   
-  const genres = ["Romantic", "Thriller", "Comedy", "Action", "Crime", "Spanish"];
-
-  const toggleGenre = (genre: string) => {
-    setSelectedGenres(prev => 
-      prev.includes(genre) 
-        ? prev.filter(g => g !== genre)
-        : [...prev, genre]
-    );
-  };
+  const { data: moviesData, isLoading } = useDiscoverMovies({
+    watchProviders: preferences.platforms.length > 0 
+      ? preferences.platforms.map(p => parseInt(p))
+      : undefined,
+    region: preferences.region,
+    sortBy: 'popularity.desc',
+  });
 
   return (
     <div className="min-h-screen pb-20">
@@ -47,76 +44,53 @@ const Index = () => {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6">
-        {/* AI Assistant Section */}
+        {/* AI Chat Section */}
         <section className="mb-8">
-          <div className="bg-card rounded-2xl p-6 border border-border">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h2 className="font-semibold">AI Assistant</h2>
-                <p className="text-xs text-muted-foreground">Your movie buddy</p>
-              </div>
-            </div>
-            
-            <div className="mb-4">
-              <p className="text-sm mb-3">Hi Liam! What kind of movie are you in the mood for?</p>
-              <div className="relative">
-                <Input 
-                  placeholder="Ask me anything..."
-                  className="bg-secondary border-border pr-12"
-                />
-                <Button 
-                  size="sm"
-                  className="absolute right-1 top-1 h-8"
-                >
-                  <Sparkles className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {genres.map((genre) => (
-                <Badge
-                  key={genre}
-                  variant={selectedGenres.includes(genre) ? "default" : "secondary"}
-                  className="cursor-pointer"
-                  onClick={() => toggleGenre(genre)}
-                >
-                  {genre}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <AIChat />
         </section>
 
-        {/* Recent Requests */}
-        <section className="mb-6">
-          <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Recent Requests</h3>
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <p className="text-sm">Recommend movie for a date night</p>
-          </div>
-        </section>
-
-        {/* Trending Movies */}
+        {/* Movies Section */}
         <section>
-          <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Trending Now</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">
+              {preferences.platforms.length > 0 
+                ? `Available on Your Platforms` 
+                : 'Popular Movies'}
+            </h3>
+            {preferences.platforms.length === 0 && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => navigate("/preferences")}
+                className="text-xs"
+              >
+                Select Platforms
+              </Button>
+            )}
+          </div>
+          
           {isLoading ? (
             <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((i) => (
+              {[1, 2, 3, 4, 5, 6].map((i) => (
                 <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
               ))}
             </div>
-          ) : (
+          ) : moviesData?.results && moviesData.results.length > 0 ? (
             <div className="grid grid-cols-2 gap-4">
-              {trendingData?.results?.slice(0, 6).map((movie) => (
+              {moviesData.results.slice(0, 10).map((movie) => (
                 <MovieCard
                   key={movie.id}
                   movie={movie}
                   onClick={() => navigate(`/movie/${movie.id}`)}
                 />
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <p className="mb-4">No movies found for your selected platforms.</p>
+              <Button onClick={() => navigate("/preferences")} variant="outline">
+                Update Preferences
+              </Button>
             </div>
           )}
         </section>

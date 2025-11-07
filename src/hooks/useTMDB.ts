@@ -48,16 +48,22 @@ export const useMovieDetails = (movieId: string | undefined) => {
   });
 };
 
-export const useDiscoverMovies = (genres?: number[], sortBy?: string) => {
+export const useDiscoverMovies = (params?: { 
+  genres?: number[];
+  sortBy?: string;
+  watchProviders?: number[];
+  region?: string;
+}) => {
   return useQuery({
-    queryKey: ['discover-movies', genres, sortBy],
+    queryKey: ['discover-movies', params],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke<TMDBResponse>('tmdb-discover', {
-        body: { genres, sortBy },
+        body: params,
       });
       
       if (error) throw error;
       return data;
     },
+    enabled: !!params,
   });
 };
