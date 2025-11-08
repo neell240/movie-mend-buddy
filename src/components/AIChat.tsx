@@ -158,14 +158,14 @@ export const AIChat = () => {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border flex flex-col h-[400px]">
+    <div className="bg-card rounded-2xl border border-border flex flex-col h-[600px]">
       <div className="flex items-center gap-3 p-4 border-b border-border">
         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
           <Sparkles className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h2 className="font-semibold">AI Assistant</h2>
-          <p className="text-xs text-muted-foreground">Your movie buddy</p>
+          <p className="text-xs text-muted-foreground">Ask for movie recommendations</p>
         </div>
       </div>
 
@@ -191,13 +191,42 @@ export const AIChat = () => {
               </div>
             </div>
             {message.movies && message.movies.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mt-3">
+              <div className="grid grid-cols-2 gap-4 mt-4">
                 {message.movies.map((movie) => (
-                  <MovieCard
+                  <div
                     key={movie.id}
-                    movie={movie}
                     onClick={() => navigate(`/movie/${movie.id}`)}
-                  />
+                    className="cursor-pointer group"
+                  >
+                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-muted">
+                      {movie.poster_path ? (
+                        <img
+                          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                          alt={movie.title}
+                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                          No Image
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      <h3 className="font-semibold text-sm line-clamp-1">{movie.title}</h3>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
+                        <span>•</span>
+                        <span className="uppercase">{movie.original_language}</span>
+                      </div>
+                      {movie.vote_average > 0 && (
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-500">⭐</span>
+                          <span className="text-sm font-medium">{movie.vote_average.toFixed(1)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
