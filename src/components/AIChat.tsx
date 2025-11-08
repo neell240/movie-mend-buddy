@@ -68,7 +68,7 @@ export const AIChat = () => {
       let buffer = "";
 
       // Add assistant message placeholder
-      setMessages(prev => [...prev, { role: "assistant", content: "", movies: [] }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -93,45 +93,9 @@ export const AIChat = () => {
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantContent += content;
-              
-              // Try to parse movie recommendations from content
-              const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
-              let movies: TMDBMovie[] = [];
-              
-              if (movieMatches) {
-                const movieIds = movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean);
-                // Fetch movie details for these IDs
-                for (const id of movieIds) {
-                  try {
-                    const movieResponse = await fetch(
-                      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details`,
-                      {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-                        },
-                        body: JSON.stringify({ movieId: id }),
-                      }
-                    );
-                    if (movieResponse.ok) {
-                      const movieData = await movieResponse.json();
-                      movies.push(movieData);
-                    }
-                  } catch (e) {
-                    console.error("Error fetching movie:", e);
-                  }
-                }
-              }
-              
               setMessages(prev => {
                 const newMessages = [...prev];
-                const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
-                newMessages[newMessages.length - 1] = {
-                  ...newMessages[newMessages.length - 1],
-                  content: cleanContent,
-                  movies: movies.length > 0 ? movies : undefined
-                };
+                newMessages[newMessages.length - 1].content = assistantContent;
                 return newMessages;
               });
             }
@@ -139,6 +103,50 @@ export const AIChat = () => {
             console.error("Error parsing SSE:", e);
           }
         }
+      }
+
+      // After streaming completes, extract and fetch movie IDs
+      const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
+      if (movieMatches) {
+        const movieIds = [...new Set(movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean))];
+        const movies: TMDBMovie[] = [];
+        
+        // Fetch all movies in parallel
+        await Promise.all(
+          movieIds.map(async (id) => {
+            try {
+              const movieResponse = await fetch(
+                `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                  },
+                  body: JSON.stringify({ movieId: id }),
+                }
+              );
+              if (movieResponse.ok) {
+                const movieData = await movieResponse.json();
+                movies.push(movieData);
+              }
+            } catch (e) {
+              console.error("Error fetching movie:", e);
+            }
+          })
+        );
+
+        // Update message with movies and clean content
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
+          newMessages[newMessages.length - 1] = {
+            ...newMessages[newMessages.length - 1],
+            content: cleanContent,
+            movies: movies.length > 0 ? movies : undefined
+          };
+          return newMessages;
+        });
       }
     } catch (error) {
       console.error("AI chat error:", error);
