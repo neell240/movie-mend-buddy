@@ -10,6 +10,7 @@ import Filters from "./pages/Filters";
 import Watchlist from "./pages/Watchlist";
 import Profile from "./pages/Profile";
 import Preferences from "./pages/Preferences";
+import AIChat from "./pages/AIChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/preferences" element={<Preferences />} />
+          <Route path="/ai-chat" element={<AIChat />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

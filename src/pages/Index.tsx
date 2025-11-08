@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
-import { AIChat } from "@/components/AIChat";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -44,11 +43,6 @@ const Index = () => {
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6">
-        {/* AI Chat Section */}
-        <section className="mb-8">
-          <AIChat />
-        </section>
-
         {/* Movies Section */}
         <section>
           <div className="flex items-center justify-between mb-3">

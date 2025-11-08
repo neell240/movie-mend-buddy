@@ -3,11 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Send } from "lucide-react";
 import { usePreferences } from "@/hooks/usePreferences";
+import { useNavigate } from "react-router-dom";
+import { MovieCard } from "@/components/MovieCard";
+import { TMDBMovie } from "@/types/tmdb";
 import { toast } from "sonner";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  movies?: TMDBMovie[];
 }
 
 export const AIChat = () => {
@@ -16,6 +20,7 @@ export const AIChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { preferences } = usePreferences();
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,7 +68,7 @@ export const AIChat = () => {
       let buffer = "";
 
       // Add assistant message placeholder
-      setMessages(prev => [...prev, { role: "assistant", content: "" }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "", movies: [] }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -88,9 +93,45 @@ export const AIChat = () => {
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantContent += content;
+              
+              // Try to parse movie recommendations from content
+              const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
+              let movies: TMDBMovie[] = [];
+              
+              if (movieMatches) {
+                const movieIds = movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean);
+                // Fetch movie details for these IDs
+                for (const id of movieIds) {
+                  try {
+                    const movieResponse = await fetch(
+                      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details`,
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                        },
+                        body: JSON.stringify({ movieId: id }),
+                      }
+                    );
+                    if (movieResponse.ok) {
+                      const movieData = await movieResponse.json();
+                      movies.push(movieData);
+                    }
+                  } catch (e) {
+                    console.error("Error fetching movie:", e);
+                  }
+                }
+              }
+              
               setMessages(prev => {
                 const newMessages = [...prev];
-                newMessages[newMessages.length - 1].content = assistantContent;
+                const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
+                newMessages[newMessages.length - 1] = {
+                  ...newMessages[newMessages.length - 1],
+                  content: cleanContent,
+                  movies: movies.length > 0 ? movies : undefined
+                };
                 return newMessages;
               });
             }
@@ -135,19 +176,31 @@ export const AIChat = () => {
           </div>
         )}
         {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+          <div key={index} className="space-y-3">
             <div
-              className={`max-w-[80%] rounded-xl px-4 py-2 ${
-                message.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground"
-              }`}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <div
+                className={`max-w-[80%] rounded-xl px-4 py-2 ${
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-secondary-foreground"
+                }`}
+              >
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              </div>
             </div>
+            {message.movies && message.movies.length > 0 && (
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                {message.movies.map((movie) => (
+                  <MovieCard
+                    key={movie.id}
+                    movie={movie}
+                    onClick={() => navigate(`/movie/${movie.id}`)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef} />
