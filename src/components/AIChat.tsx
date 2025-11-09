@@ -38,6 +38,40 @@ export const AIChat = () => {
     setInput("");
     setIsLoading(true);
 
+    await handleAIResponse([...messages, userMessage]);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const quickSuggestions = [
+    "Action movies tonight",
+    "Family-friendly picks",
+    "Romantic comedies",
+    "Hidden gems from the 90s",
+    "Award-winning films",
+    "Thriller movies like Inception",
+  ];
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
+    // Auto-send the suggestion
+    setTimeout(() => {
+      const syntheticInput = suggestion;
+      setInput("");
+      const userMessage: Message = { role: "user", content: syntheticInput };
+      setMessages(prev => [...prev, userMessage]);
+      setIsLoading(true);
+      
+      handleAIResponse([...messages, userMessage]);
+    }, 0);
+  };
+
+  const handleAIResponse = async (conversationMessages: Message[]) => {
     let assistantContent = "";
 
     try {
@@ -50,7 +84,7 @@ export const AIChat = () => {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({
-            messages: [...messages, userMessage],
+            messages: conversationMessages,
             userPreferences: preferences,
           }),
         }
@@ -67,7 +101,6 @@ export const AIChat = () => {
       const decoder = new TextDecoder();
       let buffer = "";
 
-      // Add assistant message placeholder
       setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
       while (true) {
@@ -105,13 +138,11 @@ export const AIChat = () => {
         }
       }
 
-      // After streaming completes, extract and fetch movie IDs
       const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
       if (movieMatches) {
         const movieIds = [...new Set(movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean))];
         const movies: TMDBMovie[] = [];
         
-        // Fetch all movies in parallel
         await Promise.all(
           movieIds.map(async (id) => {
             try {
@@ -136,7 +167,6 @@ export const AIChat = () => {
           })
         );
 
-        // Update message with movies and clean content
         setMessages(prev => {
           const newMessages = [...prev];
           const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
@@ -151,17 +181,9 @@ export const AIChat = () => {
     } catch (error) {
       console.error("AI chat error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to get AI response");
-      // Remove the placeholder message on error
       setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
     }
   };
 
@@ -243,7 +265,23 @@ export const AIChat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border space-y-3">
+        {messages.length === 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {quickSuggestions.map((suggestion, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                onClick={() => handleSuggestionClick(suggestion)}
+                disabled={isLoading}
+                className="whitespace-nowrap text-xs shrink-0 hover:bg-primary/10 hover:text-primary hover:border-primary/50"
+              >
+                {suggestion}
+              </Button>
+            ))}
+          </div>
+        )}
         <div className="flex gap-2">
           <Input
             placeholder="Ask me anything..."
