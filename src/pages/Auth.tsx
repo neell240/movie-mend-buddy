@@ -44,6 +44,7 @@ const Auth = () => {
 
       if (error) throw error;
       toast.success("Welcome! Check your email to verify your account.");
+      navigate("/onboarding");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign up");
     } finally {
@@ -78,9 +79,9 @@ const Auth = () => {
           <div className="flex justify-center mb-4">
             <img src={booviAvatar} alt="Boovi" className="w-24 h-24" />
           </div>
-          <CardTitle className="text-2xl">Meet Boovi!</CardTitle>
+          <CardTitle className="text-2xl">Welcome to MovieMent</CardTitle>
           <CardDescription>
-            Your cute AI movie recommender ghost
+            Your personal movie and entertainment hub
           </CardDescription>
         </CardHeader>
         <CardContent>
