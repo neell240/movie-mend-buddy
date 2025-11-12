@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import booviAvatar from "@/assets/boovi-avatar.png";
+
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <img src={booviAvatar} alt="Boovi" className="w-24 h-24" />
+            <div className="text-7xl">🎬</div>
           </div>
           <CardTitle className="text-2xl">Welcome to MovieMent</CardTitle>
           <CardDescription>
