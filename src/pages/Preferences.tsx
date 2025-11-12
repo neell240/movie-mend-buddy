@@ -23,7 +23,7 @@ const Preferences = () => {
     preferences.platforms.map(p => parseInt(p))
   );
 
-  const languages = ["English", "Spanish", "French", "German", "Japanese", "Korean"];
+  const languages = ["All Languages", "English", "Spanish", "French", "German", "Japanese", "Korean"];
   const genres = ["Action", "Comedy", "Drama", "Sci-Fi", "Thriller", "Horror", "Romance", "Animation"];
   
   const availablePlatforms = getPlatformsForRegion(selectedRegion);

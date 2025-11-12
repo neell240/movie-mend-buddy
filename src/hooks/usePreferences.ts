@@ -11,7 +11,7 @@ const PREFERENCES_KEY = 'moviemend_preferences';
 
 const defaultPreferences: UserPreferences = {
   region: 'US',
-  languages: ['English'],
+  languages: [],
   genres: [],
   platforms: [],
 };

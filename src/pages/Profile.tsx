@@ -1,110 +1,190 @@
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { ChevronRight } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { 
+  Settings, 
+  Bell, 
+  Shield, 
+  HelpCircle, 
+  Mail, 
+  LogOut,
+  LogIn
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out successfully");
+    navigate("/");
+  };
 
   const menuItems = [
     {
-      title: "Language",
-      subtitle: "App Language",
-      value: "English",
-      onClick: () => {}
+      icon: Settings,
+      label: "Preferences",
+      onClick: () => navigate("/preferences"),
     },
-    {
-      title: "Preferences",
-      subtitle: "Genres",
-      value: "Action, Comedy, Drama",
-      onClick: () => navigate("/preferences")
-    },
-    {
-      title: "Watch History",
-      subtitle: "8 movies",
-      onClick: () => {}
-    },
-    {
-      title: "Feedback",
-      subtitle: "Improve Recommendations",
-      onClick: () => {}
-    }
   ];
+
+  const appSettings = [
+    {
+      icon: Bell,
+      label: "Notifications",
+      onClick: () => {},
+    },
+  ];
+
+  const support = [
+    {
+      icon: HelpCircle,
+      label: "Help & Support",
+      onClick: () => {},
+    },
+    {
+      icon: Mail,
+      label: "Contact Us",
+      onClick: () => {},
+    },
+    {
+      icon: Shield,
+      label: "Privacy Policy",
+      onClick: () => {},
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pb-20">
+        <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
+          <div className="max-w-lg mx-auto px-4 py-4">
+            <h1 className="text-xl font-bold">Profile</h1>
+          </div>
+        </header>
+        <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold">Preferences</h1>
+          <h1 className="text-xl font-bold">Profile</h1>
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
-        {/* Menu Items */}
-        <div className="space-y-2 mb-8">
-          {menuItems.map((item) => (
-            <button
-              key={item.title}
-              onClick={item.onClick}
-              className="w-full flex items-center justify-between p-4 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors text-left"
-            >
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        {/* User Info */}
+        {user ? (
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary">
+                  {user.email?.[0].toUpperCase() || "U"}
+                </span>
+              </div>
               <div className="flex-1">
-                <h3 className="font-medium mb-1">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {item.subtitle}
-                  {item.value && ` • ${item.value}`}
-                </p>
+                <h2 className="font-semibold">{user.email}</h2>
+                <p className="text-sm text-muted-foreground">Member</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </button>
-          ))}
-        </div>
-
-        {/* Settings Section */}
-        <div className="mb-8">
-          <h2 className="text-lg font-bold mb-4">App Settings</h2>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-4 bg-card rounded-xl border border-border">
-              <div>
-                <h3 className="font-medium mb-1">Appearance</h3>
-                <p className="text-sm text-muted-foreground">Dark Mode</p>
-                <p className="text-xs text-muted-foreground mt-1">Adjust the app's visual theme</p>
-              </div>
-              <Switch defaultChecked />
             </div>
-
-            <div className="flex items-center justify-between p-4 bg-card rounded-xl border border-border">
-              <div>
-                <h3 className="font-medium mb-1">Notifications</h3>
-                <p className="text-sm text-muted-foreground">App Notifications</p>
-                <p className="text-xs text-muted-foreground mt-1">Receive updates on new releases</p>
-              </div>
-              <Switch />
+          </Card>
+        ) : (
+          <Card className="p-6">
+            <div className="text-center space-y-4">
+              <p className="text-muted-foreground">Sign in to access more features</p>
+              <Button onClick={() => navigate("/auth")} className="w-full">
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
             </div>
-          </div>
-        </div>
+          </Card>
+        )}
 
-        {/* Support Section */}
-        <div className="mb-8">
-          <h2 className="text-lg font-bold mb-4">Support</h2>
+        {/* General Settings */}
+        <section>
+          <h3 className="font-semibold mb-3">General</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center justify-between p-4 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors text-left">
-              <span className="font-medium">Help Center</span>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </button>
-            <button className="w-full flex items-center justify-between p-4 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors text-left">
-              <span className="font-medium">Contact Us</span>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </button>
+            {menuItems.map((item, index) => (
+              <Card
+                key={index}
+                className="p-4 cursor-pointer hover:bg-accent transition-colors"
+                onClick={item.onClick}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5 text-muted-foreground" />
+                  <span>{item.label}</span>
+                </div>
+              </Card>
+            ))}
           </div>
-        </div>
+        </section>
 
-        {/* About */}
-        <div className="text-center text-sm text-muted-foreground mb-4">
-          <p className="mb-1">About</p>
-          <p>App Version: 1.2.3</p>
+        {/* App Settings */}
+        <section>
+          <h3 className="font-semibold mb-3">App Settings</h3>
+          <div className="space-y-2">
+            {appSettings.map((item, index) => (
+              <Card
+                key={index}
+                className="p-4 cursor-pointer hover:bg-accent transition-colors"
+                onClick={item.onClick}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5 text-muted-foreground" />
+                  <span>{item.label}</span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Support */}
+        <section>
+          <h3 className="font-semibold mb-3">Support</h3>
+          <div className="space-y-2">
+            {support.map((item, index) => (
+              <Card
+                key={index}
+                className="p-4 cursor-pointer hover:bg-accent transition-colors"
+                onClick={item.onClick}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5 text-muted-foreground" />
+                  <span>{item.label}</span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Sign Out */}
+        {user && (
+          <Button 
+            variant="destructive" 
+            className="w-full"
+            onClick={handleSignOut}
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign Out
+          </Button>
+        )}
+
+        {/* App Info */}
+        <div className="text-center text-sm text-muted-foreground pt-4">
+          <p>MovieMend v1.0.0</p>
+          <p className="mt-1">Made with ❤️ by Boovi 👻</p>
         </div>
       </main>
 

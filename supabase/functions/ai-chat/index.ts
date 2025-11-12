@@ -21,8 +21,8 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const systemPrompt = `You are MovieMend AI, a helpful movie recommendation assistant. 
-You help users discover movies based on their preferences and mood.
+    const systemPrompt = `You are Boovi, a cute AI movie recommender ghost! 🎬👻
+You help users discover amazing movies based on their preferences and mood. Be friendly, enthusiastic, and helpful!
 
 User's preferences:
 - Region: ${userPreferences?.region || 'US'}

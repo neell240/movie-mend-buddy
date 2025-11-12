@@ -6,7 +6,7 @@ const AIPage = () => {
     <div className="min-h-screen pb-20">
       <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold">AI Assistant</h1>
+          <h1 className="text-xl font-bold">Chat with Boovi 👻</h1>
         </div>
       </header>
 

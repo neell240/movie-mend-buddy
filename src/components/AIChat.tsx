@@ -1,12 +1,15 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sparkles, Send } from "lucide-react";
-import { usePreferences } from "@/hooks/usePreferences";
-import { useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 import { MovieCard } from "@/components/MovieCard";
-import { TMDBMovie } from "@/types/tmdb";
+import { useNavigate } from "react-router-dom";
+import { usePreferences } from "@/hooks/usePreferences";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import type { TMDBMovie } from "@/types/tmdb";
+import booviAvatar from "@/assets/boovi-avatar.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -18,25 +21,120 @@ export const AIChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [showWelcome, setShowWelcome] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { preferences } = usePreferences();
   const navigate = useNavigate();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => {
+    // Check authentication and load conversation
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate("/auth");
+        return;
+      }
+
+      setUser(session.user);
+
+      // Load or create conversation
+      const { data: conversations, error } = await supabase
+        .from("conversations")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .order("updated_at", { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error("Error loading conversation:", error);
+        return;
+      }
+
+      if (conversations && conversations.length > 0) {
+        const conv = conversations[0];
+        setConversationId(conv.id);
+        setShowWelcome(false);
+        
+        // Load messages
+        const { data: msgs } = await supabase
+          .from("messages")
+          .select("*")
+          .eq("conversation_id", conv.id)
+          .order("created_at", { ascending: true });
+
+        if (msgs) {
+          setMessages(msgs.map(m => ({
+            role: m.role as "user" | "assistant",
+            content: m.content,
+            movies: m.movies ? (m.movies as any[]) as TMDBMovie[] : undefined,
+          })));
+        }
+      } else {
+        // Create new conversation with welcome message
+        const { data: newConv, error: convError } = await supabase
+          .from("conversations")
+          .insert({ user_id: session.user.id, title: "New Chat" })
+          .select()
+          .single();
+
+        if (convError) {
+          console.error("Error creating conversation:", convError);
+          return;
+        }
+
+        setConversationId(newConv.id);
+
+        // Add welcome message
+        const welcomeMsg: Message = {
+          role: "assistant",
+          content: `Boo! 👻 I'm Boovi, your cute movie recommender ghost! Welcome to MovieMend!\n\nHere's what I can help you with:\n\n🎬 **Get Personalized Movie Recommendations** - Just tell me what you're in the mood for!\n\n🔍 **Search & Filter** - Find movies by genre, rating, or streaming platform\n\n📝 **Create Your Watchlist** - Save movies you want to watch later\n\n⚙️ **Set Your Preferences** - Tell me your favorite genres, languages, and streaming services\n\nTry asking me something like "I want an action movie tonight" or "Show me family-friendly picks"! What kind of movie are you looking for today? 🍿`,
+        };
+
+        setMessages([welcomeMsg]);
+        
+        // Save welcome message to DB
+        await supabase.from("messages").insert([{
+          conversation_id: newConv.id,
+          role: "assistant",
+          content: welcomeMsg.content,
+        }]);
+      }
+    };
+
+    initAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !conversationId) return;
 
     const userMessage: Message = { role: "user", content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    setShowWelcome(false);
+
+    // Save user message
+    await supabase.from("messages").insert([{
+      conversation_id: conversationId,
+      role: "user",
+      content: input,
+    }]);
 
     await handleAIResponse([...messages, userMessage]);
   };
@@ -59,13 +157,22 @@ export const AIChat = () => {
 
   const handleSuggestionClick = (suggestion: string) => {
     setInput(suggestion);
-    // Auto-send the suggestion
     setTimeout(() => {
       const syntheticInput = suggestion;
       setInput("");
       const userMessage: Message = { role: "user", content: syntheticInput };
       setMessages(prev => [...prev, userMessage]);
       setIsLoading(true);
+      setShowWelcome(false);
+      
+      // Save user message
+      if (conversationId) {
+        supabase.from("messages").insert([{
+          conversation_id: conversationId,
+          role: "user",
+          content: syntheticInput,
+        }]);
+      }
       
       handleAIResponse([...messages, userMessage]);
     }, 0);
@@ -91,13 +198,13 @@ export const AIChat = () => {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get AI response");
+        const error = await response.json();
+        throw new Error(error.error || "Failed to get response");
       }
 
-      if (!response.body) throw new Error("No response body");
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No reader available");
 
-      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
 
@@ -108,32 +215,33 @@ export const AIChat = () => {
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
-        let newlineIndex: number;
-        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
-
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
+        for (const line of lines) {
+          if (!line.trim() || line.startsWith(":")) continue;
           if (!line.startsWith("data: ")) continue;
 
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
+          const data = line.slice(6);
+          if (data === "[DONE]") continue;
 
           try {
-            const parsed = JSON.parse(jsonStr);
+            const parsed = JSON.parse(data);
             const content = parsed.choices?.[0]?.delta?.content;
+
             if (content) {
               assistantContent += content;
               setMessages(prev => {
                 const newMessages = [...prev];
-                newMessages[newMessages.length - 1].content = assistantContent;
+                const lastMessage = newMessages[newMessages.length - 1];
+                if (lastMessage.role === "assistant") {
+                  lastMessage.content = assistantContent;
+                }
                 return newMessages;
               });
             }
           } catch (e) {
-            console.error("Error parsing SSE:", e);
+            console.error("Failed to parse SSE data:", e);
           }
         }
       }
@@ -146,23 +254,21 @@ export const AIChat = () => {
         await Promise.all(
           movieIds.map(async (id) => {
             try {
-              const movieResponse = await fetch(
-                `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details`,
+              const response = await fetch(
+                `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details?id=${id}`,
                 {
-                  method: "POST",
                   headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
                   },
-                  body: JSON.stringify({ movieId: id }),
                 }
               );
-              if (movieResponse.ok) {
-                const movieData = await movieResponse.json();
-                movies.push(movieData);
+              
+              if (response.ok) {
+                const movie = await response.json();
+                movies.push(movie);
               }
-            } catch (e) {
-              console.error("Error fetching movie:", e);
+            } catch (error) {
+              console.error("Failed to fetch movie details:", error);
             }
           })
         );
@@ -170,13 +276,32 @@ export const AIChat = () => {
         setMessages(prev => {
           const newMessages = [...prev];
           const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
-          newMessages[newMessages.length - 1] = {
-            ...newMessages[newMessages.length - 1],
-            content: cleanContent,
-            movies: movies.length > 0 ? movies : undefined
-          };
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage.role === "assistant") {
+            lastMessage.content = cleanContent;
+            lastMessage.movies = movies;
+          }
           return newMessages;
         });
+
+        // Save assistant message with movies
+        if (conversationId) {
+          await supabase.from("messages").insert([{
+            conversation_id: conversationId,
+            role: "assistant",
+            content: assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim(),
+            movies: movies as any,
+          }]);
+        }
+      } else {
+        // Save assistant message without movies
+        if (conversationId) {
+          await supabase.from("messages").insert([{
+            conversation_id: conversationId,
+            role: "assistant",
+            content: assistantContent,
+          }]);
+        }
       }
     } catch (error) {
       console.error("AI chat error:", error);
@@ -188,85 +313,57 @@ export const AIChat = () => {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border flex flex-col h-[600px]">
-      <div className="flex items-center gap-3 p-4 border-b border-border">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h2 className="font-semibold">AI Assistant</h2>
-          <p className="text-xs text-muted-foreground">Ask for movie recommendations</p>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && (
-          <div className="text-center text-muted-foreground text-sm py-8">
-            Hi! What kind of movie are you in the mood for today?
-          </div>
-        )}
         {messages.map((message, index) => (
-          <div key={index} className="space-y-3">
-            <div
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[80%] rounded-xl px-4 py-2 ${
-                  message.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground"
-                }`}
-              >
-                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-              </div>
-            </div>
-            {message.movies && message.movies.length > 0 && (
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                {message.movies.map((movie) => (
-                  <div
-                    key={movie.id}
-                    onClick={() => navigate(`/movie/${movie.id}`)}
-                    className="cursor-pointer group"
-                  >
-                    <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-muted">
-                      {movie.poster_path ? (
-                        <img
-                          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                          alt={movie.title}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                          No Image
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <div className="mt-2 space-y-1">
-                      <h3 className="font-semibold text-sm line-clamp-1">{movie.title}</h3>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
-                        <span>•</span>
-                        <span className="uppercase">{movie.original_language}</span>
-                      </div>
-                      {movie.vote_average > 0 && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-yellow-500">⭐</span>
-                          <span className="text-sm font-medium">{movie.vote_average.toFixed(1)}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+          <div
+            key={index}
+            className={`flex gap-3 ${
+              message.role === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            {message.role === "assistant" && (
+              <div className="flex-shrink-0 w-8 h-8">
+                <img src={booviAvatar} alt="Boovi" className="w-full h-full" />
               </div>
             )}
+            <div
+              className={`max-w-[80%] rounded-lg p-3 ${
+                message.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted"
+              }`}
+            >
+              <p className="whitespace-pre-wrap">{message.content}</p>
+              {message.movies && message.movies.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {message.movies.map((movie) => (
+                    <MovieCard
+                      key={movie.id}
+                      movie={movie}
+                      onClick={() => navigate(`/movie/${movie.id}`)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex gap-3 justify-start">
+            <div className="flex-shrink-0 w-8 h-8">
+              <img src={booviAvatar} alt="Boovi" className="w-full h-full" />
+            </div>
+            <Card className="p-3">
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </Card>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
       <div className="p-4 border-t border-border space-y-3">
-        {messages.length === 0 && (
+        {messages.length <= 1 && showWelcome && (
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {quickSuggestions.map((suggestion, index) => (
               <Button
@@ -284,15 +381,15 @@ export const AIChat = () => {
         )}
         <div className="flex gap-2">
           <Input
-            placeholder="Ask me anything..."
+            placeholder="Ask Boovi anything..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             disabled={isLoading}
             className="flex-1"
           />
-          <Button onClick={sendMessage} disabled={isLoading || !input.trim()} size="icon">
-            <Send className="w-4 h-4" />
+          <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send"}
           </Button>
         </div>
       </div>
