@@ -106,14 +106,6 @@ const Onboarding = () => {
     if (currentScreen < screens.length - 1) {
       setCurrentScreen(currentScreen + 1);
     } else {
-      // Mark onboarding as complete and redirect to home
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('profiles')
-          .update({ onboarding_completed: true })
-          .eq('user_id', user.id);
-      }
       navigate("/");
     }
   };
