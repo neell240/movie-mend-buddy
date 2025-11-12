@@ -17,11 +17,7 @@ const Onboarding = () => {
       buttonText: "Let's Begin 🍿",
       visual: (
         <div className="relative flex justify-center items-center h-64 animate-fade-in">
-          <img 
-            src={booviAvatar} 
-            alt="Boovi" 
-            className="w-32 h-32 animate-bounce"
-          />
+          <div className="text-8xl animate-bounce">🎬</div>
         </div>
       ),
     },
@@ -48,18 +44,17 @@ const Onboarding = () => {
       buttonText: "Next",
       visual: (
         <div className="relative flex flex-col items-center h-64 animate-fade-in gap-4">
-          <img 
-            src={booviAvatar} 
-            alt="Boovi" 
-            className="w-24 h-24"
-          />
+          <div className="text-6xl">📝</div>
           <div className="flex flex-col gap-2 w-full max-w-xs">
             {[1, 2, 3].map((i) => (
               <div 
                 key={i}
-                className="h-12 bg-gradient-to-r from-primary/20 to-primary/5 rounded-lg border border-border animate-scale-in"
+                className="h-12 bg-gradient-to-r from-primary/20 to-primary/5 rounded-lg border border-border animate-scale-in flex items-center px-4"
                 style={{ animationDelay: `${i * 0.1}s` }}
-              />
+              >
+                <div className="w-10 h-10 bg-primary/10 rounded mr-3" />
+                <div className="flex-1 h-4 bg-primary/10 rounded" />
+              </div>
             ))}
           </div>
         </div>
@@ -71,17 +66,10 @@ const Onboarding = () => {
       buttonText: "Next",
       visual: (
         <div className="relative flex justify-center items-center h-64 animate-fade-in">
-          <div className="relative">
-            <div className="w-48 h-32 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg border border-border flex items-center justify-center">
-              <div className="w-12 h-12 rounded-full bg-primary/40 flex items-center justify-center">
-                <ChevronRight className="w-6 h-6 text-primary-foreground" />
-              </div>
+          <div className="w-48 h-32 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg border border-border flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-primary/40 flex items-center justify-center animate-pulse">
+              <ChevronRight className="w-8 h-8 text-primary-foreground" />
             </div>
-            <img 
-              src={booviAvatar} 
-              alt="Boovi" 
-              className="absolute -bottom-2 -right-2 w-16 h-16"
-            />
           </div>
         </div>
       ),
