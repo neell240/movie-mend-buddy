@@ -10,7 +10,7 @@ export interface UserPreferences {
 const PREFERENCES_KEY = 'moviemend_preferences';
 
 const defaultPreferences: UserPreferences = {
-  region: 'US',
+  region: 'ALL',
   languages: [],
   genres: [],
   platforms: [],
@@ -49,6 +49,7 @@ export const STREAMING_PLATFORMS: Record<string, { id: number; name: string; reg
 };
 
 export const REGIONS = [
+  { code: 'ALL', name: 'All Regions' },
   { code: 'US', name: 'United States' },
   { code: 'UK', name: 'United Kingdom' },
   { code: 'CA', name: 'Canada' },
@@ -62,6 +63,10 @@ export const REGIONS = [
 ];
 
 export const getPlatformsForRegion = (region: string) => {
+  if (region === 'ALL') {
+    // Return all unique platforms for "All Regions"
+    return STREAMING_PLATFORMS.all;
+  }
   return STREAMING_PLATFORMS.all.filter(platform => 
     platform.regions.includes(region)
   );
