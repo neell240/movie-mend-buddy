@@ -83,7 +83,7 @@ const Onboarding = () => {
           <img 
             src={booviAvatar} 
             alt="Boovi" 
-            className="w-40 h-40 animate-scale-in"
+            className="w-52 h-52 animate-scale-in"
           />
         </div>
       ),
