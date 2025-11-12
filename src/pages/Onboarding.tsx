@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import booviAvatar from "@/assets/boovi-avatar.png";
+import booviAvatar from "@/assets/boovi-transparent.png";
 import { ChevronRight } from "lucide-react";
 
 const Onboarding = () => {
