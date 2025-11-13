@@ -14,7 +14,14 @@ serve(async (req) => {
   }
 
   try {
-    const { movieId } = await req.json();
+    // Handle both GET (query params) and POST (body) requests
+    const url = new URL(req.url);
+    let movieId = url.searchParams.get('id');
+    
+    if (!movieId && req.method === 'POST') {
+      const body = await req.json();
+      movieId = body.movieId;
+    }
 
     if (!movieId) {
       return new Response(
