@@ -266,9 +266,11 @@ export const AIChat = () => {
               if (response.ok) {
                 const movie = await response.json();
                 movies.push(movie);
+              } else {
+                console.warn(`Movie ID ${id} not found in TMDB (404)`);
               }
             } catch (error) {
-              console.error("Failed to fetch movie details:", error);
+              console.error(`Failed to fetch movie ${id}:`, error);
             }
           })
         );
