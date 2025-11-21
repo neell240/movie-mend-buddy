@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import type { TMDBMovie } from "@/types/tmdb";
 import booviAvatar from "@/assets/boovi-avatar.png";
-import { useBooviState, type BooviState } from "@/hooks/useBooviState";
 
 interface Message {
   role: "user" | "assistant";
@@ -332,42 +331,6 @@ export const AIChat = () => {
     }
   };
 
-  const BooviAvatar = ({ content, isLoading }: { content: string; isLoading: boolean }) => {
-    const state = useBooviState(content, isLoading);
-    
-    const getAnimationClass = (state: BooviState) => {
-      switch (state) {
-        case 'celebrating':
-          return 'animate-bounce';
-        case 'sympathetic':
-          return 'animate-pulse';
-        case 'excited':
-          return 'animate-[bounce_0.5s_ease-in-out_3]';
-        case 'focused':
-          return 'animate-[spin_2s_linear_infinite]';
-        case 'idle':
-        default:
-          return 'animate-[float_3s_ease-in-out_infinite]';
-      }
-    };
-
-    return (
-      <div className="flex-shrink-0 w-8 h-8 relative">
-        <img 
-          src={booviAvatar} 
-          alt="Boovi" 
-          className={`w-full h-full transition-all duration-300 ${getAnimationClass(state)}`}
-        />
-        {state === 'celebrating' && (
-          <div className="absolute -top-1 -right-1 text-xs animate-[ping_1s_ease-in-out_3]">✨</div>
-        )}
-        {state === 'excited' && (
-          <div className="absolute -top-1 -right-1 text-xs animate-[bounce_0.5s_ease-in-out_infinite]">🔥</div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -379,7 +342,9 @@ export const AIChat = () => {
             }`}
           >
             {message.role === "assistant" && (
-              <BooviAvatar content={message.content} isLoading={false} />
+              <div className="flex-shrink-0 w-8 h-8">
+                <img src={booviAvatar} alt="Boovi" className="w-full h-full" />
+              </div>
             )}
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
@@ -405,7 +370,9 @@ export const AIChat = () => {
         ))}
         {isLoading && (
           <div className="flex gap-3 justify-start">
-            <BooviAvatar content="" isLoading={true} />
+            <div className="flex-shrink-0 w-8 h-8">
+              <img src={booviAvatar} alt="Boovi" className="w-full h-full" />
+            </div>
             <Card className="p-3">
               <Loader2 className="h-4 w-4 animate-spin" />
             </Card>
