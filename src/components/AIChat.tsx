@@ -178,6 +178,14 @@ export const AIChat = () => {
     }, 0);
   };
 
+  // Verified TMDB IDs - only fetch these to prevent wrong movies
+  const VERIFIED_MOVIE_IDS = new Set([
+    313369, 787, 278, 238, 240, 27205, 155, 157336, 680, 13, 603, 769, 550, 597,
+    19995, 496243, 475557, 150540, 862, 12, 354912, 14160, 10681, 2062, 24428,
+    634649, 284054, 1726, 118340, 8587, 109445, 277834, 321612, 11036, 1397,
+    455207, 4951, 671, 120, 11, 329, 105
+  ]);
+
   const handleAIResponse = async (conversationMessages: Message[]) => {
     let assistantContent = "";
 
@@ -249,10 +257,19 @@ export const AIChat = () => {
       const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
       if (movieMatches) {
         const movieIds = [...new Set(movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean))];
+        
+        // Filter to only verified movie IDs to prevent showing wrong movies
+        const verifiedIds = movieIds.filter(id => VERIFIED_MOVIE_IDS.has(parseInt(id || '0')));
+        
+        if (verifiedIds.length !== movieIds.length) {
+          const invalidIds = movieIds.filter(id => !VERIFIED_MOVIE_IDS.has(parseInt(id || '0')));
+          console.warn('⚠️ Filtered out unverified movie IDs:', invalidIds);
+        }
+        
         const movies: TMDBMovie[] = [];
         
         await Promise.all(
-          movieIds.map(async (id) => {
+          verifiedIds.map(async (id) => {
             try {
               const response = await fetch(
                 `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details?id=${id}`,
