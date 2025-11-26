@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, Bookmark, Share2, Play, Star } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMovieDetails } from "@/hooks/useTMDB";
+import { useWatchlist } from "@/hooks/useWatchlist";
 import { getTMDBImageUrl, TMDB_BACKDROP_SIZE, TMDB_PROFILE_SIZE } from "@/types/tmdb";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,6 +12,23 @@ const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { data: movie, isLoading } = useMovieDetails(id);
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  
+  const inWatchlist = id ? isInWatchlist(parseInt(id)) : false;
+
+  const handleWatchlistToggle = () => {
+    if (!movie) return;
+    
+    if (inWatchlist) {
+      removeFromWatchlist.mutate(movie.id);
+    } else {
+      addToWatchlist.mutate({
+        id: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path,
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -68,8 +86,15 @@ const MovieDetails = () => {
             <Button variant="ghost" size="icon">
               <Share2 className="w-5 h-5" />
             </Button>
-            <Button variant="ghost" size="icon">
-              <Bookmark className="w-5 h-5" />
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleWatchlistToggle}
+            >
+              <Bookmark 
+                className="w-5 h-5" 
+                fill={inWatchlist ? "currentColor" : "none"}
+              />
             </Button>
           </div>
         </div>
