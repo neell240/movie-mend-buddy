@@ -15,6 +15,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   movies?: TMDBMovie[];
+  emotionalState?: "celebrating" | "sympathetic" | "excited" | "focused";
 }
 
 export const AIChat = () => {
@@ -186,6 +187,31 @@ export const AIChat = () => {
     455207, 4951, 671, 120, 11, 329, 105
   ]);
 
+  const detectEmotionalState = (content: string): "celebrating" | "sympathetic" | "excited" | "focused" => {
+    const lowerContent = content.toLowerCase();
+    
+    // Excited state - IMDb mentions, bold ratings, urgent words
+    if (lowerContent.includes('imdb') || lowerContent.includes('top-tier') || 
+        lowerContent.includes('must-watch') || lowerContent.includes('blockbuster incoming')) {
+      return "excited";
+    }
+    
+    // Sympathetic state - empathy, no results, suggestions
+    if (lowerContent.includes('aww') || lowerContent.includes('no reels matched') ||
+        lowerContent.includes('try a different') || lowerContent.includes('want me to try')) {
+      return "sympathetic";
+    }
+    
+    // Celebrating state - popcorn, 3D glasses, success words
+    if (lowerContent.includes('popcorn') || lowerContent.includes('3d glasses') ||
+        lowerContent.includes('found') || lowerContent.includes('blockbuster batch')) {
+      return "celebrating";
+    }
+    
+    // Default to focused
+    return "focused";
+  };
+
   const handleAIResponse = async (conversationMessages: Message[]) => {
     let assistantContent = "";
 
@@ -254,6 +280,8 @@ export const AIChat = () => {
         }
       }
 
+      const emotionalState = detectEmotionalState(assistantContent);
+      
       const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
       if (movieMatches) {
         const movieIds = [...new Set(movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean))];
@@ -299,6 +327,7 @@ export const AIChat = () => {
           if (lastMessage.role === "assistant") {
             lastMessage.content = cleanContent;
             lastMessage.movies = movies;
+            lastMessage.emotionalState = emotionalState;
           }
           return newMessages;
         });
@@ -313,6 +342,16 @@ export const AIChat = () => {
           }]);
         }
       } else {
+        // Update with emotional state
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage.role === "assistant") {
+            lastMessage.emotionalState = emotionalState;
+          }
+          return newMessages;
+        });
+        
         // Save assistant message without movies
         if (conversationId) {
           await supabase.from("messages").insert([{
@@ -343,7 +382,13 @@ export const AIChat = () => {
           >
             {message.role === "assistant" && (
               <div className="flex-shrink-0 w-8 h-8">
-                <img src={booviAvatar} alt="Boovi" className="w-full h-full" />
+                <img 
+                  src={booviAvatar} 
+                  alt="Boovi" 
+                  className={`w-full h-full ${
+                    message.emotionalState ? `boovi-${message.emotionalState}` : ''
+                  }`}
+                />
               </div>
             )}
             <div
@@ -371,7 +416,7 @@ export const AIChat = () => {
         {isLoading && (
           <div className="flex gap-3 justify-start">
             <div className="flex-shrink-0 w-8 h-8">
-              <img src={booviAvatar} alt="Boovi" className="w-full h-full" />
+              <img src={booviAvatar} alt="Boovi" className="w-full h-full boovi-focused" />
             </div>
             <Card className="p-3">
               <Loader2 className="h-4 w-4 animate-spin" />
