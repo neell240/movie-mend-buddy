@@ -10,19 +10,39 @@ import {
   HelpCircle, 
   Mail, 
   LogOut,
-  LogIn
+  LogIn,
+  Zap
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
+  const [isTestingNotifications, setIsTestingNotifications] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
     toast.success("Signed out successfully");
     navigate("/");
+  };
+
+  const handleTestNotifications = async () => {
+    setIsTestingNotifications(true);
+    try {
+      const { error } = await supabase.functions.invoke('notification-scheduler');
+      
+      if (error) throw error;
+      
+      toast.success("Notification scheduler triggered! Check your notifications in a moment.");
+    } catch (error) {
+      console.error('Error triggering notification scheduler:', error);
+      toast.error("Failed to trigger notifications. Please try again.");
+    } finally {
+      setIsTestingNotifications(false);
+    }
   };
 
   const menuItems = [
@@ -168,6 +188,29 @@ const Profile = () => {
             ))}
           </div>
         </section>
+
+        {/* Developer Tools */}
+        {user && (
+          <section>
+            <h3 className="font-semibold mb-3">Developer Tools</h3>
+            <Card className="p-4">
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Manually trigger the notification scheduler to test notifications
+                </p>
+                <Button
+                  onClick={handleTestNotifications}
+                  disabled={isTestingNotifications}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  {isTestingNotifications ? "Triggering..." : "Test Notifications"}
+                </Button>
+              </div>
+            </Card>
+          </section>
+        )}
 
         {/* Sign Out */}
         {user && (
