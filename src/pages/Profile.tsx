@@ -37,7 +37,7 @@ const Profile = () => {
     {
       icon: Bell,
       label: "Notifications",
-      onClick: () => {},
+      onClick: () => navigate("/notifications"),
     },
   ];
 
