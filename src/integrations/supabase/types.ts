@@ -127,6 +127,39 @@ export type Database = {
         }
         Relationships: []
       }
+      watchlist: {
+        Row: {
+          added_at: string
+          id: string
+          movie_id: number
+          movie_poster: string | null
+          movie_title: string
+          status: string
+          user_id: string
+          watched_at: string | null
+        }
+        Insert: {
+          added_at?: string
+          id?: string
+          movie_id: number
+          movie_poster?: string | null
+          movie_title: string
+          status?: string
+          user_id: string
+          watched_at?: string | null
+        }
+        Update: {
+          added_at?: string
+          id?: string
+          movie_id?: number
+          movie_poster?: string | null
+          movie_title?: string
+          status?: string
+          user_id?: string
+          watched_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
