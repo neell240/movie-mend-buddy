@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -30,14 +31,17 @@ const Index = () => {
               <Sparkles className="w-6 h-6 text-primary" />
               <h1 className="text-xl font-bold">MovieMend</h1>
             </div>
-            <Button 
-              size="sm" 
-              variant="ghost"
-              onClick={() => navigate("/preferences")}
-              className="text-xs"
-            >
-              Setup
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={() => navigate("/preferences")}
+                className="text-xs"
+              >
+                Setup
+              </Button>
+            </div>
           </div>
         </div>
       </header>
