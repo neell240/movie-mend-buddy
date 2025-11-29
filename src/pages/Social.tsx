@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { FriendsList } from "@/components/FriendsList";
 import { FriendRequests } from "@/components/FriendRequests";
 import { UserSearch } from "@/components/UserSearch";
+import { SocialWalkthrough } from "@/components/SocialWalkthrough";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,15 @@ import { toast } from "sonner";
 const Social = () => {
   const { pendingRequests } = useFriends();
   const { user } = useAuth();
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
+
+  useEffect(() => {
+    // Check if user has seen the social walkthrough
+    const hasSeenWalkthrough = localStorage.getItem("social-walkthrough-seen");
+    if (!hasSeenWalkthrough && user) {
+      setShowWalkthrough(true);
+    }
+  }, [user]);
 
   const handleInviteFriend = async () => {
     if (!user) {
@@ -59,6 +69,14 @@ const Social = () => {
 
   return (
     <div className="min-h-screen pb-20">
+      <SocialWalkthrough 
+        open={showWalkthrough} 
+        onClose={() => {
+          setShowWalkthrough(false);
+          localStorage.setItem("social-walkthrough-seen", "true");
+        }}
+      />
+
       <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Social</h1>
