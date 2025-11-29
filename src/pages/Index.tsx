@@ -3,7 +3,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings } from "lucide-react";
+import { Sparkles, Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,7 +42,16 @@ const Index = () => {
               <Button 
                 size="icon" 
                 variant="ghost"
+                onClick={() => navigate("/preferences")}
+                title="Setup Preferences"
+              >
+                <Wrench className="w-5 h-5" />
+              </Button>
+              <Button 
+                size="icon" 
+                variant="ghost"
                 onClick={() => navigate("/settings")}
+                title="Settings"
               >
                 <Settings className="w-5 h-5" />
               </Button>
