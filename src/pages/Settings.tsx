@@ -3,16 +3,46 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ChevronLeft, Bell, User, Globe, Shield, Palette, Info } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ChevronLeft, Bell, User, Globe, Shield, Palette, Info, Eye, Users, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
   const [autoPlayTrailers, setAutoPlayTrailers] = useState(false);
+  const [profileVisibility, setProfileVisibility] = useState<"public" | "friends_only" | "private">("friends_only");
+  const [isLoadingVisibility, setIsLoadingVisibility] = useState(true);
+
+  useEffect(() => {
+    const fetchProfileVisibility = async () => {
+      if (!user) return;
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('visibility')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile visibility:', error);
+        return;
+      }
+
+      if (data?.visibility) {
+        setProfileVisibility(data.visibility);
+      }
+      setIsLoadingVisibility(false);
+    };
+
+    fetchProfileVisibility();
+  }, [user]);
 
   const handleNotificationToggle = (checked: boolean) => {
     setNotificationsEnabled(checked);
@@ -27,6 +57,34 @@ const Settings = () => {
   const handleAutoPlayToggle = (checked: boolean) => {
     setAutoPlayTrailers(checked);
     toast.success(checked ? "Auto-play enabled" : "Auto-play disabled");
+  };
+
+  const handleVisibilityChange = async (value: "public" | "friends_only" | "private") => {
+    if (!user) {
+      toast.error("Please sign in to change privacy settings");
+      return;
+    }
+
+    setProfileVisibility(value);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ visibility: value })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Error updating visibility:', error);
+      toast.error("Failed to update privacy settings");
+      return;
+    }
+
+    const messages = {
+      public: "Your activity is now visible to everyone",
+      friends_only: "Your activity is now visible to friends only",
+      private: "Your activity is now private"
+    };
+    
+    toast.success(messages[value]);
   };
 
   return (
@@ -145,19 +203,75 @@ const Settings = () => {
             <h2 className="text-lg font-semibold">Privacy & Security</h2>
           </div>
 
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-          >
-            Privacy Policy
-          </Button>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-base font-medium mb-3 block">Who can see your activity?</Label>
+              <p className="text-sm text-muted-foreground mb-4">
+                Control who can see your movie ratings, reviews, and watchlist on the social feed
+              </p>
+              
+              {isLoadingVisibility ? (
+                <div className="text-sm text-muted-foreground">Loading...</div>
+              ) : (
+                <RadioGroup value={profileVisibility} onValueChange={handleVisibilityChange}>
+                  <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="public" id="public" />
+                    <Label htmlFor="public" className="flex-1 cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <div>
+                          <div className="font-medium">Public</div>
+                          <div className="text-xs text-muted-foreground">Everyone can see your activity</div>
+                        </div>
+                      </div>
+                    </Label>
+                  </div>
 
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-          >
-            Terms of Service
-          </Button>
+                  <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="friends_only" id="friends_only" />
+                    <Label htmlFor="friends_only" className="flex-1 cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-primary" />
+                        <div>
+                          <div className="font-medium">Friends Only</div>
+                          <div className="text-xs text-muted-foreground">Only your friends can see your activity</div>
+                        </div>
+                      </div>
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="private" id="private" />
+                    <Label htmlFor="private" className="flex-1 cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Lock className="w-4 h-4 text-primary" />
+                        <div>
+                          <div className="font-medium">Private</div>
+                          <div className="text-xs text-muted-foreground">Only you can see your activity</div>
+                        </div>
+                      </div>
+                    </Label>
+                  </div>
+                </RadioGroup>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-4 mt-4">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+            >
+              Privacy Policy
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start mt-2"
+            >
+              Terms of Service
+            </Button>
+          </div>
         </Card>
 
         {/* About */}

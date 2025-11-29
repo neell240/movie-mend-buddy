@@ -159,6 +159,7 @@ export type Database = {
           onboarding_completed: boolean | null
           updated_at: string
           username: string | null
+          visibility: Database["public"]["Enums"]["profile_visibility"]
         }
         Insert: {
           avatar_url?: string | null
@@ -167,6 +168,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           updated_at?: string
           username?: string | null
+          visibility?: Database["public"]["Enums"]["profile_visibility"]
         }
         Update: {
           avatar_url?: string | null
@@ -175,6 +177,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           updated_at?: string
           username?: string | null
+          visibility?: Database["public"]["Enums"]["profile_visibility"]
         }
         Relationships: []
       }
@@ -266,6 +269,7 @@ export type Database = {
     Enums: {
       activity_type: "rated" | "watched" | "added_to_watchlist"
       friendship_status: "pending" | "accepted" | "blocked"
+      profile_visibility: "public" | "friends_only" | "private"
       watchlist_visibility: "public" | "friends_only" | "private"
     }
     CompositeTypes: {
@@ -396,6 +400,7 @@ export const Constants = {
     Enums: {
       activity_type: ["rated", "watched", "added_to_watchlist"],
       friendship_status: ["pending", "accepted", "blocked"],
+      profile_visibility: ["public", "friends_only", "private"],
       watchlist_visibility: ["public", "friends_only", "private"],
     },
   },
