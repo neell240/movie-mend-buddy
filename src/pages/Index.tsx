@@ -3,7 +3,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,12 +40,11 @@ const Index = () => {
             <div className="flex items-center gap-2">
               <NotificationBell />
               <Button 
-                size="sm" 
+                size="icon" 
                 variant="ghost"
-                onClick={() => navigate("/preferences")}
-                className="text-xs"
+                onClick={() => navigate("/settings")}
               >
-                Setup
+                <Settings className="w-5 h-5" />
               </Button>
             </div>
           </div>
