@@ -6,17 +6,71 @@ import { FriendRequests } from "@/components/FriendRequests";
 import { UserSearch } from "@/components/UserSearch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useFriends } from "@/hooks/useFriends";
-import { Users, UserPlus, Activity } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Users, UserPlus, Activity, Share2 } from "lucide-react";
+import { toast } from "sonner";
 
 const Social = () => {
   const { pendingRequests } = useFriends();
+  const { user } = useAuth();
+
+  const handleInviteFriend = async () => {
+    if (!user) {
+      toast.error("Please sign in to invite friends");
+      return;
+    }
+
+    // Create invite link with user ID
+    const inviteUrl = `${window.location.origin}/auth?invite=${user.id}`;
+
+    // Try Web Share API first (works on mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Join me on MovieMend!",
+          text: "I'm using MovieMend to discover amazing movies. Join me!",
+          url: inviteUrl,
+        });
+        toast.success("Invite shared!");
+      } catch (error) {
+        // User cancelled or share failed
+        if ((error as Error).name !== 'AbortError') {
+          // Fallback to clipboard
+          try {
+            await navigator.clipboard.writeText(inviteUrl);
+            toast.success("Invite link copied to clipboard!");
+          } catch {
+            toast.error("Failed to share invite");
+          }
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(inviteUrl);
+        toast.success("Invite link copied to clipboard!");
+      } catch {
+        toast.error("Failed to copy invite link");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen pb-20">
       <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-4">
+        <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Social</h1>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleInviteFriend}
+            className="flex items-center gap-2"
+          >
+            <Share2 className="h-4 w-4" />
+            Invite Friend
+          </Button>
         </div>
       </header>
 
