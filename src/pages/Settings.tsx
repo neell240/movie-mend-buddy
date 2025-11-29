@@ -13,7 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
   const [autoPlayTrailers, setAutoPlayTrailers] = useState(false);
@@ -22,7 +22,10 @@ const Settings = () => {
 
   useEffect(() => {
     const fetchProfileVisibility = async () => {
-      if (!user) return;
+      if (loading || !user) {
+        setIsLoadingVisibility(false);
+        return;
+      }
       
       const { data, error } = await supabase
         .from('profiles')
@@ -32,6 +35,7 @@ const Settings = () => {
 
       if (error) {
         console.error('Error fetching profile visibility:', error);
+        setIsLoadingVisibility(false);
         return;
       }
 
@@ -42,7 +46,7 @@ const Settings = () => {
     };
 
     fetchProfileVisibility();
-  }, [user]);
+  }, [user, loading]);
 
   const handleNotificationToggle = (checked: boolean) => {
     setNotificationsEnabled(checked);
