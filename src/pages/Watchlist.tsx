@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
+import { MovieRating } from "@/components/MovieRating";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useWatchlist } from "@/hooks/useWatchlist";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -19,7 +22,24 @@ const Watchlist = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const { watchlist, isLoading, markAsWatched } = useWatchlist();
+  const { watchlist, isLoading, markAsWatched, refetch } = useWatchlist();
+
+  const handleRating = async (movieId: number, rating: number) => {
+    try {
+      const { error } = await supabase
+        .from('watchlist')
+        .update({ rating })
+        .eq('movie_id', movieId);
+
+      if (error) throw error;
+      
+      toast.success(`Rated ${rating} stars!`);
+      refetch();
+    } catch (error) {
+      console.error('Error rating movie:', error);
+      toast.error('Failed to rate movie');
+    }
+  };
 
   const filteredMovies = watchlist.filter(item => {
     const matchesSearch = item.movie_title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -93,13 +113,20 @@ const Watchlist = () => {
                   }}
                   onClick={() => navigate(`/movie/${item.movie_id}`)}
                 />
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
                   <Badge 
                     variant={item.status === "watched" ? "secondary" : "destructive"}
                     className="flex-1 justify-center"
                   >
                     {item.status === "watched" ? "Watched" : "Want to Watch"}
                   </Badge>
+                  {item.status === "watched" && (
+                    <MovieRating
+                      rating={item.rating}
+                      onRate={(rating) => handleRating(item.movie_id, rating)}
+                      size="sm"
+                    />
+                  )}
                   {item.status !== "watched" && (
                     <Button
                       size="sm"

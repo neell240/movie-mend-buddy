@@ -11,12 +11,14 @@ export interface WatchlistItem {
   status: string;
   added_at: string;
   watched_at: string | null;
+  rating: number | null;
+  notes: string | null;
 }
 
 export const useWatchlist = () => {
   const queryClient = useQueryClient();
 
-  const { data: watchlist = [], isLoading } = useQuery({
+  const { data: watchlist = [], isLoading, refetch } = useQuery({
     queryKey: ["watchlist"],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -131,5 +133,6 @@ export const useWatchlist = () => {
     removeFromWatchlist,
     markAsWatched,
     isInWatchlist,
+    refetch,
   };
 };
