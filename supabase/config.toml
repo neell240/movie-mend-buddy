@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.notification-scheduler]
 verify_jwt = false
+
+[functions.recommendations]
+verify_jwt = true

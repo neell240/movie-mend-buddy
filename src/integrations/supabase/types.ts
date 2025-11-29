@@ -134,6 +134,8 @@ export type Database = {
           movie_id: number
           movie_poster: string | null
           movie_title: string
+          notes: string | null
+          rating: number | null
           status: string
           user_id: string
           watched_at: string | null
@@ -144,6 +146,8 @@ export type Database = {
           movie_id: number
           movie_poster?: string | null
           movie_title: string
+          notes?: string | null
+          rating?: number | null
           status?: string
           user_id: string
           watched_at?: string | null
@@ -154,6 +158,8 @@ export type Database = {
           movie_id?: number
           movie_poster?: string | null
           movie_title?: string
+          notes?: string | null
+          rating?: number | null
           status?: string
           user_id?: string
           watched_at?: string | null

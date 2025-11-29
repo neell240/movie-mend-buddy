@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
+import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,10 +9,12 @@ import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
+import { useWatchlist } from "@/hooks/useWatchlist";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
+  const { watchlist } = useWatchlist();
   
   const { data: moviesData, isLoading } = useDiscoverMovies({
     watchProviders: preferences.platforms.length > 0 
@@ -20,6 +23,9 @@ const Index = () => {
     region: preferences.region,
     sortBy: 'popularity.desc',
   });
+
+  // Check if user has watched and rated movies
+  const hasRatedMovies = watchlist.some(item => item.status === 'watched' && item.rating !== null);
 
   return (
     <div className="min-h-screen pb-20">
@@ -46,7 +52,12 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-8">
+        {/* Personalized Recommendations */}
+        {hasRatedMovies && (
+          <PersonalizedRecommendations />
+        )}
+
         {/* Movies Section */}
         <section>
           <div className="flex items-center justify-between mb-3">
