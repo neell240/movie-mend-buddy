@@ -264,7 +264,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_view_user_activity: {
+        Args: { activity_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       activity_type: "rated" | "watched" | "added_to_watchlist"
