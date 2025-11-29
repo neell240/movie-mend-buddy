@@ -7,6 +7,7 @@ import { useMovieDetails } from "@/hooks/useTMDB";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { getTMDBImageUrl, TMDB_BACKDROP_SIZE, TMDB_PROFILE_SIZE } from "@/types/tmdb";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
@@ -27,6 +28,38 @@ const MovieDetails = () => {
         title: movie.title,
         poster_path: movie.poster_path,
       });
+    }
+  };
+
+  const handleShare = async () => {
+    if (!movie) return;
+
+    const shareUrl = window.location.href;
+    const shareText = `Check out ${movie.title} (${year})`;
+
+    // Try Web Share API first (works on mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: movie.title,
+          text: shareText,
+          url: shareUrl,
+        });
+        toast.success("Shared successfully!");
+      } catch (error) {
+        // User cancelled or share failed
+        if ((error as Error).name !== 'AbortError') {
+          toast.error("Failed to share");
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+      } catch (error) {
+        toast.error("Failed to copy link");
+      }
     }
   };
 
@@ -83,7 +116,7 @@ const MovieDetails = () => {
             <ChevronLeft className="w-5 h-5" />
           </Button>
           <div className="flex gap-2">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={handleShare}>
               <Share2 className="w-5 h-5" />
             </Button>
             <Button 
