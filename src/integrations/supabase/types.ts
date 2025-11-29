@@ -38,6 +38,54 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      friendships: {
+        Row: {
+          created_at: string
+          friend_id: string
+          id: string
+          status: Database["public"]["Enums"]["friendship_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_id: string
+          id?: string
+          status?: Database["public"]["Enums"]["friendship_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_id?: string
+          id?: string
+          status?: Database["public"]["Enums"]["friendship_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -105,6 +153,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
           id: string
           onboarding_completed: boolean | null
@@ -112,6 +161,7 @@ export type Database = {
           username: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           id: string
           onboarding_completed?: boolean | null
@@ -119,11 +169,48 @@ export type Database = {
           username?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           id?: string
           onboarding_completed?: boolean | null
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      user_activities: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          created_at: string
+          id: string
+          metadata: Json | null
+          movie_id: number
+          movie_poster: string | null
+          movie_title: string
+          rating: number | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          movie_id: number
+          movie_poster?: string | null
+          movie_title: string
+          rating?: number | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: Database["public"]["Enums"]["activity_type"]
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          movie_id?: number
+          movie_poster?: string | null
+          movie_title?: string
+          rating?: number | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -138,6 +225,7 @@ export type Database = {
           rating: number | null
           status: string
           user_id: string
+          visibility: Database["public"]["Enums"]["watchlist_visibility"]
           watched_at: string | null
         }
         Insert: {
@@ -150,6 +238,7 @@ export type Database = {
           rating?: number | null
           status?: string
           user_id: string
+          visibility?: Database["public"]["Enums"]["watchlist_visibility"]
           watched_at?: string | null
         }
         Update: {
@@ -162,6 +251,7 @@ export type Database = {
           rating?: number | null
           status?: string
           user_id?: string
+          visibility?: Database["public"]["Enums"]["watchlist_visibility"]
           watched_at?: string | null
         }
         Relationships: []
@@ -174,7 +264,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      activity_type: "rated" | "watched" | "added_to_watchlist"
+      friendship_status: "pending" | "accepted" | "blocked"
+      watchlist_visibility: "public" | "friends_only" | "private"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -301,6 +393,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      activity_type: ["rated", "watched", "added_to_watchlist"],
+      friendship_status: ["pending", "accepted", "blocked"],
+      watchlist_visibility: ["public", "friends_only", "private"],
+    },
   },
 } as const

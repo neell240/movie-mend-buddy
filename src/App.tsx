@@ -14,6 +14,7 @@ import AIChat from "./pages/AIChat";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Notifications from "./pages/Notifications";
+import Social from "./pages/Social";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/social" element={<Social />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
