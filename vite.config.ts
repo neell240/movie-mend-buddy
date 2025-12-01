@@ -15,17 +15,53 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['app-icon.png', 'splash-screen.png'],
+      includeAssets: ['app-icon.png', 'splash.png', 'icons/*.png'],
       manifest: {
-        name: 'MovieMend - Your AI Movie Buddy',
+        name: 'MovieMend',
         short_name: 'MovieMend',
         description: 'AI-powered movie recommendations with offline support',
-        theme_color: '#5B21B6',
+        theme_color: '#7d2222',
+        background_color: '#000000',
+        display: 'standalone',
+        start_url: '/',
+        scope: '/',
+        orientation: 'portrait',
         icons: [
           {
-            src: 'app-icon.png',
+            src: '/icons/icon-48x48.png',
+            sizes: '48x48',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-72x72.png',
+            sizes: '72x72',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-96x96.png',
+            sizes: '96x96',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-144x144.png',
+            sizes: '144x144',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ]
       },
