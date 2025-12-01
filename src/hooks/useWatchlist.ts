@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useOfflineSync } from "./useOfflineSync";
+import { useEffect } from "react";
 
 export interface WatchlistItem {
   id: string;
@@ -17,6 +19,7 @@ export interface WatchlistItem {
 
 export const useWatchlist = () => {
   const queryClient = useQueryClient();
+  const { isOnline, cacheWatchlist, getCachedWatchlist } = useOfflineSync();
 
   const { data: watchlist = [], isLoading, refetch } = useQuery({
     queryKey: ["watchlist"],
@@ -24,15 +27,33 @@ export const useWatchlist = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
+      // If offline, return cached data
+      if (!isOnline) {
+        return getCachedWatchlist();
+      }
+
       const { data, error } = await supabase
         .from("watchlist")
         .select("*")
         .order("added_at", { ascending: false });
 
       if (error) throw error;
+      
+      // Cache the watchlist data for offline use
+      if (data) {
+        cacheWatchlist(user.id);
+      }
+      
       return data as WatchlistItem[];
     },
   });
+
+  // Sync watchlist when coming back online
+  useEffect(() => {
+    if (isOnline) {
+      refetch();
+    }
+  }, [isOnline, refetch]);
 
   const addToWatchlist = useMutation({
     mutationFn: async (movie: { id: number; title: string; poster_path: string | null }) => {
