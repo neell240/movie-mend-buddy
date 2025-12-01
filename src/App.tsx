@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
 import MovieDetails from "./pages/MovieDetails";
@@ -16,6 +17,7 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Notifications from "./pages/Notifications";
 import Social from "./pages/Social";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <OfflineIndicator />
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -40,6 +43,7 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/install" element={<Install />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
