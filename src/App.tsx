@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
+import { FloatingBoovi } from "@/components/FloatingBoovi";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
 import MovieDetails from "./pages/MovieDetails";
@@ -49,6 +50,7 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <FloatingBoovi enabled={true} />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
