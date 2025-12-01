@@ -1,0 +1,206 @@
+/* Boovi Animation Keyframes */
+
+/* Idle floating animation */
+@keyframes boovi-idle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+/* Wave animation */
+@keyframes boovi-wave {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  10% {
+    transform: translateY(-5px) rotate(-5deg);
+  }
+  20% {
+    transform: translateY(0px) rotate(5deg);
+  }
+  30% {
+    transform: translateY(-5px) rotate(-5deg);
+  }
+  40% {
+    transform: translateY(0px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0deg);
+  }
+}
+
+/* Jump animation */
+@keyframes boovi-jump {
+  0%, 100% {
+    transform: translateY(0px) scaleY(1);
+  }
+  20% {
+    transform: translateY(0px) scaleY(0.9) scaleX(1.1);
+  }
+  50% {
+    transform: translateY(-30px) scaleY(1.1) scaleX(0.95);
+  }
+  80% {
+    transform: translateY(0px) scaleY(0.95) scaleX(1.05);
+  }
+}
+
+/* Think/AI mode animation */
+@keyframes boovi-think {
+  0%, 100% {
+    transform: translateY(0px);
+    filter: brightness(1);
+  }
+  50% {
+    transform: translateY(-5px);
+    filter: brightness(1.1);
+  }
+}
+
+/* Loading animation */
+@keyframes boovi-loading {
+  0%, 100% {
+    transform: scale(1) translateY(0px);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.95) translateY(-8px);
+    opacity: 0.8;
+  }
+}
+
+/* Point animation */
+@keyframes boovi-point {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px);
+  }
+  50% {
+    transform: translateX(10px) translateY(-5px);
+  }
+}
+
+/* Celebrate animation */
+@keyframes boovi-celebrate {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-10deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(10deg);
+  }
+}
+
+/* Glow effect for think mode */
+@keyframes boovi-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+/* Sparkle animations */
+@keyframes boovi-sparkle {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(var(--sparkle-x), var(--sparkle-y)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--sparkle-x) * 1.5), calc(var(--sparkle-y) * 1.5)) scale(0);
+  }
+}
+
+/* Animation classes */
+.animate-boovi-idle {
+  animation: boovi-idle 3s ease-in-out infinite;
+}
+
+.animate-boovi-wave {
+  animation: boovi-wave 2s ease-in-out infinite;
+}
+
+.animate-boovi-jump {
+  animation: boovi-jump 1s ease-in-out;
+}
+
+.animate-boovi-think {
+  animation: boovi-think 2.5s ease-in-out infinite;
+}
+
+.animate-boovi-loading {
+  animation: boovi-loading 1.5s ease-in-out infinite;
+}
+
+.animate-boovi-point {
+  animation: boovi-point 1.5s ease-in-out infinite;
+}
+
+.animate-boovi-celebrate {
+  animation: boovi-celebrate 0.6s ease-in-out 3;
+}
+
+.animate-boovi-glow {
+  animation: boovi-glow 2s ease-in-out infinite;
+}
+
+/* Sparkle positioning */
+.boovi-sparkle {
+  position: absolute;
+  font-size: 1.2rem;
+  animation: boovi-sparkle 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.boovi-sparkle-1 {
+  top: 10%;
+  right: 10%;
+  --sparkle-x: 20px;
+  --sparkle-y: -20px;
+  animation-delay: 0s;
+}
+
+.boovi-sparkle-2 {
+  top: 30%;
+  left: 5%;
+  --sparkle-x: -15px;
+  --sparkle-y: -25px;
+  animation-delay: 0.7s;
+}
+
+.boovi-sparkle-3 {
+  bottom: 20%;
+  right: 15%;
+  --sparkle-x: 25px;
+  --sparkle-y: 15px;
+  animation-delay: 1.4s;
+}
+
+/* Pulse animation for attention */
+@keyframes boovi-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-boovi-pulse {
+  animation: boovi-pulse 2s ease-in-out infinite;
+}
