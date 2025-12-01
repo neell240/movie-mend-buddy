@@ -8,6 +8,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
+const signInSchema = z.object({
+  email: z.string().trim().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+const signUpSchema = z.object({
+  email: z.string().trim().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z.string().trim().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
+});
 
 
 const Auth = () => {
@@ -31,20 +43,39 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate inputs
+      const validation = signUpSchema.safeParse({ email, password, username });
+      if (!validation.success) {
+        const firstError = validation.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: validation.data.email,
+        password: validation.data.password,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            username,
+            username: validation.data.username,
           },
         },
       });
 
-      if (error) throw error;
-      toast.success("Welcome! Check your email to verify your account.");
-      navigate("/onboarding");
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast.error("This email is already registered. Please sign in instead.");
+        } else {
+          toast.error(error.message);
+        }
+        return;
+      }
+      
+      toast.success("Account created! You can now sign in.");
+      // Switch to sign in tab
+      const signInTab = document.querySelector('[value="signin"]') as HTMLButtonElement;
+      signInTab?.click();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign up");
     } finally {
@@ -57,12 +88,29 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate inputs
+      const validation = signInSchema.safeParse({ email, password });
+      if (!validation.success) {
+        const firstError = validation.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: validation.data.email,
+        password: validation.data.password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password. Please check your credentials and try again.");
+        } else {
+          toast.error(error.message);
+        }
+        return;
+      }
+      
       toast.success("Welcome back!");
       navigate("/");
     } catch (error) {
