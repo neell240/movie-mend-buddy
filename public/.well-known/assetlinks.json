@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.moviemend.neelstech",
+        "sha256_cert_fingerprints": ["D7:2C:AE:99:84:FA:27:66:54:6C:96:B8:7B:E8:E6:50:26:DF:AA:5B:8A:78:30:7B:AC:00:3F:34:FB:4B:99:28"]
+      }
+    }]
