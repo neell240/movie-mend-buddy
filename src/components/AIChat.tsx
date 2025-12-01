@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import type { TMDBMovie } from "@/types/tmdb";
-import booviAvatar from "@/assets/boovi-avatar.png";
+import { BooviAnimated } from "@/components/BooviAnimated";
 
 interface Message {
   role: "user" | "assistant";
@@ -381,13 +381,15 @@ export const AIChat = () => {
             }`}
           >
             {message.role === "assistant" && (
-              <div className="flex-shrink-0 w-8 h-8">
-                <img 
-                  src={booviAvatar} 
-                  alt="Boovi" 
-                  className={`w-full h-full ${
-                    message.emotionalState ? `boovi-${message.emotionalState}` : ''
-                  }`}
+              <div className="flex-shrink-0">
+                <BooviAnimated 
+                  animation={
+                    message.emotionalState === "celebrating" ? "celebrate" :
+                    message.emotionalState === "excited" ? "jump" :
+                    message.emotionalState === "focused" ? "think" :
+                    "idle"
+                  }
+                  size="sm"
                 />
               </div>
             )}
@@ -415,8 +417,8 @@ export const AIChat = () => {
         ))}
         {isLoading && (
           <div className="flex gap-3 justify-start">
-            <div className="flex-shrink-0 w-8 h-8">
-              <img src={booviAvatar} alt="Boovi" className="w-full h-full boovi-focused" />
+            <div className="flex-shrink-0">
+              <BooviAnimated animation="think" size="sm" />
             </div>
             <Card className="p-3">
               <Loader2 className="h-4 w-4 animate-spin" />

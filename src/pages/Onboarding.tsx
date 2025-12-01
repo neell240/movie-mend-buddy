@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import booviAvatar from "@/assets/boovi-transparent.png";
+import { BooviAnimated } from "@/components/BooviAnimated";
 import { ChevronRight } from "lucide-react";
 
 const Onboarding = () => {
@@ -80,10 +80,10 @@ const Onboarding = () => {
       buttonText: "Let's Go!",
       visual: (
         <div className="relative flex justify-center items-center h-64 animate-fade-in">
-          <img 
-            src={booviAvatar} 
-            alt="Boovi" 
-            className="w-52 h-52 animate-scale-in"
+          <BooviAnimated 
+            animation="wave"
+            size="xl"
+            showSparkles
           />
         </div>
       ),

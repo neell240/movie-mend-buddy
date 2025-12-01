@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { BooviAnimated } from "@/components/BooviAnimated";
 import { Activity, Users, UserPlus, Share2 } from "lucide-react";
 
 interface SocialWalkthroughProps {
@@ -59,11 +60,7 @@ export const SocialWalkthrough = ({ open, onClose }: SocialWalkthroughProps) => 
         <div className="flex flex-col items-center text-center space-y-6 py-6">
           {/* Boovi Avatar */}
           <div className="relative">
-            <img 
-              src="/src/assets/boovi-transparent.png" 
-              alt="Boovi" 
-              className="w-24 h-24 animate-bounce"
-            />
+            <BooviAnimated animation="wave" size="xl" showSparkles />
           </div>
 
           {/* Icon for current feature */}
