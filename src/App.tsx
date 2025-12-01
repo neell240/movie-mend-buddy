@@ -18,6 +18,7 @@ import Onboarding from "./pages/Onboarding";
 import Notifications from "./pages/Notifications";
 import Social from "./pages/Social";
 import Install from "./pages/Install";
+import BooviDemo from "./pages/BooviDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/social" element={<Social />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/boovi-demo" element={<BooviDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
