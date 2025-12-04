@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BooviAnimated } from './BooviAnimated';
 import { useBooviPersonality } from '@/contexts/BooviPersonalityContext';
-import { useBooviSounds, ANIMATION_SOUNDS } from '@/hooks/useBooviSounds';
 import { cn } from '@/lib/utils';
-import { X, MessageCircle, Volume2, VolumeX } from 'lucide-react';
+import { X, MessageCircle } from 'lucide-react';
 
 interface FloatingBooviProps {
   enabled?: boolean;
@@ -11,29 +10,10 @@ interface FloatingBooviProps {
 
 export const FloatingBoovi = ({ enabled = true }: FloatingBooviProps) => {
   const { currentState, trigger } = useBooviPersonality();
-  const { playSound, setEnabled, isEnabled } = useBooviSounds();
   const [isVisible, setIsVisible] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [position, setPosition] = useState({ bottom: 20, right: 20 });
+  const [position, setPosition] = useState({ bottom: 20, right: 20 })
   const [showMessage, setShowMessage] = useState(false);
-  const [soundsOn, setSoundsOn] = useState(true);
-  const lastAnimationRef = useRef(currentState.animation);
-
-  // Play sound when animation changes
-  useEffect(() => {
-    if (currentState.animation !== lastAnimationRef.current) {
-      const sound = ANIMATION_SOUNDS[currentState.animation];
-      if (sound) {
-        playSound(sound);
-      }
-      lastAnimationRef.current = currentState.animation;
-    }
-  }, [currentState.animation, playSound]);
-
-  // Initialize sound preference
-  useEffect(() => {
-    setSoundsOn(isEnabled());
-  }, [isEnabled]);
 
   // Show message when state changes
   useEffect(() => {
@@ -125,12 +105,6 @@ export const FloatingBoovi = ({ enabled = true }: FloatingBooviProps) => {
     setIsVisible(false);
   }, []);
 
-  const handleToggleSound = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newState = !soundsOn;
-    setSoundsOn(newState);
-    setEnabled(newState);
-  }, [soundsOn, setEnabled]);
 
   if (!enabled || !isVisible) return null;
 
@@ -181,13 +155,6 @@ export const FloatingBoovi = ({ enabled = true }: FloatingBooviProps) => {
           {/* Controls (show on hover) */}
           {!isMinimized && (
             <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
-              <button
-                onClick={handleToggleSound}
-                className="w-6 h-6 rounded-full bg-background border border-border shadow-sm flex items-center justify-center hover:bg-muted"
-                aria-label={soundsOn ? "Mute Boovi" : "Unmute Boovi"}
-              >
-                {soundsOn ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
-              </button>
               <button
                 onClick={handleMinimize}
                 className="w-6 h-6 rounded-full bg-background border border-border shadow-sm flex items-center justify-center hover:bg-muted"
