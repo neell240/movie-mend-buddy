@@ -9,18 +9,6 @@ type BooviAnimation =
   | "loading" 
   | "point"
   | "celebrate"
-  | "eat"
-  | "shocked"
-  | "sad"
-  | "angry"
-  | "laugh"
-  | "shh"
-  | "sleep"
-  | "confused"
-  | "excited"
-  | "hug"
-  | "typing"
-  | "fly"
   | "none";
 
 interface BooviAnimatedProps {
@@ -69,18 +57,6 @@ export const BooviAnimated = ({
             "animate-boovi-loading": animation === "loading",
             "animate-boovi-point": animation === "point",
             "animate-boovi-celebrate": animation === "celebrate",
-            "animate-boovi-eat": animation === "eat",
-            "animate-boovi-shocked": animation === "shocked",
-            "animate-boovi-sad": animation === "sad",
-            "animate-boovi-angry": animation === "angry",
-            "animate-boovi-laugh": animation === "laugh",
-            "animate-boovi-shh": animation === "shh",
-            "animate-boovi-sleep": animation === "sleep",
-            "animate-boovi-confused": animation === "confused",
-            "animate-boovi-excited": animation === "excited",
-            "animate-boovi-hug": animation === "hug",
-            "animate-boovi-typing": animation === "typing",
-            "animate-boovi-fly": animation === "fly",
           }
         )}
       />
