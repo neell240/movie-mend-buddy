@@ -130,11 +130,7 @@ export const FloatingBoovi = ({ enabled = true }: FloatingBooviProps) => {
     const newState = !soundsOn;
     setSoundsOn(newState);
     setEnabled(newState);
-    // Play a sound to confirm it's on
-    if (newState) {
-      playSound('ding');
-    }
-  }, [soundsOn, setEnabled, playSound]);
+  }, [soundsOn, setEnabled]);
 
   if (!enabled || !isVisible) return null;
 
