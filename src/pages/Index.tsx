@@ -20,6 +20,9 @@ const Index = () => {
     watchProviders: preferences.platforms.length > 0 
       ? preferences.platforms.map(p => parseInt(p))
       : undefined,
+    genres: preferences.genres.length > 0
+      ? preferences.genres.map(g => parseInt(g))
+      : undefined,
     region: preferences.region,
     sortBy: 'popularity.desc',
   });
