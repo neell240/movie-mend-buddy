@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface UserPreferences {
   region: string;
@@ -22,12 +22,13 @@ export const usePreferences = () => {
     return stored ? JSON.parse(stored) : defaultPreferences;
   });
 
-  useEffect(() => {
-    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
-  }, [preferences]);
-
   const updatePreferences = (updates: Partial<UserPreferences>) => {
-    setPreferencesState(prev => ({ ...prev, ...updates }));
+    setPreferencesState(prev => {
+      const newPreferences = { ...prev, ...updates };
+      // Save synchronously to ensure it persists before navigation
+      localStorage.setItem(PREFERENCES_KEY, JSON.stringify(newPreferences));
+      return newPreferences;
+    });
   };
 
   return { preferences, updatePreferences };
