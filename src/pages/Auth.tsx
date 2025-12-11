@@ -116,7 +116,7 @@ const Auth = () => {
         return;
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: validation.data.email,
         password: validation.data.password,
         options: {
@@ -136,10 +136,18 @@ const Auth = () => {
         return;
       }
       
-      toast.success("Account created! You can now sign in.");
-      // Switch to sign in tab
-      const signInTab = document.querySelector('[value="signin"]') as HTMLButtonElement;
-      signInTab?.click();
+      // Check if user was automatically signed in (auto-confirm enabled)
+      if (data.session && data.user) {
+        // Handle invite friendship
+        await handleInviteFriendship(data.user.id);
+        toast.success("Account created! Welcome to MovieMend!");
+        navigate("/");
+      } else {
+        // Email confirmation required
+        toast.success("Account created! Please check your email to confirm, then sign in.");
+        const signInTab = document.querySelector('[value="signin"]') as HTMLButtonElement;
+        signInTab?.click();
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign up");
     } finally {
