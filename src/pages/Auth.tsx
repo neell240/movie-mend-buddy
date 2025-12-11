@@ -74,14 +74,22 @@ const Auth = () => {
     }
 
     try {
-      // Check if friendship already exists
-      const { data: existingFriendship } = await supabase
+      // Check if friendship already exists (check both directions)
+      const { data: existingFriendship1 } = await supabase
         .from('friendships')
         .select('id')
-        .or(`and(user_id.eq.${storedInvite},friend_id.eq.${newUserId}),and(user_id.eq.${newUserId},friend_id.eq.${storedInvite})`)
-        .single();
+        .eq('user_id', storedInvite)
+        .eq('friend_id', newUserId)
+        .maybeSingle();
 
-      if (!existingFriendship) {
+      const { data: existingFriendship2 } = await supabase
+        .from('friendships')
+        .select('id')
+        .eq('user_id', newUserId)
+        .eq('friend_id', storedInvite)
+        .maybeSingle();
+
+      if (!existingFriendship1 && !existingFriendship2) {
         // Create friendship (already accepted since invited)
         const { error } = await supabase
           .from('friendships')
@@ -92,7 +100,28 @@ const Auth = () => {
           });
 
         if (!error) {
+          // Get the new user's username for the notification
+          const { data: newUserProfile } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', newUserId)
+            .single();
+
+          const newUsername = newUserProfile?.username || 'A new friend';
+
+          // Create notification for the inviter
+          await supabase
+            .from('notifications')
+            .insert({
+              user_id: storedInvite,
+              title: '🎉 Your friend joined!',
+              message: `${newUsername} just joined MovieMend using your invite link! You're now friends.`,
+              type: 'friend_joined'
+            });
+
           toast.success("You're now friends with your inviter! 🎉");
+        } else {
+          console.error('Error creating friendship:', error);
         }
       }
     } catch (error) {

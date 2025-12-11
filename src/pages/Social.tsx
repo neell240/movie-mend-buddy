@@ -34,13 +34,14 @@ const Social = () => {
 
     // Create invite link with user ID - use production URL
     const inviteUrl = `https://movie-mend.vercel.app/auth?invite=${user.id}`;
+    const inviteText = "Yo! Join me on MovieMend — Boovi's got fire movie picks waiting. Let's be friends and discover movies together 👻🍿🔥";
 
     // Try Web Share API first (works on mobile)
     if (navigator.share) {
       try {
         await navigator.share({
           title: "Join me on MovieMend!",
-          text: "I'm using MovieMend to discover amazing movies. Join me!",
+          text: inviteText,
           url: inviteUrl,
         });
         toast.success("Invite shared!");
@@ -49,7 +50,7 @@ const Social = () => {
         if ((error as Error).name !== 'AbortError') {
           // Fallback to clipboard
           try {
-            await navigator.clipboard.writeText(inviteUrl);
+            await navigator.clipboard.writeText(`${inviteText}\n${inviteUrl}`);
             toast.success("Invite link copied to clipboard!");
           } catch {
             toast.error("Failed to share invite");
@@ -59,7 +60,7 @@ const Social = () => {
     } else {
       // Fallback: copy to clipboard
       try {
-        await navigator.clipboard.writeText(inviteUrl);
+        await navigator.clipboard.writeText(`${inviteText}\n${inviteUrl}`);
         toast.success("Invite link copied to clipboard!");
       } catch {
         toast.error("Failed to copy invite link");
