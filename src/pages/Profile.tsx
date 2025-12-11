@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { usePremium } from "@/hooks/usePremium";
 import { 
   Settings, 
   Bell, 
@@ -11,16 +12,20 @@ import {
   Mail, 
   LogOut,
   LogIn,
-  Zap
+  Zap,
+  Crown
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { PremiumBadge } from "@/components/PremiumBadge";
+import { BooviGold } from "@/components/BooviGold";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
+  const { isPremium } = usePremium();
   const [isTestingNotifications, setIsTestingNotifications] = useState(false);
 
   const handleSignOut = async () => {
@@ -107,16 +112,30 @@ const Profile = () => {
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* User Info */}
         {user ? (
-          <Card className="p-6">
+          <Card className={`p-6 ${isPremium ? 'border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-yellow-500/5' : ''}`}>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary">
-                  {user.email?.[0].toUpperCase() || "U"}
-                </span>
-              </div>
+              {isPremium ? (
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center ring-2 ring-amber-400/50">
+                    <BooviGold size="sm" className="scale-90" />
+                  </div>
+                  <Crown className="absolute -top-1 -right-1 w-5 h-5 text-amber-400" />
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-primary">
+                    {user.email?.[0].toUpperCase() || "U"}
+                  </span>
+                </div>
+              )}
               <div className="flex-1">
-                <h2 className="font-semibold">{user.email}</h2>
-                <p className="text-sm text-muted-foreground">Member</p>
+                <div className="flex items-center gap-2">
+                  <h2 className="font-semibold">{user.email}</h2>
+                  {isPremium && <PremiumBadge size="sm" showText={false} />}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {isPremium ? 'Premium Member' : 'Member'}
+                </p>
               </div>
             </div>
           </Card>

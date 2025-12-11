@@ -156,6 +156,8 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           id: string
+          is_admin: boolean
+          is_premium: boolean
           onboarding_completed: boolean | null
           updated_at: string
           username: string | null
@@ -165,6 +167,8 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           id: string
+          is_admin?: boolean
+          is_premium?: boolean
           onboarding_completed?: boolean | null
           updated_at?: string
           username?: string | null
@@ -174,6 +178,8 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           id?: string
+          is_admin?: boolean
+          is_premium?: boolean
           onboarding_completed?: boolean | null
           updated_at?: string
           username?: string | null
