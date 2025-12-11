@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ const signUpSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,11 +33,27 @@ const Auth = () => {
   const [resetEmail, setResetEmail] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [inviterId, setInviterId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check for invite parameter
+    const invite = searchParams.get('invite');
+    if (invite) {
+      setInviterId(invite);
+      localStorage.setItem('moviemend_invite', invite);
+    } else {
+      // Check localStorage for existing invite
+      const storedInvite = localStorage.getItem('moviemend_invite');
+      if (storedInvite) {
+        setInviterId(storedInvite);
+      }
+    }
+
     // Check if already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
+        // If logged in and have invite, create friendship
+        handleInviteFriendship(session.user.id);
         navigate("/");
       }
     });
@@ -47,7 +64,43 @@ const Auth = () => {
     if (type === 'recovery') {
       toast.info("Please enter your new password");
     }
-  }, [navigate]);
+  }, [navigate, searchParams]);
+
+  const handleInviteFriendship = async (newUserId: string) => {
+    const storedInvite = localStorage.getItem('moviemend_invite');
+    if (!storedInvite || storedInvite === newUserId) {
+      localStorage.removeItem('moviemend_invite');
+      return;
+    }
+
+    try {
+      // Check if friendship already exists
+      const { data: existingFriendship } = await supabase
+        .from('friendships')
+        .select('id')
+        .or(`and(user_id.eq.${storedInvite},friend_id.eq.${newUserId}),and(user_id.eq.${newUserId},friend_id.eq.${storedInvite})`)
+        .single();
+
+      if (!existingFriendship) {
+        // Create friendship (already accepted since invited)
+        const { error } = await supabase
+          .from('friendships')
+          .insert({
+            user_id: storedInvite,
+            friend_id: newUserId,
+            status: 'accepted'
+          });
+
+        if (!error) {
+          toast.success("You're now friends with your inviter! 🎉");
+        }
+      }
+    } catch (error) {
+      console.error('Error creating friendship:', error);
+    } finally {
+      localStorage.removeItem('moviemend_invite');
+    }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +161,7 @@ const Auth = () => {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: validation.data.email,
         password: validation.data.password,
       });
@@ -120,6 +173,11 @@ const Auth = () => {
           toast.error(error.message);
         }
         return;
+      }
+      
+      // Handle invite friendship if user signed in via invite link
+      if (data.user) {
+        await handleInviteFriendship(data.user.id);
       }
       
       toast.success("Welcome back!");
@@ -171,11 +229,17 @@ const Auth = () => {
           </div>
           <CardTitle className="text-2xl">Welcome to MovieMent</CardTitle>
           <CardDescription>
-            Your personal movie and entertainment hub
+            {inviterId ? (
+              <span className="text-primary font-medium">
+                You've been invited to join! Sign up to connect with your friend 🎉
+              </span>
+            ) : (
+              "Your personal movie and entertainment hub"
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
+          <Tabs defaultValue={inviterId ? "signup" : "signin"} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
