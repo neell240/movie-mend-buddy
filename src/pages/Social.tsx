@@ -32,8 +32,8 @@ const Social = () => {
       return;
     }
 
-    // Create invite link with user ID
-    const inviteUrl = `${window.location.origin}/auth?invite=${user.id}`;
+    // Create invite link with user ID - use production URL
+    const inviteUrl = `https://movie-mend.vercel.app/auth?invite=${user.id}`;
 
     // Try Web Share API first (works on mobile)
     if (navigator.share) {
