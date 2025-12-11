@@ -14,8 +14,8 @@ export const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-burgundy-base border-t border-burgundy-light">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-4">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-burgundy-base border-t border-burgundy-light lg:top-0 lg:bottom-auto lg:border-t-0 lg:border-b">
+      <div className="flex items-center justify-around h-16 max-w-7xl mx-auto px-4 lg:justify-center lg:gap-8">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -25,12 +25,12 @@ export const BottomNav = () => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 flex-1 py-2 transition-colors",
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                "flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 flex-1 lg:flex-none py-2 lg:px-4 lg:py-2 lg:rounded-lg transition-colors",
+                isActive ? "text-primary lg:bg-primary/10" : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
               )}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className="text-xs lg:text-sm font-medium">{item.label}</span>
             </Link>
           );
         })}

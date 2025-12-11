@@ -29,10 +29,10 @@ const Search = () => {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-4">
+      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-4">
             <div className="relative flex-1">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -77,19 +77,19 @@ const Search = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-4 py-6">
         {!debouncedQuery ? (
           <section className="mb-8">
             <h2 className="text-lg font-bold mb-4">Popular Movies</h2>
             {isLoadingDiscover ? (
-              <div className="grid grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
-                {discoverData?.results?.slice(0, 6).map((movie) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {discoverData?.results?.slice(0, 12).map((movie) => (
                   <MovieCard
                     key={movie.id}
                     movie={movie}
@@ -108,13 +108,13 @@ const Search = () => {
               </span>
             </div>
             {isSearching ? (
-              <div className="grid grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {searchData?.results?.map((movie) => (
                   <MovieCard
                     key={movie.id}

@@ -56,9 +56,9 @@ const Watchlist = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20">
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-4">
+    <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
+      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <h1 className="text-xl font-bold mb-4">My Watchlist</h1>
           
           <div className="relative mb-4">
@@ -86,13 +86,13 @@ const Watchlist = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-4 py-6">
         {filteredMovies.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <p>No movies in your watchlist yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {filteredMovies.map((item) => (
               <div key={item.id} className="space-y-2">
                 <MovieCard

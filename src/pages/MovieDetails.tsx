@@ -65,15 +65,15 @@ const MovieDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen pb-20">
-        <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80">
-          <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
+        <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 lg:top-16">
+          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ChevronLeft className="w-5 h-5" />
             </Button>
           </div>
         </header>
-        <div className="max-w-lg mx-auto px-4">
+        <div className="max-w-4xl mx-auto px-4">
           <Skeleton className="aspect-[2/3] max-w-xs mx-auto rounded-2xl mb-6" />
           <Skeleton className="h-8 w-3/4 mb-2" />
           <Skeleton className="h-4 w-1/2 mb-4" />
@@ -104,10 +104,10 @@ const MovieDetails = () => {
   const director = movie.credits?.crew?.find(c => c.job === 'Director');
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80">
-        <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 lg:top-16">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Button
             variant="ghost"
             size="icon"
@@ -133,10 +133,10 @@ const MovieDetails = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto">
+      <main className="max-w-4xl mx-auto lg:grid lg:grid-cols-[300px_1fr] lg:gap-8 lg:px-4">
         {/* Movie Poster */}
-        <div className="px-4 mb-6">
-          <div className="relative aspect-[2/3] max-w-xs mx-auto rounded-2xl overflow-hidden">
+        <div className="px-4 mb-6 lg:px-0">
+          <div className="relative aspect-[2/3] max-w-xs mx-auto lg:max-w-none rounded-2xl overflow-hidden lg:sticky lg:top-36">
             <img 
               src={poster} 
               alt={movie.title}
@@ -145,7 +145,7 @@ const MovieDetails = () => {
           </div>
         </div>
 
-        <div className="px-4">
+        <div className="px-4 lg:px-0">
           {/* Title & Info */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold mb-2">{movie.title}</h1>
