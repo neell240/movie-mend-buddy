@@ -68,7 +68,7 @@ const Social = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
       <SocialWalkthrough 
         open={showWalkthrough} 
         onClose={() => {
@@ -77,8 +77,8 @@ const Social = () => {
         }}
       />
 
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold">Social</h1>
           <Button
             variant="default"
@@ -92,7 +92,7 @@ const Social = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-4 py-6">
         <Tabs defaultValue="feed" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="feed" className="flex items-center gap-2">

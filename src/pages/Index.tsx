@@ -31,11 +31,11 @@ const Index = () => {
   const hasRatedMovies = watchlist.some(item => item.status === 'watched' && item.rating !== null);
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
+      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-primary" />
               <h1 className="text-xl font-bold">MovieMend</h1>
@@ -63,7 +63,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
         {/* Personalized Recommendations */}
         {hasRatedMovies && (
           <PersonalizedRecommendations />
@@ -90,14 +90,14 @@ const Index = () => {
           </div>
           
           {isLoading ? (
-            <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
                 <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
               ))}
             </div>
           ) : moviesData?.results && moviesData.results.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              {moviesData.results.slice(0, 10).map((movie) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {moviesData.results.slice(0, 18).map((movie) => (
                 <MovieCard
                   key={movie.id}
                   movie={movie}
