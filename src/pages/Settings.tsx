@@ -4,21 +4,43 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronLeft, Bell, User, Globe, Shield, Palette, Info, Eye, Users, Lock } from "lucide-react";
+import { ChevronLeft, Bell, User, Globe, Shield, Palette, Info, Eye, Users, Lock, Crown, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePremium } from "@/hooks/usePremium";
+import { PremiumBadge } from "@/components/PremiumBadge";
+import { BooviGold } from "@/components/BooviGold";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { isPremium, isAdmin, togglePremium, setAdminStatus, isLoading: premiumLoading } = usePremium();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
   const [autoPlayTrailers, setAutoPlayTrailers] = useState(false);
   const [profileVisibility, setProfileVisibility] = useState<"public" | "friends_only" | "private">("friends_only");
   const [isLoadingVisibility, setIsLoadingVisibility] = useState(true);
+
+  const handlePremiumToggle = async (enabled: boolean) => {
+    const success = await togglePremium(enabled);
+    if (success) {
+      toast.success(enabled ? "Premium mode enabled! 👑" : "Premium mode disabled");
+    } else {
+      toast.error("Failed to toggle premium mode");
+    }
+  };
+
+  const handleAdminToggle = async (enabled: boolean) => {
+    const success = await setAdminStatus(enabled);
+    if (success) {
+      toast.success(enabled ? "Admin mode enabled" : "Admin mode disabled");
+    } else {
+      toast.error("Failed to toggle admin mode");
+    }
+  };
 
   useEffect(() => {
     const fetchProfileVisibility = async () => {
@@ -277,6 +299,75 @@ const Settings = () => {
             </Button>
           </div>
         </Card>
+
+        {/* Premium Status */}
+        {isPremium && (
+          <Card className="p-6 space-y-4 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-yellow-500/5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Crown className="w-5 h-5 text-amber-400" />
+                <h2 className="text-lg font-semibold">Premium Status</h2>
+              </div>
+              <PremiumBadge size="sm" />
+            </div>
+            <div className="flex items-center gap-4">
+              <BooviGold size="md" />
+              <div>
+                <p className="font-medium text-amber-400">You're a Premium Member!</p>
+                <p className="text-sm text-muted-foreground">Enjoy exclusive features and the gold Boovi skin</p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Developer Tools (Admin Only) */}
+        {user && (
+          <Card className="p-6 space-y-4 border-dashed">
+            <div className="flex items-center gap-3 mb-4">
+              <Wrench className="w-5 h-5 text-orange-500" />
+              <h2 className="text-lg font-semibold">Developer Tools</h2>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              Test premium features without real payments
+            </p>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label htmlFor="admin-mode">Enable Admin Mode</Label>
+                <p className="text-sm text-muted-foreground">
+                  Grant access to dev tools
+                </p>
+              </div>
+              <Switch
+                id="admin-mode"
+                checked={isAdmin}
+                onCheckedChange={handleAdminToggle}
+                disabled={premiumLoading}
+              />
+            </div>
+
+            {isAdmin && (
+              <div className="flex items-center justify-between pt-4 border-t border-border">
+                <div className="space-y-1">
+                  <Label htmlFor="premium-test" className="flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-amber-400" />
+                    Premium Test Mode
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Simulate premium membership
+                  </p>
+                </div>
+                <Switch
+                  id="premium-test"
+                  checked={isPremium}
+                  onCheckedChange={handlePremiumToggle}
+                  disabled={premiumLoading}
+                />
+              </div>
+            )}
+          </Card>
+        )}
 
         {/* About */}
         <Card className="p-6 space-y-4">
