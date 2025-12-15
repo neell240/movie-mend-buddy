@@ -151,6 +151,139 @@ export type Database = {
         }
         Relationships: []
       }
+      party_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_reaction: boolean
+          movie_timestamp_ms: number | null
+          room_id: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_reaction?: boolean
+          movie_timestamp_ms?: number | null
+          room_id: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_reaction?: boolean
+          movie_timestamp_ms?: number | null
+          room_id?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "party_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      party_participants: {
+        Row: {
+          avatar_url: string | null
+          id: string
+          is_buffering: boolean
+          is_ready: boolean
+          joined_at: string
+          last_heartbeat: string
+          last_timestamp_ms: number
+          room_id: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          id?: string
+          is_buffering?: boolean
+          is_ready?: boolean
+          joined_at?: string
+          last_heartbeat?: string
+          last_timestamp_ms?: number
+          room_id: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          id?: string
+          is_buffering?: boolean
+          is_ready?: boolean
+          joined_at?: string
+          last_heartbeat?: string
+          last_timestamp_ms?: number
+          room_id?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_participants_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "party_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      party_rooms: {
+        Row: {
+          created_at: string
+          current_timestamp_ms: number
+          host_id: string
+          id: string
+          movie_id: number
+          movie_poster: string | null
+          movie_title: string
+          playback_speed: number
+          room_code: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_timestamp_ms?: number
+          host_id: string
+          id?: string
+          movie_id: number
+          movie_poster?: string | null
+          movie_title: string
+          playback_speed?: number
+          room_code: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_timestamp_ms?: number
+          host_id?: string
+          id?: string
+          movie_id?: number
+          movie_poster?: string | null
+          movie_title?: string
+          playback_speed?: number
+          room_code?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -274,6 +407,7 @@ export type Database = {
         Args: { activity_user_id: string }
         Returns: boolean
       }
+      generate_room_code: { Args: never; Returns: string }
     }
     Enums: {
       activity_type: "rated" | "watched" | "added_to_watchlist"
