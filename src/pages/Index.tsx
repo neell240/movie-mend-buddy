@@ -40,7 +40,7 @@ const Index = () => {
     sortBy: 'popularity.desc',
   });
 
-  const hasRatedMovies = watchlist.some(item => item.status === 'watched' && item.rating !== null);
+  
 
   return (
     <>
@@ -134,10 +134,8 @@ const Index = () => {
             <ChristmasMoviesSection limit={6} />
           )}
 
-          {/* Personalized Recommendations */}
-          {hasRatedMovies && (
-            <PersonalizedRecommendations />
-          )}
+          {/* Personalized Recommendations - Always visible */}
+          <PersonalizedRecommendations />
 
           {/* Movies Section */}
           <section 
