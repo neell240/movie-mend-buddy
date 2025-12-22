@@ -76,12 +76,11 @@ export const useDiscoverMovies = (params?: {
     queryKey: ['discover-movies', params],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke<TMDBResponse>('tmdb-discover', {
-        body: params,
+        body: params || {},
       });
       
       if (error) throw error;
       return data;
     },
-    enabled: !!params,
   });
 };
