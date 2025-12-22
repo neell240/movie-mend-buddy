@@ -18,58 +18,76 @@ export const ChristmasHeroBanner = () => {
     return "Your Christmas Movie Helper";
   };
 
+  const getSubtitle = () => {
+    if (isChristmasDay) {
+      return "Time for holiday movies & magic ✨";
+    }
+    if (daysUntilChristmas <= 3) {
+      return `${daysUntilChristmas} days to go! ☕🍿`;
+    }
+    return "Hot chocolate & movie night ☕🍿";
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-3xl"
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="relative overflow-hidden hero-glass"
     >
-      {/* Premium gradient background */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(145deg, hsl(120 32% 22%) 0%, hsl(120 35% 16%) 50%, hsl(125 38% 12%) 100%)",
-        }}
-      />
-      
       {/* Animated snow particles inside card */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(12)].map((_, i) => (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(16)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1.5 h-1.5 bg-white/30 rounded-full"
-            initial={{ 
-              x: Math.random() * 100 + "%", 
-              y: -10,
-              opacity: 0 
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{
+              left: `${5 + Math.random() * 90}%`,
+              opacity: 0.4 + Math.random() * 0.3,
             }}
+            initial={{ y: -10 }}
             animate={{ 
-              y: "110%",
-              opacity: [0, 0.6, 0.6, 0],
+              y: "120%",
             }}
             transition={{
-              duration: 4 + Math.random() * 3,
+              duration: 6 + Math.random() * 4,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: Math.random() * 4,
               ease: "linear",
             }}
           />
         ))}
       </div>
       
-      {/* Decorative glows */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-[hsl(var(--christmas-gold))] opacity-15 blur-3xl rounded-full" />
-      <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[hsl(var(--christmas-cream))] opacity-10 blur-3xl rounded-full" />
+      {/* Warm gold corner glow */}
+      <div 
+        className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl"
+        style={{ 
+          background: "radial-gradient(circle, hsl(30 60% 75% / 0.2) 0%, transparent 70%)" 
+        }}
+      />
+      <div 
+        className="absolute -bottom-12 -left-12 w-32 h-32 rounded-full blur-3xl"
+        style={{ 
+          background: "radial-gradient(circle, hsl(0 0% 100% / 0.08) 0%, transparent 70%)" 
+        }}
+      />
       
       {/* Content */}
       <div className="relative z-10 p-6 flex items-center gap-5">
-        {/* Boovi with glow */}
+        {/* Boovi with warm glow */}
         <motion.div 
           className="relative flex-shrink-0"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-gold))] opacity-30 blur-2xl scale-150" />
+          {/* Warm golden glow behind Boovi */}
+          <div 
+            className="absolute inset-0 rounded-full blur-2xl scale-150"
+            style={{
+              background: "radial-gradient(circle, hsl(30 60% 75% / 0.35) 0%, transparent 70%)"
+            }}
+          />
           <ChristmasBoovi size="lg" showGlow={false} animate={false} />
         </motion.div>
         
@@ -81,14 +99,20 @@ export const ChristmasHeroBanner = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Sparkles className="w-4 h-4 text-[hsl(var(--christmas-gold))]" />
+            <motion.div
+              animate={{ rotate: [0, 15, -15, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <Sparkles className="w-4 h-4 text-[hsl(var(--christmas-gold))]" />
+            </motion.div>
             <span className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--christmas-gold))]">
               Christmas Edition
             </span>
           </motion.div>
           
           <motion.h2 
-            className="text-2xl font-bold text-[hsl(var(--christmas-cream))] leading-tight drop-shadow-sm"
+            className="text-2xl font-bold text-[hsl(var(--christmas-cream))] leading-tight"
+            style={{ textShadow: "0 2px 10px hsl(120 32% 8% / 0.3)" }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -97,21 +121,32 @@ export const ChristmasHeroBanner = () => {
           </motion.h2>
           
           <motion.p 
-            className="text-sm text-[hsl(var(--christmas-beige))] mt-2 opacity-90"
+            className="text-sm text-[hsl(var(--christmas-cream))] mt-2 opacity-80"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: 0.8 }}
             transition={{ delay: 0.4 }}
           >
-            Hot chocolate & movie night ☕🍿
+            {getSubtitle()}
           </motion.p>
         </div>
       </div>
       
-      {/* Bottom decorative elements */}
-      <div className="absolute bottom-3 right-4 flex gap-1.5 opacity-40">
-        <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--christmas-red))]" />
-        <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--christmas-gold))]" />
-        <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--christmas-cream))]" />
+      {/* Bottom decorative dots */}
+      <div className="absolute bottom-3 right-4 flex gap-2">
+        {[
+          "hsl(0 67% 33%)",     // Santa red
+          "hsl(30 60% 75%)",    // Warm gold
+          "hsl(38 38% 93%)",    // Cream
+        ].map((color, i) => (
+          <motion.div 
+            key={i}
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: color }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.5 + i * 0.1 }}
+          />
+        ))}
       </div>
     </motion.div>
   );
