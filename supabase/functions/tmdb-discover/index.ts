@@ -18,15 +18,24 @@ serve(async (req) => {
 
     console.log('Discovering movies with filters:', { genres, sortBy, page, watchProviders, region });
 
+    // Filter out invalid values (NaN, null, undefined)
+    const validGenres = genres?.filter((g: number) => g != null && !isNaN(g) && g > 0);
+    const validWatchProviders = watchProviders?.filter((p: number) => p != null && !isNaN(p) && p > 0);
+
     let url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&sort_by=${sortBy}&page=${page}&include_adult=false&watch_region=${region}`;
     
-    if (genres && genres.length > 0) {
-      url += `&with_genres=${genres.join(',')}`;
+    // Add genres if valid
+    if (validGenres && validGenres.length > 0) {
+      url += `&with_genres=${validGenres.join(',')}`;
     }
 
-    if (watchProviders && watchProviders.length > 0) {
-      url += `&with_watch_providers=${watchProviders.join(',')}`;
+    // Add watch providers with monetization type for proper filtering
+    if (validWatchProviders && validWatchProviders.length > 0) {
+      url += `&with_watch_providers=${validWatchProviders.join('|')}`; // Use | for OR logic
+      url += `&with_watch_monetization_types=flatrate|free|ads|rent|buy`; // Include all types
     }
+
+    console.log('Fetching from TMDB URL (without API key):', url.replace(TMDB_API_KEY || '', '[REDACTED]'));
 
     const response = await fetch(url, {
       headers: {
@@ -41,7 +50,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Successfully discovered movies');
+    console.log('Successfully discovered movies, count:', data?.results?.length || 0);
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

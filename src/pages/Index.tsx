@@ -25,13 +25,17 @@ const Index = () => {
   const { isChristmas, showSnowfall } = useSeasonal();
   const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
   
+  // Parse preferences safely - filter out NaN values
+  const watchProviders = preferences.platforms.length > 0 
+    ? preferences.platforms.map(p => parseInt(p)).filter(n => !isNaN(n) && n > 0)
+    : undefined;
+  const genres = preferences.genres.length > 0
+    ? preferences.genres.map(g => parseInt(g)).filter(n => !isNaN(n) && n > 0)
+    : undefined;
+    
   const { data: moviesData, isLoading } = useDiscoverMovies({
-    watchProviders: preferences.platforms.length > 0 
-      ? preferences.platforms.map(p => parseInt(p))
-      : undefined,
-    genres: preferences.genres.length > 0
-      ? preferences.genres.map(g => parseInt(g))
-      : undefined,
+    watchProviders: watchProviders && watchProviders.length > 0 ? watchProviders : undefined,
+    genres: genres && genres.length > 0 ? genres : undefined,
     region: preferences.region,
     sortBy: 'popularity.desc',
   });
