@@ -1,7 +1,7 @@
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Bookmark, Share2, Play, Star, Clock, Calendar, Users, Film } from "lucide-react";
+import { ChevronLeft, Bookmark, Share2, Play, Star, Clock, Calendar, Users, Film, ThumbsUp } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMovieDetails } from "@/hooks/useTMDB";
 import { useWatchlist } from "@/hooks/useWatchlist";
@@ -10,15 +10,37 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useSeasonal } from "@/hooks/useChristmasMode";
 import { cn } from "@/lib/utils";
+import { MovieRating } from "@/components/MovieRating";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { data: movie, isLoading } = useMovieDetails(id);
-  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist, watchlist, rateMovie } = useWatchlist();
   const { isChristmas } = useSeasonal();
   
   const inWatchlist = id ? isInWatchlist(parseInt(id)) : false;
+  const watchlistItem = watchlist.find(item => item.movie_id === parseInt(id || '0'));
+  const currentRating = watchlistItem?.rating || null;
+
+  const handleRate = (rating: number) => {
+    if (!movie || !id) return;
+    
+    if (!inWatchlist) {
+      // First add to watchlist, then rate
+      addToWatchlist.mutate({
+        id: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path,
+      }, {
+        onSuccess: () => {
+          rateMovie.mutate({ movieId: movie.id, rating });
+        }
+      });
+    } else {
+      rateMovie.mutate({ movieId: parseInt(id), rating });
+    }
+  };
 
   const handleWatchlistToggle = () => {
     if (!movie) return;
@@ -213,17 +235,40 @@ const MovieDetails = () => {
               <p className="text-sm italic text-muted-foreground mb-3">"{movie.tagline}"</p>
             )}
 
-            {/* Add to Watchlist CTA (Mobile) */}
-            <Button 
-              onClick={handleWatchlistToggle}
-              className={cn(
-                "w-full lg:w-auto mt-2",
-                inWatchlist ? "bg-muted text-muted-foreground hover:bg-muted/80" : ""
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              <Button 
+                onClick={handleWatchlistToggle}
+                className={cn(
+                  "flex-1 lg:flex-none",
+                  inWatchlist ? "bg-muted text-muted-foreground hover:bg-muted/80" : ""
+                )}
+              >
+                <Bookmark className="w-4 h-4 mr-2" fill={inWatchlist ? "currentColor" : "none"} />
+                {inWatchlist ? "In Watchlist" : "Add to Watchlist"}
+              </Button>
+            </div>
+
+            {/* Rate This Movie Section */}
+            <div className={cn(
+              "mt-4 p-4 rounded-xl",
+              isChristmas ? "bg-card border border-border" : "bg-card/50 backdrop-blur-sm"
+            )}>
+              <div className="flex items-center gap-2 mb-3">
+                <ThumbsUp className="w-4 h-4 text-primary" />
+                <span className="font-medium text-sm">Rate This Movie</span>
+              </div>
+              <MovieRating 
+                rating={currentRating} 
+                onRate={handleRate}
+                size="lg"
+              />
+              {!inWatchlist && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Rating will add this movie to your watchlist
+                </p>
               )}
-            >
-              <Bookmark className="w-4 h-4 mr-2" fill={inWatchlist ? "currentColor" : "none"} />
-              {inWatchlist ? "In Watchlist" : "Add to Watchlist"}
-            </Button>
+            </div>
           </div>
         </div>
 
