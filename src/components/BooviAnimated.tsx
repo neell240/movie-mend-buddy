@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import booviImage from "@/assets/boovi-transparent.png";
+import booviImage from "@/assets/boovi-christmas-chat.png";
 
 type BooviAnimation = 
   | "wave" 
