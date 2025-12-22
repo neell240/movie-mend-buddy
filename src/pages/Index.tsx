@@ -57,8 +57,8 @@ const Index = () => {
         <header 
           className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
           style={isChristmas ? {
-            background: "linear-gradient(to right, hsl(120 32% 14% / 0.95), hsl(120 35% 12% / 0.95))",
-            borderColor: "hsl(120 25% 22%)",
+            background: "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
+            borderColor: "hsl(355 40% 28%)",
           } : {
             background: "hsl(var(--background) / 0.8)",
             borderColor: "hsl(var(--border))",
@@ -75,8 +75,8 @@ const Index = () => {
                 <h1 
                   className="text-xl font-bold"
                   style={isChristmas ? { 
-                    color: "hsl(38 38% 93%)",
-                    textShadow: "0 2px 8px hsl(120 32% 8% / 0.4)"
+                    color: "hsl(45 60% 96%)",
+                    textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
                   } : undefined}
                 >
                   {isChristmas ? "MovieMend 🎄" : "MovieMend"}
@@ -89,7 +89,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/preferences")}
                   title="Setup Preferences"
-                  className={isChristmas ? "text-[hsl(38,38%,85%)] hover:text-[hsl(30,60%,75%)] hover:bg-[hsl(120,28%,22%)]" : ""}
+                  className={isChristmas ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
                 >
                   <Wrench className="w-5 h-5" />
                 </Button>
@@ -98,7 +98,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/settings")}
                   title="Settings"
-                  className={isChristmas ? "text-[hsl(38,38%,85%)] hover:text-[hsl(30,60%,75%)] hover:bg-[hsl(120,28%,22%)]" : ""}
+                  className={isChristmas ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
                 >
                   <Settings className="w-5 h-5" />
                 </Button>
