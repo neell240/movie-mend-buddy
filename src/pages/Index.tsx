@@ -142,6 +142,8 @@ const Index = () => {
               </Button>
             </div>
           )}
+        </section>
+
           {/* Christmas Movies Section */}
           {isChristmas && (
             <ChristmasMoviesSection limit={6} />
