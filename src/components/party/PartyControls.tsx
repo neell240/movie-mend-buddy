@@ -28,8 +28,19 @@ const PartyControls = ({
   onSeek,
   currentTimestamp,
 }: PartyControlsProps) => {
-  const formatTime = (ms: number) => {
-    const seconds = Math.floor(ms / 1000);
+  // Safe values with defaults
+  const safeSyncState = syncState ?? {
+    status: 'waiting' as const,
+    timestamp_ms: 0,
+    drift_ms: 0,
+    countdownSeconds: 0,
+  };
+  const safeParticipants = participants ?? [];
+  const safeCurrentTimestamp = currentTimestamp ?? 0;
+  
+  const formatTime = (ms: number | null | undefined) => {
+    const safeMs = ms ?? 0;
+    const seconds = Math.floor(safeMs / 1000);
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     const hours = Math.floor(mins / 60);
@@ -41,10 +52,11 @@ const PartyControls = ({
   };
 
   const getDriftMessage = () => {
-    if (Math.abs(syncState.drift_ms) < 2000) return null;
+    const driftMs = safeSyncState.drift_ms ?? 0;
+    if (Math.abs(driftMs) < 2000) return null;
     
-    const ahead = syncState.drift_ms > 0;
-    const seconds = Math.abs(Math.round(syncState.drift_ms / 1000));
+    const ahead = driftMs > 0;
+    const seconds = Math.abs(Math.round(driftMs / 1000));
     
     return {
       type: ahead ? 'ahead' : 'behind',
@@ -54,38 +66,56 @@ const PartyControls = ({
   };
 
   const driftInfo = getDriftMessage();
+  const status = safeSyncState.status ?? 'waiting';
+
+  const getStatusText = () => {
+    switch (status) {
+      case 'waiting':
+        return '⏳ Waiting for everyone...';
+      case 'countdown':
+        return `🎬 Starting in ${safeSyncState.countdownSeconds ?? 0}...`;
+      case 'playing':
+        return '▶️ Now playing';
+      case 'paused':
+        return '⏸️ Paused';
+      case 'ended':
+        return '🎉 Party ended!';
+      default:
+        return '⏳ Waiting...';
+    }
+  };
+
+  const getBooviAnimation = () => {
+    switch (status) {
+      case 'playing':
+        return 'idle';
+      case 'countdown':
+        return 'wave';
+      case 'paused':
+        return 'think';
+      default:
+        return 'idle';
+    }
+  };
 
   return (
     <div className="bg-card rounded-xl border border-border p-4 space-y-4">
       {/* Status display */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-        <BooviAnimated 
-            animation={
-              syncState.status === 'playing' ? 'idle' :
-              syncState.status === 'countdown' ? 'wave' :
-              syncState.status === 'paused' ? 'think' : 'idle'
-            } 
-            size="sm" 
-          />
+          <BooviAnimated animation={getBooviAnimation()} size="sm" />
           <div>
-            <p className="text-sm font-medium">
-              {syncState.status === 'waiting' && '⏳ Waiting for everyone...'}
-              {syncState.status === 'countdown' && `🎬 Starting in ${syncState.countdownSeconds}...`}
-              {syncState.status === 'playing' && '▶️ Now playing'}
-              {syncState.status === 'paused' && '⏸️ Paused'}
-              {syncState.status === 'ended' && '🎉 Party ended!'}
-            </p>
+            <p className="text-sm font-medium">{getStatusText()}</p>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {formatTime(currentTimestamp)}
+              {formatTime(safeCurrentTimestamp)}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-muted-foreground">
           <Users className="h-4 w-4" />
-          <span className="text-sm">{participants.length}</span>
+          <span className="text-sm">{safeParticipants.length}</span>
           {anyBuffering && (
             <Loader2 className="h-4 w-4 animate-spin text-yellow-500" />
           )}
@@ -101,10 +131,10 @@ const PartyControls = ({
       )}
 
       {/* Countdown overlay effect */}
-      {syncState.status === 'countdown' && (
+      {status === 'countdown' && (
         <div className="text-center py-4">
           <p className="text-6xl font-bold text-primary animate-pulse">
-            {syncState.countdownSeconds}
+            {safeSyncState.countdownSeconds ?? 0}
           </p>
           <p className="text-sm text-muted-foreground mt-2">
             Press PLAY on your streaming app when it hits 0!
@@ -115,7 +145,7 @@ const PartyControls = ({
       {/* Host controls */}
       {isHost && (
         <div className="flex items-center justify-center gap-2">
-          {syncState.status === 'waiting' && (
+          {status === 'waiting' && (
             <Button
               onClick={onStartCountdown}
               disabled={!allReady}
@@ -126,17 +156,17 @@ const PartyControls = ({
             </Button>
           )}
 
-          {(syncState.status === 'playing' || syncState.status === 'paused') && (
+          {(status === 'playing' || status === 'paused') && (
             <>
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => onSeek(Math.max(0, currentTimestamp - 10000))}
+                onClick={() => onSeek(Math.max(0, safeCurrentTimestamp - 10000))}
               >
                 <SkipBack className="h-4 w-4" />
               </Button>
               
-              {syncState.status === 'playing' ? (
+              {status === 'playing' ? (
                 <Button size="icon" onClick={onPause}>
                   <Pause className="h-4 w-4" />
                 </Button>
@@ -149,7 +179,7 @@ const PartyControls = ({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => onSeek(currentTimestamp + 10000)}
+                onClick={() => onSeek(safeCurrentTimestamp + 10000)}
               >
                 <SkipForward className="h-4 w-4" />
               </Button>
@@ -159,7 +189,7 @@ const PartyControls = ({
       )}
 
       {/* Non-host instructions */}
-      {!isHost && syncState.status === 'playing' && (
+      {!isHost && status === 'playing' && (
         <p className="text-center text-sm text-muted-foreground">
           Follow the host's controls in your streaming app
         </p>

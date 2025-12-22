@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Loader2, ArrowRight, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useParty, PartyRoom } from '@/hooks/useParty';
 import { useSeasonal } from '@/hooks/useChristmasMode';
 import { ChristmasBoovi } from '@/components/christmas/ChristmasBoovi';
@@ -24,31 +24,59 @@ const JoinPartyModal = ({ open, onOpenChange, onRoomJoined }: JoinPartyModalProp
   const [error, setError] = useState('');
 
   const handleJoin = async () => {
-    if (code.length < 6) return;
+    if (code.length < 6) {
+      setError('Please enter a 6-character code');
+      return;
+    }
 
     setIsJoining(true);
     setError('');
 
-    const room = await joinByCode(code);
-    
-    setIsJoining(false);
-
-    if (room) {
-      onRoomJoined(room);
-      onOpenChange(false);
-      setCode('');
-    } else {
-      setError('Party not found. Check the code and try again.');
+    try {
+      const room = await joinByCode(code);
+      
+      if (room?.id) {
+        onRoomJoined(room);
+        onOpenChange(false);
+        setCode('');
+        setError('');
+      } else {
+        setError('Party not found. Check the code and try again.');
+      }
+    } catch (err) {
+      console.error('Error joining party:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setIsJoining(false);
     }
   };
 
   const handleCodeChange = (value: string) => {
-    setCode(value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6));
-    setError('');
+    // Only allow uppercase letters and numbers, max 6 chars
+    const sanitized = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    setCode(sanitized);
+    if (error) setError('');
+  };
+
+  const handleClose = (newOpen: boolean) => {
+    if (!isJoining) {
+      onOpenChange(newOpen);
+      if (!newOpen) {
+        // Reset state when closing
+        setCode('');
+        setError('');
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && code.length === 6 && !isJoining) {
+      handleJoin();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
@@ -76,20 +104,31 @@ const JoinPartyModal = ({ open, onOpenChange, onRoomJoined }: JoinPartyModalProp
             <Input
               value={code}
               onChange={(e) => handleCodeChange(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="ABC123"
               maxLength={6}
-              className="text-center text-3xl tracking-[0.5em] font-mono h-16"
+              className={`text-center text-3xl tracking-[0.5em] font-mono h-16 ${
+                error ? 'border-destructive focus-visible:ring-destructive' : ''
+              }`}
               disabled={isJoining}
+              autoFocus
             />
-            {error && (
-              <motion.p
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-sm text-destructive mt-2 text-center"
-              >
-                {error}
-              </motion.p>
-            )}
+            
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: -10, height: 0 }}
+                  className="mt-2"
+                >
+                  <div className="flex items-center gap-2 text-destructive text-sm">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <Button
@@ -110,6 +149,10 @@ const JoinPartyModal = ({ open, onOpenChange, onRoomJoined }: JoinPartyModalProp
               </>
             )}
           </Button>
+
+          <p className="text-xs text-center text-muted-foreground">
+            Ask the host for the party code or use the invite link
+          </p>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Copy, Check, ExternalLink, LogOut, Hand, Users } from 'lucide-react';
@@ -10,6 +10,8 @@ import { useSeasonal } from '@/hooks/useChristmasMode';
 import PartyChat from './PartyChat';
 import PartyControls from './PartyControls';
 import PartyParticipants from './PartyParticipants';
+import PartyLoading from './PartyLoading';
+import PartyNotFound from './PartyNotFound';
 import { ChristmasBoovi } from '@/components/christmas/ChristmasBoovi';
 import { BooviAnimated } from '@/components/BooviAnimated';
 import ReactionsOverlay from './ReactionsOverlay';
@@ -86,13 +88,23 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
     updateLocalTimestamp,
   } = useParty(roomId);
 
-  const currentParticipant = participants.find(p => p.user_id === user?.id);
+  // Safe current participant lookup
+  const currentParticipant = useMemo(() => {
+    if (!user?.id || !participants?.length) return null;
+    return participants.find(p => p.user_id === user.id) ?? null;
+  }, [participants, user?.id]);
+
+  // Safe room code
+  const roomCode = room?.room_code ?? '';
+  const movieTitle = room?.movie_title ?? 'Unknown Movie';
+  const moviePoster = room?.movie_poster ?? null;
+  const hostId = room?.host_id ?? '';
 
   const copyRoomCode = async () => {
-    if (!room) return;
+    if (!roomCode) return;
     
     try {
-      await navigator.clipboard.writeText(room.room_code);
+      await navigator.clipboard.writeText(roomCode);
       setCopied(true);
       toast({ title: 'Room code copied! 📋' });
       setTimeout(() => setCopied(false), 2000);
@@ -118,35 +130,55 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
   };
 
   const handleLeave = async () => {
-    await leaveRoom();
-    onLeave();
+    try {
+      await leaveRoom();
+    } catch (error) {
+      console.error('Error leaving room:', error);
+    } finally {
+      onLeave();
+    }
   };
 
   const handleReaction = async (emoji: string) => {
-    await sendReaction(emoji);
-    // Add floating reaction
-    const id = Math.random().toString(36);
-    setFloatingReactions(prev => [...prev, { id, emoji }]);
-    setTimeout(() => {
-      setFloatingReactions(prev => prev.filter(r => r.id !== id));
-    }, 2000);
+    try {
+      await sendReaction(emoji);
+      // Add floating reaction
+      const id = Math.random().toString(36);
+      setFloatingReactions(prev => [...prev, { id, emoji }]);
+      setTimeout(() => {
+        setFloatingReactions(prev => prev.filter(r => r.id !== id));
+      }, 2000);
+    } catch (error) {
+      console.error('Error sending reaction:', error);
+    }
+  };
+
+  const handleSendMessage = async (content: string) => {
+    try {
+      await sendMessage(content);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({ title: 'Failed to send message', variant: 'destructive' });
+    }
   };
 
   // Simulate timestamp updates
   useEffect(() => {
-    if (syncState.status !== 'playing') return;
+    if (syncState?.status !== 'playing') return;
 
     const interval = setInterval(() => {
-      updateLocalTimestamp(localTimestamp + 1000);
+      updateLocalTimestamp((localTimestamp ?? 0) + 1000);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [syncState.status, localTimestamp, updateLocalTimestamp]);
+  }, [syncState?.status, localTimestamp, updateLocalTimestamp]);
 
   // Listen for reactions from messages
   useEffect(() => {
+    if (!messages?.length || !user?.id) return;
+    
     const latestMessage = messages[messages.length - 1];
-    if (latestMessage?.is_reaction && latestMessage.user_id !== user?.id) {
+    if (latestMessage?.is_reaction && latestMessage.user_id !== user.id) {
       const id = Math.random().toString(36);
       setFloatingReactions(prev => [...prev, { id, emoji: latestMessage.content }]);
       setTimeout(() => {
@@ -155,37 +187,27 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
     }
   }, [messages, user?.id]);
 
+  // Loading state
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-          {isChristmas ? (
-            <ChristmasBoovi size="lg" variant="excited" />
-          ) : (
-            <BooviAnimated animation="loading" size="xl" />
-          )}
-        </motion.div>
-        <p className="mt-4 text-muted-foreground">Loading party...</p>
-      </div>
-    );
+    return <PartyLoading message="Loading party..." />;
   }
 
+  // Party not found
   if (!room) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        {isChristmas ? (
-          <ChristmasBoovi size="lg" variant="cozy" />
-        ) : (
-          <BooviAnimated animation="think" size="xl" />
-        )}
-        <p className="mt-4 text-muted-foreground">Party not found</p>
-        <Button onClick={onLeave} className="mt-4">Go Back</Button>
-      </div>
-    );
+    return <PartyNotFound onGoBack={onLeave} />;
   }
+
+  // Safe sync state with defaults
+  const safeSyncState = syncState ?? {
+    status: 'waiting' as const,
+    timestamp_ms: 0,
+    drift_ms: 0,
+    countdownSeconds: 0,
+  };
+
+  // Safe participants array
+  const safeParticipants = participants ?? [];
+  const safeMessages = messages ?? [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -194,9 +216,9 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
       
       {/* Boovi Host */}
       <BooviHost 
-        syncState={syncState}
-        participantCount={participants.length}
-        isHost={isHost || false}
+        syncState={safeSyncState}
+        participantCount={safeParticipants.length}
+        isHost={isHost ?? false}
       />
 
       {/* Header */}
@@ -221,13 +243,14 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
                 variant="outline" 
                 className="font-mono text-lg tracking-widest px-3 py-1"
               >
-                {room.room_code}
+                {roomCode || '------'}
               </Badge>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8"
                 onClick={copyRoomCode}
+                disabled={!roomCode}
               >
                 {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
               </Button>
@@ -235,9 +258,9 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
             <div className="flex items-center gap-1 justify-center mt-1">
               <Users className="w-3 h-3 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">
-                {participants.length} watching
+                {safeParticipants.length} watching
               </span>
-              {syncState.status === 'playing' && (
+              {safeSyncState.status === 'playing' && (
                 <Badge variant="destructive" className="ml-2 text-xs animate-pulse">
                   LIVE
                 </Badge>
@@ -262,15 +285,22 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
               : 'bg-card border-border'
           }`}
         >
-          {room.movie_poster && (
+          {moviePoster ? (
             <img
-              src={`https://image.tmdb.org/t/p/w154${room.movie_poster}`}
-              alt={room.movie_title}
+              src={`https://image.tmdb.org/t/p/w154${moviePoster}`}
+              alt={movieTitle}
               className="w-20 h-30 rounded-xl object-cover shadow-lg"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
             />
+          ) : (
+            <div className="w-20 h-30 rounded-xl bg-muted flex items-center justify-center">
+              <span className="text-2xl">🎬</span>
+            </div>
           )}
           <div className="flex-1">
-            <h2 className="font-bold text-lg">{room.movie_title}</h2>
+            <h2 className="font-bold text-lg">{movieTitle}</h2>
             <p className="text-sm text-muted-foreground">
               {isHost ? "You're hosting this party! 🎬" : "Waiting for host to start..."}
             </p>
@@ -279,7 +309,7 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
 
         {/* Platform Selector */}
         <AnimatePresence>
-          {syncState.status === 'waiting' && (
+          {safeSyncState.status === 'waiting' && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -310,14 +340,14 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground mt-3 text-center">
-                Find "{room.movie_title}" and get ready to press play!
+                Find "{movieTitle}" and get ready to press play!
               </p>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Ready Button */}
-        {syncState.status === 'waiting' && (
+        {safeSyncState.status === 'waiting' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -340,21 +370,21 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
           {/* Controls + Participants */}
           <div className="lg:col-span-2 space-y-4">
             <PartyControls
-              syncState={syncState}
-              isHost={isHost || false}
-              allReady={allReady}
-              anyBuffering={anyBuffering}
-              participants={participants}
+              syncState={safeSyncState}
+              isHost={isHost ?? false}
+              allReady={allReady ?? false}
+              anyBuffering={anyBuffering ?? false}
+              participants={safeParticipants}
               onStartCountdown={() => startCountdown(5)}
               onPlay={play}
               onPause={pause}
               onSeek={seek}
-              currentTimestamp={localTimestamp}
+              currentTimestamp={localTimestamp ?? 0}
             />
 
             <PartyParticipants
-              participants={participants}
-              hostId={room.host_id}
+              participants={safeParticipants}
+              hostId={hostId}
               currentUserId={user?.id}
             />
           </div>
@@ -362,8 +392,8 @@ const PartyRoomEnhanced = ({ roomId, onLeave }: PartyRoomEnhancedProps) => {
           {/* Chat */}
           <div className="lg:col-span-1 h-[400px] lg:h-[600px] mt-4 lg:mt-0">
             <PartyChat
-              messages={messages}
-              onSendMessage={sendMessage}
+              messages={safeMessages}
+              onSendMessage={handleSendMessage}
               onSendReaction={handleReaction}
               currentUserId={user?.id}
             />

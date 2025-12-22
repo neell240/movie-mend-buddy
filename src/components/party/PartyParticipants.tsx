@@ -11,24 +11,58 @@ interface PartyParticipantsProps {
 }
 
 const PartyParticipants = ({ participants, hostId, currentUserId }: PartyParticipantsProps) => {
-  const isStale = (heartbeat: string) => {
-    const lastBeat = new Date(heartbeat).getTime();
-    const now = Date.now();
-    return now - lastBeat > 10000; // 10 seconds
+  // Safe array with fallback
+  const safeParticipants = participants ?? [];
+  
+  const isStale = (heartbeat: string | null | undefined) => {
+    if (!heartbeat) return true;
+    try {
+      const lastBeat = new Date(heartbeat).getTime();
+      const now = Date.now();
+      return now - lastBeat > 10000; // 10 seconds
+    } catch {
+      return true;
+    }
   };
+
+  const formatHeartbeat = (heartbeat: string | null | undefined) => {
+    if (!heartbeat) return 'Unknown';
+    try {
+      return formatDistanceToNow(new Date(heartbeat), { addSuffix: true });
+    } catch {
+      return 'Unknown';
+    }
+  };
+
+  if (safeParticipants.length === 0) {
+    return (
+      <div className="bg-card rounded-xl border border-border p-4">
+        <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+          <Crown className="h-4 w-4 text-yellow-500" />
+          Party Members (0)
+        </h3>
+        <p className="text-sm text-muted-foreground text-center py-4">
+          Waiting for participants...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-card rounded-xl border border-border p-4">
       <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
         <Crown className="h-4 w-4 text-yellow-500" />
-        Party Members ({participants.length})
+        Party Members ({safeParticipants.length})
       </h3>
       
       <div className="space-y-2">
-        {participants.map((participant) => {
+        {safeParticipants.map((participant) => {
+          if (!participant?.id) return null;
+          
           const isHost = participant.user_id === hostId;
           const isYou = participant.user_id === currentUserId;
           const stale = isStale(participant.last_heartbeat);
+          const username = participant.username || 'Anonymous';
 
           return (
             <div
@@ -41,7 +75,7 @@ const PartyParticipants = ({ participants, hostId, currentUserId }: PartyPartici
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={participant.avatar_url || undefined} />
                   <AvatarFallback className="text-xs">
-                    {participant.username?.[0]?.toUpperCase() || '?'}
+                    {username[0]?.toUpperCase() || '?'}
                   </AvatarFallback>
                 </Avatar>
                 {isHost && (
@@ -51,12 +85,12 @@ const PartyParticipants = ({ participants, hostId, currentUserId }: PartyPartici
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
-                  {participant.username || 'Anonymous'}
+                  {username}
                   {isYou && <span className="text-muted-foreground"> (you)</span>}
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {formatDistanceToNow(new Date(participant.last_heartbeat), { addSuffix: true })}
+                  {formatHeartbeat(participant.last_heartbeat)}
                 </p>
               </div>
 
