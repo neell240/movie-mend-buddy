@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, Search, Bookmark, Sparkles } from "lucide-react";
+import { Home, Search, Bookmark, Sparkles, Users } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useSeasonal } from "@/hooks/useChristmasMode";
@@ -14,6 +14,7 @@ export const BottomNav = () => {
     { icon: Home, label: "Home", path: "/" },
     { icon: Search, label: "Search", path: "/search" },
     { icon: Sparkles, label: "AI Chat", path: "/ai-chat" },
+    { icon: Users, label: "Social", path: "/social" },
     { icon: Bookmark, label: "Watchlist", path: "/watchlist" },
   ];
 
