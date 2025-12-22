@@ -54,75 +54,76 @@ All colors MUST be HSL.
     --gradient-card: linear-gradient(135deg, hsl(0, 25%, 15%), hsl(0, 20%, 12%));
   }
 
-  /* Christmas Theme (Dec 23-31) - Cozy warm colors */
+  /* Christmas Theme (Dec 23-31) - Cozy, Premium, Festive */
   .theme-christmas {
-    /* Warm cream background for light feel */
-    --background: 30 30% 96%;
-    --foreground: 150 30% 15%;
+    /* Pine green dark background */
+    --background: 120 30% 16%;
+    --foreground: 30 30% 90%;
 
-    /* Warm card colors */
-    --card: 30 25% 92%;
-    --card-foreground: 150 30% 15%;
+    /* Warm cream cards */
+    --card: 30 45% 75%;
+    --card-foreground: 120 30% 12%;
 
-    --popover: 30 25% 94%;
-    --popover-foreground: 150 30% 15%;
+    --popover: 120 25% 20%;
+    --popover-foreground: 30 30% 90%;
 
-    /* Pine green primary */
-    --primary: 152 43% 21%;
-    --primary-foreground: 0 0% 100%;
+    /* Christmas red primary CTA */
+    --primary: 358 70% 32%;
+    --primary-foreground: 30 30% 95%;
 
-    /* Soft secondary */
-    --secondary: 30 20% 88%;
-    --secondary-foreground: 150 30% 20%;
+    /* Forest green secondary */
+    --secondary: 120 25% 27%;
+    --secondary-foreground: 30 30% 90%;
 
-    --muted: 30 15% 85%;
-    --muted-foreground: 150 15% 40%;
+    --muted: 120 20% 22%;
+    --muted-foreground: 30 20% 70%;
 
-    /* Christmas red accent */
-    --accent: 0 70% 48%;
-    --accent-foreground: 0 0% 100%;
+    /* Wine red accent */
+    --accent: 358 78% 25%;
+    --accent-foreground: 30 30% 95%;
 
-    --destructive: 0 70% 48%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 358 70% 32%;
+    --destructive-foreground: 30 30% 95%;
 
-    --border: 30 15% 85%;
-    --input: 30 20% 90%;
-    --ring: 152 43% 21%;
+    --border: 120 20% 25%;
+    --input: 120 20% 22%;
+    --ring: 358 70% 32%;
 
     /* Christmas specific colors */
-    --christmas-pine: 152 43% 21%;
-    --christmas-red: 0 70% 48%;
-    --christmas-gold: 43 90% 55%;
-    --christmas-cream: 30 30% 96%;
-    --christmas-cozy: 30 25% 92%;
+    --christmas-pine: 120 30% 16%;
+    --christmas-forest: 120 25% 27%;
+    --christmas-red: 358 70% 32%;
+    --christmas-wine: 358 78% 25%;
+    --christmas-cream: 30 45% 75%;
+    --christmas-gold: 43 80% 50%;
   }
 
-  /* Christmas Dark Mode */
+  /* Christmas Dark Mode - Same cozy dark pine theme */
   .theme-christmas.dark, .theme-christmas .dark {
-    --background: 0 0% 7%;
-    --foreground: 30 20% 95%;
+    --background: 120 35% 10%;
+    --foreground: 30 30% 90%;
 
-    --card: 150 20% 10%;
-    --card-foreground: 30 20% 95%;
+    --card: 30 40% 70%;
+    --card-foreground: 120 30% 12%;
 
-    --popover: 150 20% 8%;
-    --popover-foreground: 30 20% 95%;
+    --popover: 120 30% 14%;
+    --popover-foreground: 30 30% 90%;
 
-    --primary: 152 50% 35%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 358 70% 32%;
+    --primary-foreground: 30 30% 95%;
 
-    --secondary: 150 15% 15%;
-    --secondary-foreground: 30 20% 90%;
+    --secondary: 120 25% 20%;
+    --secondary-foreground: 30 30% 90%;
 
-    --muted: 150 10% 18%;
-    --muted-foreground: 30 10% 60%;
+    --muted: 120 20% 16%;
+    --muted-foreground: 30 20% 60%;
 
-    --accent: 0 65% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 358 78% 25%;
+    --accent-foreground: 30 30% 95%;
 
-    --border: 150 15% 18%;
-    --input: 150 15% 15%;
-    --ring: 152 50% 35%;
+    --border: 120 20% 18%;
+    --input: 120 20% 16%;
+    --ring: 358 70% 32%;
   }
 
   /* New Year Theme (Jan 1-7) - Fresh, celebratory */
@@ -241,13 +242,32 @@ All colors MUST be HSL.
 
   /* Christmas cozy glow */
   .christmas-glow {
-    box-shadow: 0 0 30px hsl(var(--christmas-gold) / 0.2),
-                0 0 60px hsl(var(--christmas-gold) / 0.1);
+    box-shadow: 0 0 40px hsl(var(--christmas-gold) / 0.3),
+                0 0 80px hsl(var(--christmas-gold) / 0.15);
   }
 
   /* Softer shadows for Christmas */
   .theme-christmas .shadow-lg {
-    box-shadow: 0 10px 25px -5px hsl(var(--christmas-pine) / 0.1),
-                0 4px 10px -5px hsl(var(--christmas-pine) / 0.05);
+    box-shadow: 0 10px 30px -5px hsl(0 0% 0% / 0.3),
+                0 4px 12px -5px hsl(0 0% 0% / 0.2);
+  }
+
+  /* Christmas gradient background */
+  .theme-christmas body,
+  .theme-christmas {
+    background: linear-gradient(180deg, hsl(120 30% 16%), hsl(120 35% 12%));
+  }
+
+  /* Cozy card styling */
+  .theme-christmas .cozy-card {
+    background: hsl(var(--christmas-cream));
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px -4px hsl(0 0% 0% / 0.25);
+  }
+
+  /* Premium CTA glow */
+  .theme-christmas .cta-glow {
+    box-shadow: 0 4px 20px hsl(var(--christmas-red) / 0.4),
+                0 0 40px hsl(var(--christmas-red) / 0.2);
   }
 }

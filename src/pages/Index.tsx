@@ -42,7 +42,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {isChristmas ? (
-                <ChristmasBoovi mood="happy" size="sm" />
+                <ChristmasBoovi size="sm" />
               ) : (
                 <Sparkles className="w-6 h-6 text-primary" />
               )}

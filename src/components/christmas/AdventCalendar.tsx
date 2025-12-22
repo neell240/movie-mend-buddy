@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Gift, Calendar, Sparkles, Play } from "lucide-react";
 import { ChristmasBoovi } from "./ChristmasBoovi";
@@ -46,7 +45,6 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   const [isRevealed, setIsRevealed] = useState(false);
 
   useEffect(() => {
-    // Update date at midnight
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -63,16 +61,11 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   const currentDay = today.getDate();
   const currentMonth = today.getMonth();
   
-  // Only show during December
   const isDecember = currentMonth === 11;
-  const dayIndex = Math.min(currentDay - 1, 24); // 0-24 for Dec 1-25
-  
-  // Show countdown or movie depending on the day
+  const dayIndex = Math.min(currentDay - 1, 24);
   const todaysMovie = isDecember && currentDay <= 25 ? ADVENT_MOVIES[dayIndex] : null;
 
-  const handleReveal = () => {
-    setIsRevealed(true);
-  };
+  const handleReveal = () => setIsRevealed(true);
 
   const handleWatchMovie = () => {
     if (todaysMovie) {
@@ -83,67 +76,60 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   // After Christmas
   if (currentMonth === 11 && currentDay > 25) {
     return (
-      <Card className={`p-6 bg-gradient-to-br from-christmas-red/10 to-christmas-green/10 border-christmas-red/20 ${className}`}>
+      <div className={`bg-card rounded-2xl p-5 ${className}`}>
         <div className="flex items-center gap-4">
-          <ChristmasBoovi mood="cozy" size="md" />
+          <ChristmasBoovi size="md" />
           <div>
-            <h3 className="font-bold text-lg">Hope you had a Merry Christmas! 🎄</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="font-bold text-lg text-card-foreground">Hope you had a Merry Christmas! 🎄</h3>
+            <p className="text-sm text-card-foreground/70">
               See you next year for more movie magic!
             </p>
           </div>
         </div>
-      </Card>
+      </div>
     );
   }
 
-  // Before December or non-December
-  if (!isDecember) {
-    return null;
-  }
+  if (!isDecember) return null;
 
   return (
-    <Card className={`p-6 bg-gradient-to-br from-christmas-red/10 via-background to-christmas-green/10 border-christmas-red/20 overflow-hidden ${className}`}>
+    <div className={`bg-card rounded-2xl p-5 shadow-lg overflow-hidden ${className}`}>
       <div className="relative">
         {/* Decorative elements */}
-        <div className="absolute -top-4 -right-4 text-4xl opacity-20">🎄</div>
-        <div className="absolute -bottom-4 -left-4 text-4xl opacity-20">🎁</div>
+        <div className="absolute -top-4 -right-4 text-4xl opacity-10">🎄</div>
+        <div className="absolute -bottom-4 -left-4 text-4xl opacity-10">🎁</div>
 
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-4 relative z-10">
           <div className="flex-shrink-0">
-            <ChristmasBoovi 
-              mood={isRevealed ? "excited" : "happy"} 
-              size="lg" 
-              showSparkles={isRevealed}
-            />
+            <ChristmasBoovi size="lg" showGlow={isRevealed} />
           </div>
 
           <div className="flex-1 space-y-3">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-christmas-red" />
-              <span className="text-sm font-medium text-muted-foreground">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Calendar className="w-4 h-4 text-[hsl(var(--christmas-wine))]" />
+              <span className="text-sm font-medium text-card-foreground/70">
                 December {currentDay}
               </span>
               {daysUntilChristmas > 0 && (
-                <span className="text-xs bg-christmas-green/20 text-christmas-green px-2 py-0.5 rounded-full">
-                  {daysUntilChristmas} days until Christmas
+                <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-secondary-foreground">
+                  {daysUntilChristmas} days left
                 </span>
               )}
             </div>
 
-            <h3 className="font-bold text-xl flex items-center gap-2">
-              <Gift className="w-5 h-5 text-christmas-red" />
-              🎁 Today's Christmas Movie Pick
+            <h3 className="font-bold text-lg text-card-foreground flex items-center gap-2">
+              <Gift className="w-5 h-5 text-[hsl(var(--christmas-wine))]" />
+              Today's Christmas Movie Pick
             </h3>
 
             {!isRevealed ? (
               <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Boovi has a special movie recommendation for you today!
+                <p className="text-sm text-card-foreground/70">
+                  Boovi has a special movie for you today!
                 </p>
                 <Button 
                   onClick={handleReveal}
-                  className="bg-christmas-red hover:bg-christmas-red/90 text-white"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground cta-glow"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Reveal Today's Pick
@@ -151,27 +137,26 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
               </div>
             ) : todaysMovie ? (
               <div className="space-y-3 animate-fade-in">
-                <div className="bg-background/50 rounded-lg p-4 border border-christmas-green/20">
-                  <p className="font-semibold text-lg text-foreground">
-                    {todaysMovie.title}
+                <div className="bg-secondary/30 rounded-xl p-4 border border-border/50">
+                  <p className="font-semibold text-lg text-card-foreground">
+                    🎁 {todaysMovie.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-card-foreground/70">
                     ({todaysMovie.year})
                   </p>
                 </div>
                 <Button 
                   onClick={handleWatchMovie}
-                  variant="outline"
-                  className="border-christmas-green text-christmas-green hover:bg-christmas-green/10"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Play className="w-4 h-4 mr-2" />
-                  View Movie Details
+                  View Movie
                 </Button>
               </div>
             ) : null}
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
