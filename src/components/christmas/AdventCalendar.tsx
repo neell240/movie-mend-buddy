@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Gift, Calendar, Sparkles, Play } from "lucide-react";
 import { ChristmasBoovi } from "./ChristmasBoovi";
+import { useSeasonal } from "@/hooks/useChristmasMode";
 
 // Daily Christmas movie picks (25 days)
 const ADVENT_MOVIES = [
@@ -40,6 +41,7 @@ interface AdventCalendarProps {
 
 export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   const navigate = useNavigate();
+  const { daysUntilChristmas, isChristmasDay } = useSeasonal();
   const [today, setToday] = useState(new Date());
   const [isRevealed, setIsRevealed] = useState(false);
 
@@ -67,10 +69,6 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   
   // Show countdown or movie depending on the day
   const todaysMovie = isDecember && currentDay <= 25 ? ADVENT_MOVIES[dayIndex] : null;
-  
-  // Days until Christmas
-  const christmasDate = new Date(today.getFullYear(), 11, 25);
-  const daysUntilChristmas = Math.max(0, Math.ceil((christmasDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
 
   const handleReveal = () => {
     setIsRevealed(true);

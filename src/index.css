@@ -9,6 +9,7 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  /* Default theme (normal mode) */
   :root {
     --background: 0 10% 8%;
     --foreground: 0 0% 95%;
@@ -48,14 +49,115 @@ All colors MUST be HSL.
     --red-bright: 0 100% 62%;
     --red-hover: 0 100% 56%;
     
-    /* Christmas colors */
-    --christmas-red: 0 80% 50%;
-    --christmas-green: 140 60% 40%;
-    --christmas-gold: 45 90% 55%;
-    
     /* Gradients */
     --gradient-dark: linear-gradient(180deg, hsl(0, 25%, 10%), hsl(0, 20%, 8%));
     --gradient-card: linear-gradient(135deg, hsl(0, 25%, 15%), hsl(0, 20%, 12%));
+  }
+
+  /* Christmas Theme (Dec 23-31) - Cozy warm colors */
+  .theme-christmas {
+    /* Warm cream background for light feel */
+    --background: 30 30% 96%;
+    --foreground: 150 30% 15%;
+
+    /* Warm card colors */
+    --card: 30 25% 92%;
+    --card-foreground: 150 30% 15%;
+
+    --popover: 30 25% 94%;
+    --popover-foreground: 150 30% 15%;
+
+    /* Pine green primary */
+    --primary: 152 43% 21%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft secondary */
+    --secondary: 30 20% 88%;
+    --secondary-foreground: 150 30% 20%;
+
+    --muted: 30 15% 85%;
+    --muted-foreground: 150 15% 40%;
+
+    /* Christmas red accent */
+    --accent: 0 70% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 15% 85%;
+    --input: 30 20% 90%;
+    --ring: 152 43% 21%;
+
+    /* Christmas specific colors */
+    --christmas-pine: 152 43% 21%;
+    --christmas-red: 0 70% 48%;
+    --christmas-gold: 43 90% 55%;
+    --christmas-cream: 30 30% 96%;
+    --christmas-cozy: 30 25% 92%;
+  }
+
+  /* Christmas Dark Mode */
+  .theme-christmas.dark, .theme-christmas .dark {
+    --background: 0 0% 7%;
+    --foreground: 30 20% 95%;
+
+    --card: 150 20% 10%;
+    --card-foreground: 30 20% 95%;
+
+    --popover: 150 20% 8%;
+    --popover-foreground: 30 20% 95%;
+
+    --primary: 152 50% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 150 15% 15%;
+    --secondary-foreground: 30 20% 90%;
+
+    --muted: 150 10% 18%;
+    --muted-foreground: 30 10% 60%;
+
+    --accent: 0 65% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 150 15% 18%;
+    --input: 150 15% 15%;
+    --ring: 152 50% 35%;
+  }
+
+  /* New Year Theme (Jan 1-7) - Fresh, celebratory */
+  .theme-newyear {
+    --background: 220 20% 10%;
+    --foreground: 0 0% 95%;
+
+    --card: 220 25% 14%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Midnight blue primary */
+    --primary: 220 80% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 20% 20%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 0 0% 60%;
+
+    /* Gold accent */
+    --accent: 43 90% 55%;
+    --accent-foreground: 0 0% 10%;
+
+    --border: 220 15% 22%;
+    --input: 220 20% 18%;
+    --ring: 43 90% 55%;
+
+    /* New Year specific colors */
+    --newyear-midnight: 220 80% 60%;
+    --newyear-gold: 43 90% 55%;
+    --newyear-silver: 220 10% 80%;
   }
 }
 
@@ -66,8 +168,13 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    background: linear-gradient(180deg, hsl(0, 25%, 10%), hsl(0, 20%, 8%));
     min-height: 100vh;
+    transition: background-color 0.5s ease, color 0.3s ease;
+  }
+
+  /* Apply gradient only for default theme */
+  body:not(.theme-christmas):not(.theme-newyear) {
+    background: linear-gradient(180deg, hsl(0, 25%, 10%), hsl(0, 20%, 8%));
   }
   
   /* Scrollbar styling */
@@ -84,7 +191,7 @@ All colors MUST be HSL.
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-burgundy-light;
+    @apply bg-primary/50;
   }
   
   /* Boovi Avatar Animations */
@@ -130,5 +237,17 @@ All colors MUST be HSL.
   
   .boovi-focused {
     animation: boovi-focused 1.5s ease-in-out infinite;
+  }
+
+  /* Christmas cozy glow */
+  .christmas-glow {
+    box-shadow: 0 0 30px hsl(var(--christmas-gold) / 0.2),
+                0 0 60px hsl(var(--christmas-gold) / 0.1);
+  }
+
+  /* Softer shadows for Christmas */
+  .theme-christmas .shadow-lg {
+    box-shadow: 0 10px 25px -5px hsl(var(--christmas-pine) / 0.1),
+                0 4px 10px -5px hsl(var(--christmas-pine) / 0.05);
   }
 }
