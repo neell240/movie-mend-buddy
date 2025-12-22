@@ -394,13 +394,17 @@ export const AIChat = () => {
               </div>
             )}
             <div
-              className={`max-w-[80%] rounded-lg p-3 ${
+              className={`max-w-[80%] rounded-2xl p-4 ${
                 message.role === "user"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted"
+                  : "bg-card border border-border shadow-sm"
               }`}
             >
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              <p className={`whitespace-pre-wrap leading-relaxed ${
+                message.role === "assistant" 
+                  ? "text-foreground text-[15px]" 
+                  : ""
+              }`}>{message.content}</p>
               {message.movies && message.movies.length > 0 && (
                 <div className="grid grid-cols-2 gap-3 mt-4">
                   {message.movies.map((movie) => (
