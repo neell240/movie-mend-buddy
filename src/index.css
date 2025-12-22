@@ -80,9 +80,9 @@ All colors MUST be HSL.
     --secondary: 355 45% 25%;
     --secondary-foreground: 45 60% 96%;
 
-    /* Dark red muted */
-    --muted: 355 40% 22%;
-    --muted-foreground: 45 40% 85%;
+    /* Dark muted for cards - readable on both dark and light backgrounds */
+    --muted: 42 30% 90%;
+    --muted-foreground: 355 25% 35%;
 
     /* Gold accent for highlights */
     --accent: 42 85% 60%;
@@ -91,8 +91,8 @@ All colors MUST be HSL.
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 355 35% 28%;
-    --input: 355 40% 24%;
+    --border: 42 35% 85%;
+    --input: 42 40% 92%;
     --ring: 42 85% 60%;
 
     --radius: 1.25rem;

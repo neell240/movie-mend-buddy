@@ -27,7 +27,7 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => {
     >
       <div className="pr-8">
         <div className="flex items-start justify-between gap-2 mb-1">
-          <h4 className="font-medium text-sm">{notification.title}</h4>
+          <h4 className="font-medium text-sm text-card-foreground">{notification.title}</h4>
           {!notification.read && (
             <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-1" />
           )}

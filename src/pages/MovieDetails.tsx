@@ -162,11 +162,11 @@ const MovieDetails = () => {
 
           {/* Ratings */}
           <div className="mb-6 bg-card rounded-2xl p-4 border border-border">
-            <h3 className="font-semibold mb-3">Rating</h3>
+            <h3 className="font-semibold mb-3 text-card-foreground">Rating</h3>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Star className="w-8 h-8 fill-yellow-500 text-yellow-500" />
-                <span className="text-4xl font-bold">{rating}</span>
+                <span className="text-4xl font-bold text-card-foreground">{rating}</span>
                 <span className="text-sm text-muted-foreground">/ 5</span>
               </div>
               <div className="flex-1">
