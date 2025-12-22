@@ -63,15 +63,15 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TreePine className="w-5 h-5 text-green-500" />
+          <TreePine className="w-5 h-5 text-[hsl(var(--christmas-forest))]" />
           <h2 className="text-lg font-bold text-foreground">
-            🎄 Christmas Movies to Watch
+            Christmas Movies 🎄
           </h2>
         </div>
         <Button
           variant="ghost"
           size="sm"
-          className="text-xs text-christmas-red hover:text-christmas-red/80"
+          className="text-xs text-[hsl(var(--christmas-cranberry))] hover:text-[hsl(var(--christmas-cranberry))]/80 hover:bg-[hsl(var(--christmas-cranberry))]/10 rounded-xl"
           onClick={() => navigate("/search?q=christmas")}
         >
           See All
@@ -79,7 +79,7 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Let Boovi find tonight's perfect Christmas movie 👻🍿
+        Cozy up with a perfect holiday film ☕🍿
       </p>
 
       {isLoading ? (
