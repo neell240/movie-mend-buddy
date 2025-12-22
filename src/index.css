@@ -48,6 +48,11 @@ All colors MUST be HSL.
     --red-bright: 0 100% 62%;
     --red-hover: 0 100% 56%;
     
+    /* Christmas colors */
+    --christmas-red: 0 80% 50%;
+    --christmas-green: 140 60% 40%;
+    --christmas-gold: 45 90% 55%;
+    
     /* Gradients */
     --gradient-dark: linear-gradient(180deg, hsl(0, 25%, 10%), hsl(0, 20%, 8%));
     --gradient-card: linear-gradient(135deg, hsl(0, 25%, 15%), hsl(0, 20%, 12%));

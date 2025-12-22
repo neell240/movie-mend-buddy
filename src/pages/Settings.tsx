@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronLeft, Bell, User, Globe, Shield, Palette, Info, Eye, Users, Lock, Crown, Wrench } from "lucide-react";
+import { ChevronLeft, Bell, User, Globe, Shield, Palette, Info, Eye, Users, Lock, Crown, Wrench, Snowflake } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -13,11 +13,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { PremiumBadge } from "@/components/PremiumBadge";
 import { BooviGold } from "@/components/BooviGold";
+import { useChristmas } from "@/hooks/useChristmasMode";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { isPremium, isAdmin, togglePremium, setAdminStatus, isLoading: premiumLoading } = usePremium();
+  const { isChristmasSeason, settings: christmasSettings, toggleChristmasMode, toggleSnowfall } = useChristmas();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
   const [autoPlayTrailers, setAutoPlayTrailers] = useState(false);
@@ -220,6 +222,50 @@ const Settings = () => {
               onCheckedChange={handleAutoPlayToggle}
             />
           </div>
+
+          {/* Christmas Theme Toggle */}
+          {isChristmasSeason && (
+            <>
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="space-y-1">
+                  <Label htmlFor="christmas-mode" className="flex items-center gap-2">
+                    <Snowflake className="w-4 h-4 text-christmas-green" />
+                    Christmas Theme 🎄
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Enable festive decorations and Christmas movies
+                  </p>
+                </div>
+                <Switch
+                  id="christmas-mode"
+                  checked={christmasSettings.enabled}
+                  onCheckedChange={(checked) => {
+                    toggleChristmasMode(checked);
+                    toast.success(checked ? "Christmas mode enabled! 🎄" : "Christmas mode disabled");
+                  }}
+                />
+              </div>
+
+              {christmasSettings.enabled && (
+                <div className="flex items-center justify-between pl-6">
+                  <div className="space-y-1">
+                    <Label htmlFor="snowfall">Snowfall Effect</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Show falling snow animation
+                    </p>
+                  </div>
+                  <Switch
+                    id="snowfall"
+                    checked={christmasSettings.snowfall}
+                    onCheckedChange={(checked) => {
+                      toggleSnowfall(checked);
+                      toast.success(checked ? "Let it snow! ❄️" : "Snowfall disabled");
+                    }}
+                  />
+                </div>
+              )}
+            </>
+          )}
         </Card>
 
         {/* Privacy & Security */}
