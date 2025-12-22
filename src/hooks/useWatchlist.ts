@@ -143,6 +143,32 @@ export const useWatchlist = () => {
     },
   });
 
+  const rateMovie = useMutation({
+    mutationFn: async ({ movieId, rating }: { movieId: number; rating: number }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Must be logged in");
+
+      const { error } = await supabase
+        .from("watchlist")
+        .update({
+          rating,
+          status: 'watched',
+          watched_at: new Date().toISOString(),
+        })
+        .eq("user_id", user.id)
+        .eq("movie_id", movieId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+      toast({
+        title: "Rated!",
+        description: "Your rating has been saved",
+      });
+    },
+  });
+
   const isInWatchlist = (movieId: number) => {
     return watchlist.some(item => item.movie_id === movieId);
   };
@@ -153,6 +179,7 @@ export const useWatchlist = () => {
     addToWatchlist,
     removeFromWatchlist,
     markAsWatched,
+    rateMovie,
     isInWatchlist,
     refetch,
   };
