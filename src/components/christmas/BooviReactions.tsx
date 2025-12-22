@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, TargetAndTransition } from "framer-motion";
 import { cn } from "@/lib/utils";
 import booviSanta from "@/assets/boovi-christmas-santa.png";
 
@@ -28,7 +28,7 @@ const reactionEmojis: Record<BooviReaction, string> = {
   idle: "",
 };
 
-const reactionAnimations: Record<BooviReaction, object> = {
+const reactionAnimations: Record<BooviReaction, TargetAndTransition> = {
   wave: {
     rotate: [0, -15, 15, -15, 15, 0],
     y: [0, -5, 0],
