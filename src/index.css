@@ -54,51 +54,52 @@ All colors MUST be HSL.
     --gradient-card: linear-gradient(135deg, hsl(0, 25%, 15%), hsl(0, 20%, 12%));
   }
 
-  /* Christmas Theme (Dec 23-31) - Cozy, Playful, Magical */
+  /* Christmas Theme (Dec 23-31) - Cozy, Premium, Magical */
   .theme-christmas {
-    /* Deep forest green gradient background */
-    --background: 145 45% 18%;
-    --foreground: 30 40% 95%;
+    /* Deep Christmas green - #1d351d as base */
+    --background: 120 32% 16%;
+    --foreground: 35 45% 94%;
 
-    /* Warm cream/beige cards */
-    --card: 35 55% 88%;
-    --card-foreground: 145 40% 15%;
+    /* Warm cream cards - #f6efe4 */
+    --card: 36 48% 93%;
+    --card-foreground: 120 32% 12%;
 
-    --popover: 35 50% 85%;
-    --popover-foreground: 145 40% 15%;
+    --popover: 36 45% 90%;
+    --popover-foreground: 120 32% 12%;
 
-    /* Soft cranberry red primary CTA */
-    --primary: 355 55% 45%;
+    /* Soft cranberry red CTA - #8b181d */
+    --primary: 357 72% 32%;
     --primary-foreground: 0 0% 100%;
 
-    /* Forest green secondary */
-    --secondary: 145 35% 28%;
-    --secondary-foreground: 30 40% 95%;
+    /* Forest green secondary - #325632 */
+    --secondary: 120 28% 26%;
+    --secondary-foreground: 35 45% 94%;
 
-    --muted: 145 30% 25%;
-    --muted-foreground: 30 30% 80%;
+    --muted: 120 25% 22%;
+    --muted-foreground: 35 35% 80%;
 
-    /* Cranberry accent */
-    --accent: 355 50% 42%;
+    /* Wine red accent - #6f0f11 */
+    --accent: 358 77% 25%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 355 55% 45%;
+    --destructive: 357 72% 32%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 145 25% 30%;
-    --input: 145 30% 25%;
-    --ring: 355 55% 45%;
+    --border: 120 20% 24%;
+    --input: 120 25% 20%;
+    --ring: 357 72% 32%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
-    /* Christmas specific colors - playful & cozy */
-    --christmas-pine: 145 45% 18%;
-    --christmas-forest: 145 40% 24%;
-    --christmas-red: 355 55% 45%;
-    --christmas-cranberry: 355 50% 42%;
-    --christmas-cream: 35 55% 88%;
-    --christmas-beige: 35 45% 82%;
-    --christmas-gold: 42 75% 55%;
+    /* Christmas specific colors - locked palette */
+    --christmas-pine: 120 32% 16%;
+    --christmas-pine-light: 120 28% 22%;
+    --christmas-forest: 120 28% 26%;
+    --christmas-red: 357 72% 32%;
+    --christmas-wine: 358 77% 25%;
+    --christmas-cream: 36 48% 93%;
+    --christmas-beige: 30 55% 75%;
+    --christmas-gold: 38 75% 58%;
     --christmas-snow: 0 0% 98%;
   }
 
@@ -244,55 +245,85 @@ All colors MUST be HSL.
     animation: boovi-focused 1.5s ease-in-out infinite;
   }
 
-  /* Christmas warm glow */
+  /* Christmas warm glow - soft gold */
   .christmas-glow {
-    box-shadow: 0 0 30px hsl(var(--christmas-gold) / 0.25),
-                0 0 60px hsl(var(--christmas-gold) / 0.1);
+    box-shadow: 0 0 40px hsl(var(--christmas-gold) / 0.3),
+                0 0 80px hsl(var(--christmas-gold) / 0.15);
   }
 
-  /* Softer, warmer shadows for Christmas */
+  /* Soft, warm shadows for Christmas */
   .theme-christmas .shadow-lg {
-    box-shadow: 0 12px 35px -8px hsl(145 50% 10% / 0.35),
-                0 4px 15px -5px hsl(145 50% 10% / 0.2);
+    box-shadow: 0 16px 40px -10px hsl(120 32% 8% / 0.4),
+                0 6px 16px -6px hsl(120 32% 8% / 0.25);
   }
 
-  /* Christmas gradient background - deep forest with warmth */
+  /* Christmas gradient background - deep forest with gradient */
   .theme-christmas body,
   .theme-christmas {
-    background: linear-gradient(160deg, hsl(145 45% 20%) 0%, hsl(145 50% 14%) 50%, hsl(150 55% 10%) 100%);
+    background: linear-gradient(165deg, 
+      hsl(120 32% 18%) 0%, 
+      hsl(120 35% 14%) 40%, 
+      hsl(125 38% 10%) 100%);
   }
 
-  /* Cozy card styling with layered depth */
+  /* Premium cozy card styling */
   .theme-christmas .cozy-card {
-    background: linear-gradient(145deg, hsl(35 55% 90%), hsl(35 50% 86%));
-    border-radius: 1.25rem;
-    box-shadow: 0 12px 30px -6px hsl(145 50% 8% / 0.3),
-                0 4px 12px -4px hsl(145 50% 8% / 0.15),
-                inset 0 1px 2px hsl(0 0% 100% / 0.3);
+    background: linear-gradient(145deg, 
+      hsl(36 48% 95%) 0%, 
+      hsl(36 45% 91%) 100%);
+    border-radius: 1.5rem;
+    box-shadow: 
+      0 20px 50px -15px hsl(120 32% 6% / 0.35),
+      0 8px 20px -8px hsl(120 32% 6% / 0.2),
+      inset 0 1px 3px hsl(0 0% 100% / 0.5);
   }
 
-  /* Soft CTA glow - not harsh */
+  /* Soft CTA glow - warm not harsh */
   .theme-christmas .cta-glow {
-    box-shadow: 0 6px 25px hsl(var(--christmas-red) / 0.3),
-                0 2px 10px hsl(var(--christmas-red) / 0.15);
+    box-shadow: 
+      0 8px 30px hsl(var(--christmas-red) / 0.35),
+      0 4px 15px hsl(var(--christmas-red) / 0.2);
+    transition: all 0.3s ease;
   }
 
-  /* Playful rounded elements */
-  .theme-christmas .rounded-xl {
-    border-radius: 1.25rem;
+  .theme-christmas .cta-glow:hover {
+    box-shadow: 
+      0 12px 40px hsl(var(--christmas-red) / 0.45),
+      0 6px 20px hsl(var(--christmas-red) / 0.25);
+    transform: translateY(-2px);
   }
 
   /* Snow white accent glow */
   .theme-christmas .snow-glow {
-    box-shadow: 0 0 20px hsl(0 0% 100% / 0.15),
-                0 0 40px hsl(0 0% 100% / 0.08);
+    box-shadow: 0 0 25px hsl(0 0% 100% / 0.2),
+                0 0 50px hsl(0 0% 100% / 0.1);
   }
 
   /* Gold shimmer effect */
   .theme-christmas .gold-shimmer {
     background: linear-gradient(135deg, 
-      hsl(var(--christmas-gold) / 0.1) 0%, 
-      hsl(var(--christmas-gold) / 0.3) 50%, 
-      hsl(var(--christmas-gold) / 0.1) 100%);
+      hsl(var(--christmas-gold) / 0.15) 0%, 
+      hsl(var(--christmas-gold) / 0.35) 50%, 
+      hsl(var(--christmas-gold) / 0.15) 100%);
+  }
+
+  /* Sparkle animation */
+  @keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  .theme-christmas .animate-sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  /* Confetti burst animation */
+  @keyframes confetti-fall {
+    0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .animate-confetti {
+    animation: confetti-fall 3s ease-out forwards;
   }
 }
