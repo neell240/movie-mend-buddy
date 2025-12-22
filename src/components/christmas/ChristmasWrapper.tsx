@@ -26,7 +26,7 @@ export const ChristmasWrapper = () => {
 
   return (
     <>
-      <Snowfall enabled={showSnowfall} intensity="light" />
+      <Snowfall enabled={showSnowfall} />
     </>
   );
 };
