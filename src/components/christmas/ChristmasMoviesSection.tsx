@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MovieCard } from "@/components/MovieCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TreePine } from "lucide-react";
+import { TreePine, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 // Christmas movie IDs from TMDB
 const CHRISTMAS_MOVIE_IDS = [
@@ -40,49 +41,65 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
   });
 
   return (
-    <section className="cozy-card p-5 space-y-4">
+    <motion.section 
+      className="cozy-card p-5 space-y-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.25 }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TreePine className="w-5 h-5 text-[hsl(120,28%,30%)]" />
-          <h2 className="text-lg font-bold text-[hsl(120,32%,16%)]">
+          <motion.div
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            <TreePine className="w-5 h-5 text-[hsl(145,30%,35%)]" />
+          </motion.div>
+          <h2 className="text-lg font-bold text-[hsl(20,15%,18%)]">
             Christmas Movies 🎄
           </h2>
         </div>
         <Button
-          variant="outline"
           size="sm"
-          className="text-xs border-[hsl(120,28%,26%)] text-[hsl(120,32%,25%)] hover:bg-[hsl(120,28%,90%)] rounded-xl"
           onClick={() => navigate("/search?q=christmas")}
+          className="text-xs rounded-xl cta-glow text-white"
         >
+          <Sparkles className="w-3 h-3 mr-1" />
           See All
         </Button>
       </div>
 
-      <p className="text-sm text-[hsl(120,28%,40%)]">
+      <p className="text-sm text-[hsl(20,15%,45%)]">
         Cozy up with a perfect holiday film ☕🍿
       </p>
 
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="aspect-[2/3] rounded-xl bg-[hsl(120,20%,85%)]" />
+            <Skeleton key={i} className="aspect-[2/3] rounded-xl bg-[hsl(42,40%,90%)]" />
           ))}
         </div>
       ) : movies && movies.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {movies.map((movie: any) => (
-            <MovieCard
+          {movies.map((movie: any, index: number) => (
+            <motion.div
               key={movie.id}
-              movie={movie}
-              onClick={() => navigate(`/movie/${movie.id}`)}
-            />
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * index }}
+            >
+              <MovieCard
+                movie={movie}
+                onClick={() => navigate(`/movie/${movie.id}`)}
+              />
+            </motion.div>
           ))}
         </div>
       ) : (
-        <p className="text-center text-[hsl(120,28%,40%)] py-8">
+        <p className="text-center text-[hsl(20,15%,50%)] py-8">
           No Christmas movies found
         </p>
       )}
-    </section>
+    </motion.section>
   );
 };
