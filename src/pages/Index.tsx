@@ -16,12 +16,13 @@ import { ChristmasBoovi } from "@/components/christmas/ChristmasBoovi";
 import { ChristmasHeroBanner } from "@/components/christmas/ChristmasHeroBanner";
 import { ChristmasDailyPick } from "@/components/christmas/ChristmasDailyPick";
 import { ChristmasOnboarding, useChristmasOnboarding } from "@/components/christmas/ChristmasOnboarding";
+import { Snowfall } from "@/components/christmas/Snowfall";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
   const { watchlist } = useWatchlist();
-  const { isChristmas } = useSeasonal();
+  const { isChristmas, showSnowfall } = useSeasonal();
   const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
   
   const { data: moviesData, isLoading } = useDiscoverMovies({
@@ -39,6 +40,9 @@ const Index = () => {
 
   return (
     <>
+      {/* Global Snowfall for Christmas */}
+      {isChristmas && <Snowfall enabled={showSnowfall} />}
+
       {/* Christmas First-Launch Onboarding */}
       {isChristmas && showOnboarding && (
         <ChristmasOnboarding onComplete={completeOnboarding} />
@@ -46,16 +50,31 @@ const Index = () => {
       
       <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
         {/* Header */}
-        <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
+        <header 
+          className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
+          style={isChristmas ? {
+            background: "linear-gradient(to right, hsl(120 32% 14% / 0.95), hsl(120 35% 12% / 0.95))",
+            borderColor: "hsl(120 25% 22%)",
+          } : {
+            background: "hsl(var(--background) / 0.8)",
+            borderColor: "hsl(var(--border))",
+          }}
+        >
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {isChristmas ? (
-                  <ChristmasBoovi size="sm" />
+                  <ChristmasBoovi size="sm" showGlow={false} />
                 ) : (
                   <Sparkles className="w-6 h-6 text-primary" />
                 )}
-                <h1 className="text-xl font-bold">
+                <h1 
+                  className="text-xl font-bold"
+                  style={isChristmas ? { 
+                    color: "hsl(38 38% 93%)",
+                    textShadow: "0 2px 8px hsl(120 32% 8% / 0.4)"
+                  } : undefined}
+                >
                   {isChristmas ? "MovieMend 🎄" : "MovieMend"}
                 </h1>
               </div>
@@ -66,6 +85,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/preferences")}
                   title="Setup Preferences"
+                  className={isChristmas ? "text-[hsl(38,38%,85%)] hover:text-[hsl(30,60%,75%)] hover:bg-[hsl(120,28%,22%)]" : ""}
                 >
                   <Wrench className="w-5 h-5" />
                 </Button>
@@ -74,6 +94,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/settings")}
                   title="Settings"
+                  className={isChristmas ? "text-[hsl(38,38%,85%)] hover:text-[hsl(30,60%,75%)] hover:bg-[hsl(120,28%,22%)]" : ""}
                 >
                   <Settings className="w-5 h-5" />
                 </Button>
@@ -93,61 +114,71 @@ const Index = () => {
             <ChristmasDailyPick />
           )}
 
-        {/* Personalized Recommendations */}
-        {hasRatedMovies && (
-          <PersonalizedRecommendations />
-        )}
-
-        {/* Movies Section */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-muted-foreground">
-              {preferences.platforms.length > 0 
-                ? `Available on Your Platforms` 
-                : 'Popular Movies'}
-            </h3>
-            {preferences.platforms.length === 0 && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => navigate("/preferences")}
-                className="text-xs"
-              >
-                Select Platforms
-              </Button>
-            )}
-          </div>
-          
-          {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
-                <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
-              ))}
-            </div>
-          ) : moviesData?.results && moviesData.results.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {moviesData.results.slice(0, 18).map((movie) => (
-                <MovieCard
-                  key={movie.id}
-                  movie={movie}
-                  onClick={() => navigate(`/movie/${movie.id}`)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <p className="mb-4">No movies found for your selected platforms.</p>
-              <Button onClick={() => navigate("/preferences")} variant="outline">
-                Update Preferences
-              </Button>
-            </div>
-          )}
-        </section>
-
-          {/* Christmas Movies Section */}
+          {/* Christmas Movies Section - BEFORE Popular */}
           {isChristmas && (
             <ChristmasMoviesSection limit={6} />
           )}
+
+          {/* Personalized Recommendations */}
+          {hasRatedMovies && (
+            <PersonalizedRecommendations />
+          )}
+
+          {/* Movies Section */}
+          <section 
+            className={isChristmas ? "cozy-card p-5" : ""}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 
+                className={isChristmas 
+                  ? "text-base font-bold text-[hsl(120,32%,16%)]" 
+                  : "text-sm font-semibold text-muted-foreground"
+                }
+              >
+                {preferences.platforms.length > 0 
+                  ? `Available on Your Platforms` 
+                  : 'Popular Movies'}
+              </h3>
+              {preferences.platforms.length === 0 && (
+                <Button
+                  size="sm"
+                  variant={isChristmas ? "outline" : "ghost"}
+                  onClick={() => navigate("/preferences")}
+                  className={isChristmas 
+                    ? "text-xs border-[hsl(120,28%,26%)] text-[hsl(120,32%,25%)] hover:bg-[hsl(120,28%,90%)]" 
+                    : "text-xs"
+                  }
+                >
+                  Select Platforms
+                </Button>
+              )}
+            </div>
+            
+            {isLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+                  <Skeleton key={i} className="aspect-[2/3] rounded-xl" />
+                ))}
+              </div>
+            ) : moviesData?.results && moviesData.results.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                {moviesData.results.slice(0, 18).map((movie) => (
+                  <MovieCard
+                    key={movie.id}
+                    movie={movie}
+                    onClick={() => navigate(`/movie/${movie.id}`)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p className="mb-4">No movies found for your selected platforms.</p>
+                <Button onClick={() => navigate("/preferences")} variant="outline">
+                  Update Preferences
+                </Button>
+              </div>
+            )}
+          </section>
         </main>
 
         <BottomNav />
