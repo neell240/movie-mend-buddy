@@ -1,5 +1,5 @@
 import { useSeasonal } from "@/hooks/useChristmasMode";
-import booviSanta from "@/assets/boovi-christmas-santa.png";
+import booviPopcorn from "@/assets/boovi-christmas-popcorn.png";
 import { Sparkles } from "lucide-react";
 
 interface ChristmasBannerProps {
@@ -46,7 +46,7 @@ export const ChristmasBanner = ({ className }: ChristmasBannerProps) => {
           <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-gold))] opacity-25 blur-2xl scale-150" />
           <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-snow))] opacity-15 blur-xl scale-125" />
           <img 
-            src={booviSanta} 
+            src={booviPopcorn} 
             alt="Christmas Boovi" 
             className="w-24 h-24 object-contain relative z-10 animate-boovi-float drop-shadow-lg"
           />

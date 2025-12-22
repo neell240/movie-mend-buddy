@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import booviSanta from "@/assets/boovi-christmas-santa.png";
+import booviPopcorn from "@/assets/boovi-christmas-popcorn.png";
 
 interface ChristmasBooviProps {
   className?: string;
@@ -30,7 +30,7 @@ export const ChristmasBoovi = ({
       
       {/* Main Christmas Boovi image */}
       <img
-        src={booviSanta}
+        src={booviPopcorn}
         alt="Christmas Boovi"
         className={cn(
           sizeClasses[size],
