@@ -157,11 +157,11 @@ const Index = () => {
               {preferences.platforms.length === 0 && (
                 <Button
                   size="sm"
-                  variant={isChristmas ? "outline" : "ghost"}
+                  variant="default"
                   onClick={() => navigate("/preferences")}
                   className={isChristmas 
-                    ? "text-xs border-[hsl(120,28%,26%)] text-[hsl(120,32%,25%)] hover:bg-[hsl(120,28%,90%)]" 
-                    : "text-xs"
+                    ? "text-xs bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white font-semibold shadow-lg animate-pulse" 
+                    : "text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md"
                   }
                 >
                   Select Platforms
