@@ -15,11 +15,11 @@ export const BottomNav = () => {
     { icon: Bookmark, label: "Watchlist", path: "/watchlist" },
   ];
 
-  // Christmas theme: dark pine green background, red active, cream inactive
+  // Christmas theme: cozy forest green with warm accents
   const christmasStyles = isChristmas ? {
-    nav: "bg-[hsl(120,30%,12%)] border-[hsl(120,20%,18%)]",
-    active: "text-[hsl(var(--christmas-red))]",
-    inactive: "text-[hsl(var(--christmas-cream))] hover:text-[hsl(var(--christmas-gold))]",
+    nav: "bg-gradient-to-r from-[hsl(145,45%,16%)] to-[hsl(145,50%,14%)] border-[hsl(145,35%,22%)]",
+    active: "text-[hsl(var(--christmas-cranberry))]",
+    inactive: "text-[hsl(35,50%,85%)] hover:text-[hsl(var(--christmas-gold))]",
   } : {
     nav: "bg-burgundy-base border-burgundy-light",
     active: "text-primary lg:bg-primary/10",

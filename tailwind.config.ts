@@ -58,8 +58,13 @@ export default {
         },
         christmas: {
           red: "hsl(var(--christmas-red))",
-          green: "hsl(var(--christmas-green))",
+          cranberry: "hsl(var(--christmas-cranberry))",
+          forest: "hsl(var(--christmas-forest))",
+          pine: "hsl(var(--christmas-pine))",
+          cream: "hsl(var(--christmas-cream))",
+          beige: "hsl(var(--christmas-beige))",
           gold: "hsl(var(--christmas-gold))",
+          snow: "hsl(var(--christmas-snow))",
         },
       },
       borderRadius: {

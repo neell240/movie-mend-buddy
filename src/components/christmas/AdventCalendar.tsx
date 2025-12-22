@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Gift, Calendar, Sparkles, Play } from "lucide-react";
-import { ChristmasBoovi } from "./ChristmasBoovi";
+import booviSanta from "@/assets/boovi-christmas-santa.png";
 import { useSeasonal } from "@/hooks/useChristmasMode";
 
 // Daily Christmas movie picks (25 days)
@@ -40,7 +40,7 @@ interface AdventCalendarProps {
 
 export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   const navigate = useNavigate();
-  const { daysUntilChristmas, isChristmasDay } = useSeasonal();
+  const { daysUntilChristmas } = useSeasonal();
   const [today, setToday] = useState(new Date());
   const [isRevealed, setIsRevealed] = useState(false);
 
@@ -76,12 +76,19 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   // After Christmas
   if (currentMonth === 11 && currentDay > 25) {
     return (
-      <div className={`bg-card rounded-2xl p-5 ${className}`}>
-        <div className="flex items-center gap-4">
-          <ChristmasBoovi size="md" />
+      <div className={`relative overflow-hidden rounded-3xl ${className}`}>
+        {/* Warm cream background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(35,55%,90%)] to-[hsl(35,50%,85%)]" />
+        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[hsl(var(--christmas-gold))] opacity-15 blur-2xl" />
+        
+        <div className="relative z-10 p-6 flex items-center gap-5">
+          <div className="relative flex-shrink-0">
+            <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-gold))] opacity-20 blur-xl scale-125" />
+            <img src={booviSanta} alt="Christmas Boovi" className="w-20 h-20 object-contain relative z-10" />
+          </div>
           <div>
-            <h3 className="font-bold text-lg text-card-foreground">Hope you had a Merry Christmas! 🎄</h3>
-            <p className="text-sm text-card-foreground/70">
+            <h3 className="font-bold text-xl text-[hsl(145,45%,15%)]">Hope you had a wonderful Christmas! 🎄</h3>
+            <p className="text-sm text-[hsl(145,30%,30%)] mt-1">
               See you next year for more movie magic!
             </p>
           </div>
@@ -93,64 +100,83 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
   if (!isDecember) return null;
 
   return (
-    <div className={`bg-card rounded-2xl p-5 shadow-lg overflow-hidden ${className}`}>
-      <div className="relative">
-        {/* Decorative elements */}
-        <div className="absolute -top-4 -right-4 text-4xl opacity-10">🎄</div>
-        <div className="absolute -bottom-4 -left-4 text-4xl opacity-10">🎁</div>
+    <div className={`relative overflow-hidden rounded-3xl ${className}`}>
+      {/* Warm cream/beige card background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(35,55%,90%)] via-[hsl(35,52%,88%)] to-[hsl(35,48%,85%)]" />
+      
+      {/* Decorative elements */}
+      <div className="absolute -top-8 -right-8 w-28 h-28 rounded-full bg-[hsl(var(--christmas-cranberry))] opacity-10 blur-2xl" />
+      <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-[hsl(var(--christmas-gold))] opacity-15 blur-2xl" />
+      <div className="absolute top-1/2 right-8 w-20 h-20 rounded-full bg-[hsl(var(--christmas-forest))] opacity-8 blur-xl" />
+      
+      {/* Subtle pattern dots */}
+      <div className="absolute top-4 right-12 w-2 h-2 rounded-full bg-[hsl(var(--christmas-cranberry))] opacity-20" />
+      <div className="absolute bottom-8 left-1/3 w-1.5 h-1.5 rounded-full bg-[hsl(var(--christmas-forest))] opacity-25" />
+      <div className="absolute top-1/3 left-8 w-2 h-2 rounded-full bg-[hsl(var(--christmas-gold))] opacity-30" />
 
-        <div className="flex items-start gap-4 relative z-10">
-          <div className="flex-shrink-0">
-            <ChristmasBoovi size="lg" showGlow={isRevealed} />
+      <div className="relative z-10 p-6">
+        <div className="flex items-start gap-5">
+          {/* Boovi with cozy glow */}
+          <div className="relative flex-shrink-0">
+            <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-gold))] opacity-25 blur-2xl scale-150" />
+            <div className="absolute inset-0 rounded-full bg-white opacity-10 blur-xl scale-125" />
+            <img 
+              src={booviSanta} 
+              alt="Christmas Boovi" 
+              className="w-24 h-24 object-contain relative z-10 animate-boovi-float drop-shadow-md"
+            />
           </div>
 
           <div className="flex-1 space-y-3">
+            {/* Date badge */}
             <div className="flex items-center gap-2 flex-wrap">
-              <Calendar className="w-4 h-4 text-[hsl(var(--christmas-wine))]" />
-              <span className="text-sm font-medium text-card-foreground/70">
-                December {currentDay}
-              </span>
+              <div className="flex items-center gap-1.5 bg-[hsl(var(--christmas-forest))] px-3 py-1 rounded-full">
+                <Calendar className="w-3.5 h-3.5 text-white" />
+                <span className="text-xs font-medium text-white">
+                  December {currentDay}
+                </span>
+              </div>
               {daysUntilChristmas > 0 && (
-                <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-secondary-foreground">
-                  {daysUntilChristmas} days left
+                <span className="text-xs bg-[hsl(var(--christmas-cranberry))] text-white px-2.5 py-1 rounded-full font-medium">
+                  {daysUntilChristmas} days left ✨
                 </span>
               )}
             </div>
 
-            <h3 className="font-bold text-lg text-card-foreground flex items-center gap-2">
-              <Gift className="w-5 h-5 text-[hsl(var(--christmas-wine))]" />
-              Today's Christmas Movie Pick
+            <h3 className="font-bold text-xl text-[hsl(145,45%,15%)] flex items-center gap-2">
+              <Gift className="w-5 h-5 text-[hsl(var(--christmas-cranberry))]" />
+              Today's Movie Pick
             </h3>
 
             {!isRevealed ? (
               <div className="space-y-3">
-                <p className="text-sm text-card-foreground/70">
-                  Boovi has a special movie for you today!
+                <p className="text-sm text-[hsl(145,30%,30%)]">
+                  Boovi has picked a special movie just for you! 🎁
                 </p>
                 <Button 
                   onClick={handleReveal}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground cta-glow"
+                  className="bg-[hsl(var(--christmas-cranberry))] hover:bg-[hsl(355,55%,40%)] text-white rounded-xl px-5 py-2.5 shadow-lg cta-glow"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Reveal Today's Pick
+                  Unwrap Today's Pick
                 </Button>
               </div>
             ) : todaysMovie ? (
               <div className="space-y-3 animate-fade-in">
-                <div className="bg-secondary/30 rounded-xl p-4 border border-border/50">
-                  <p className="font-semibold text-lg text-card-foreground">
-                    🎁 {todaysMovie.title}
+                <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-[hsl(var(--christmas-gold))]/20 shadow-inner">
+                  <p className="font-bold text-xl text-[hsl(145,45%,15%)]">
+                    🎬 {todaysMovie.title}
                   </p>
-                  <p className="text-sm text-card-foreground/70">
-                    ({todaysMovie.year})
+                  <p className="text-sm text-[hsl(145,30%,35%)] mt-0.5">
+                    {todaysMovie.year}
                   </p>
                 </div>
                 <Button 
                   onClick={handleWatchMovie}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="bg-[hsl(var(--christmas-forest))] hover:bg-[hsl(145,40%,22%)] text-white rounded-xl px-5 py-2.5 shadow-lg"
                 >
                   <Play className="w-4 h-4 mr-2" />
-                  View Movie
+                  View Movie Details
                 </Button>
               </div>
             ) : null}

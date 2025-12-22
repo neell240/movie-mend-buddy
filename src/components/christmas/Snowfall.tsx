@@ -8,6 +8,7 @@ interface Snowflake {
   duration: number;
   size: number;
   opacity: number;
+  drift: number;
 }
 
 interface SnowfallProps {
@@ -24,16 +25,17 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
       return;
     }
 
-    // Minimal, slow, subtle snow - only 15 flakes
-    const count = 15;
+    // Light, magical snowfall - 25 soft flakes
+    const count = 25;
     
     const flakes: Snowflake[] = Array.from({ length: count }, (_, i) => ({
       id: i,
       left: Math.random() * 100,
-      delay: Math.random() * 15,
-      duration: 20 + Math.random() * 15, // Very slow: 20-35 seconds
-      size: Math.random() * 2 + 1.5, // Small: 1.5-3.5px
-      opacity: Math.random() * 0.15 + 0.08, // Very low opacity: 0.08-0.23
+      delay: Math.random() * 12,
+      duration: 18 + Math.random() * 12, // Slow: 18-30 seconds
+      size: Math.random() * 3 + 2, // Soft: 2-5px
+      opacity: Math.random() * 0.25 + 0.15, // Gentle: 0.15-0.40
+      drift: Math.random() * 30 - 15, // Slight horizontal drift
     }));
 
     setSnowflakes(flakes);
@@ -52,7 +54,7 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
       {snowflakes.map((flake) => (
         <div
           key={flake.id}
-          className="absolute rounded-full bg-[hsl(var(--christmas-cream))] animate-snowfall"
+          className="absolute rounded-full bg-white animate-snowfall"
           style={{
             left: `${flake.left}%`,
             width: `${flake.size}px`,
@@ -60,6 +62,8 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
             opacity: flake.opacity,
             animationDelay: `${flake.delay}s`,
             animationDuration: `${flake.duration}s`,
+            filter: `blur(${flake.size > 3.5 ? 0.5 : 0}px)`,
+            boxShadow: `0 0 ${flake.size * 2}px hsl(0 0% 100% / 0.3)`,
           }}
         />
       ))}
