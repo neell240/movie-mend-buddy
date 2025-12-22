@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
@@ -10,16 +11,18 @@ import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { useSeasonal } from "@/hooks/useChristmasMode";
-import { AdventCalendar } from "@/components/christmas/AdventCalendar";
 import { ChristmasMoviesSection } from "@/components/christmas/ChristmasMoviesSection";
 import { ChristmasBoovi } from "@/components/christmas/ChristmasBoovi";
-import { ChristmasBanner } from "@/components/christmas/ChristmasBanner";
+import { ChristmasHeroBanner } from "@/components/christmas/ChristmasHeroBanner";
+import { ChristmasDailyPick } from "@/components/christmas/ChristmasDailyPick";
+import { ChristmasOnboarding, useChristmasOnboarding } from "@/components/christmas/ChristmasOnboarding";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
   const { watchlist } = useWatchlist();
   const { isChristmas } = useSeasonal();
+  const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
   
   const { data: moviesData, isLoading } = useDiscoverMovies({
     watchProviders: preferences.platforms.length > 0 
@@ -35,59 +38,60 @@ const Index = () => {
   const hasRatedMovies = watchlist.some(item => item.status === 'watched' && item.rating !== null);
 
   return (
-    <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
-      {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {isChristmas ? (
-                <ChristmasBoovi size="sm" />
-              ) : (
-                <Sparkles className="w-6 h-6 text-primary" />
-              )}
-              <h1 className="text-xl font-bold">
-                {isChristmas ? "MovieMend 🎄" : "MovieMend"}
-              </h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <NotificationBell />
-              <Button 
-                size="icon" 
-                variant="ghost"
-                onClick={() => navigate("/preferences")}
-                title="Setup Preferences"
-              >
-                <Wrench className="w-5 h-5" />
-              </Button>
-              <Button 
-                size="icon" 
-                variant="ghost"
-                onClick={() => navigate("/settings")}
-                title="Settings"
-              >
-                <Settings className="w-5 h-5" />
-              </Button>
+    <>
+      {/* Christmas First-Launch Onboarding */}
+      {isChristmas && showOnboarding && (
+        <ChristmasOnboarding onComplete={completeOnboarding} />
+      )}
+      
+      <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
+        {/* Header */}
+        <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border lg:top-16">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {isChristmas ? (
+                  <ChristmasBoovi size="sm" />
+                ) : (
+                  <Sparkles className="w-6 h-6 text-primary" />
+                )}
+                <h1 className="text-xl font-bold">
+                  {isChristmas ? "MovieMend 🎄" : "MovieMend"}
+                </h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <NotificationBell />
+                <Button 
+                  size="icon" 
+                  variant="ghost"
+                  onClick={() => navigate("/preferences")}
+                  title="Setup Preferences"
+                >
+                  <Wrench className="w-5 h-5" />
+                </Button>
+                <Button 
+                  size="icon" 
+                  variant="ghost"
+                  onClick={() => navigate("/settings")}
+                  title="Settings"
+                >
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-        {/* Christmas Banner */}
-        {isChristmas && (
-          <ChristmasBanner />
-        )}
+        <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+          {/* Christmas Hero Banner */}
+          {isChristmas && (
+            <ChristmasHeroBanner />
+          )}
 
-        {/* Christmas Advent Calendar */}
-        {isChristmas && (
-          <AdventCalendar />
-        )}
-
-        {/* Christmas Movies Section */}
-        {isChristmas && (
-          <ChristmasMoviesSection limit={6} />
-        )}
+          {/* Christmas Daily Pick */}
+          {isChristmas && (
+            <ChristmasDailyPick />
+          )}
 
         {/* Personalized Recommendations */}
         {hasRatedMovies && (
@@ -138,11 +142,15 @@ const Index = () => {
               </Button>
             </div>
           )}
-        </section>
-      </main>
+          {/* Christmas Movies Section */}
+          {isChristmas && (
+            <ChristmasMoviesSection limit={6} />
+          )}
+        </main>
 
-      <BottomNav />
-    </div>
+        <BottomNav />
+      </div>
+    </>
   );
 };
 
