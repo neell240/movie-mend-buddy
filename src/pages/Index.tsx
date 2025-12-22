@@ -9,7 +9,6 @@ import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
-import { PartyIcon } from "@/components/party/PartyIcon";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { useSeasonal } from "@/hooks/useChristmasMode";
 import { ChristmasMoviesSection } from "@/components/christmas/ChristmasMoviesSection";
@@ -95,7 +94,6 @@ const Index = () => {
                     <Snowflake className={`w-5 h-5 ${showSnowfall ? 'animate-pulse' : 'opacity-60'}`} />
                   </Button>
                 )}
-                <PartyIcon />
                 <NotificationBell />
                 <Button
                   size="icon" 

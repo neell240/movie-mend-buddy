@@ -21,7 +21,6 @@ import Notifications from "./pages/Notifications";
 import Social from "./pages/Social";
 import Install from "./pages/Install";
 import BooviDemo from "./pages/BooviDemo";
-import Party from "./pages/Party";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,7 +50,6 @@ const App = () => (
             <Route path="/social" element={<Social />} />
             <Route path="/install" element={<Install />} />
             <Route path="/boovi-demo" element={<BooviDemo />} />
-            <Route path="/party" element={<Party />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
