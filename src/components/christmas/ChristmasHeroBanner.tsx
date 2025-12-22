@@ -95,8 +95,8 @@ export const ChristmasHeroBanner = () => {
           </motion.div>
           
           <motion.h2 
-            className="text-2xl font-bold text-[hsl(42,50%,96%)] leading-tight"
-            style={{ textShadow: "0 2px 12px hsl(140 25% 6% / 0.4)" }}
+            className="text-2xl font-bold text-[hsl(45,60%,96%)] leading-tight"
+            style={{ textShadow: "0 2px 12px hsl(355 50% 8% / 0.4)" }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}

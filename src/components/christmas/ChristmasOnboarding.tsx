@@ -164,7 +164,7 @@ export const ChristmasOnboarding = ({ onComplete }: ChristmasOnboardingProps) =>
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] flex items-center justify-center"
         style={{
-          background: "linear-gradient(175deg, hsl(140 25% 14%) 0%, hsl(145 28% 10%) 50%, hsl(140 22% 12%) 100%)",
+          background: "linear-gradient(175deg, hsl(355 55% 22%) 0%, hsl(355 50% 16%) 50%, hsl(355 48% 14%) 100%)",
         }}
       >
         <Snowfall />

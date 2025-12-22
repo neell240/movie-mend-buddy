@@ -37,41 +37,41 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
     
     const flakes: Snowflake[] = [];
     
-    // Back layer (small, slow, blurred)
-    for (let i = 0; i < 15; i++) {
+    // Back layer (small, slow, subtle)
+    for (let i = 0; i < 10; i++) {
       flakes.push({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 20,
-        duration: 30 + Math.random() * 15,
-        size: 1.5 + Math.random() * 1.5,
-        opacity: 0.15 + Math.random() * 0.1,
+        duration: 35 + Math.random() * 20,
+        size: 1 + Math.random() * 1,
+        opacity: 0.1 + Math.random() * 0.08,
         layer: 'back',
       });
     }
     
-    // Mid layer (medium)
-    for (let i = 15; i < 30; i++) {
+    // Mid layer (medium, subtle)
+    for (let i = 10; i < 20; i++) {
       flakes.push({
         id: i,
         left: Math.random() * 100,
         delay: Math.random() * 15,
-        duration: 20 + Math.random() * 10,
-        size: 2 + Math.random() * 2,
-        opacity: 0.25 + Math.random() * 0.15,
+        duration: 25 + Math.random() * 15,
+        size: 1.5 + Math.random() * 1.5,
+        opacity: 0.12 + Math.random() * 0.1,
         layer: 'mid',
       });
     }
     
-    // Front layer (larger, faster, sharper)
-    for (let i = 30; i < 40; i++) {
+    // Front layer (slightly larger, still subtle)
+    for (let i = 20; i < 28; i++) {
       flakes.push({
         id: i,
         left: Math.random() * 100,
-        delay: Math.random() * 10,
-        duration: 12 + Math.random() * 8,
-        size: 3 + Math.random() * 2,
-        opacity: 0.35 + Math.random() * 0.2,
+        delay: Math.random() * 12,
+        duration: 18 + Math.random() * 10,
+        size: 2 + Math.random() * 1.5,
+        opacity: 0.15 + Math.random() * 0.1,
         layer: 'front',
       });
     }
@@ -141,11 +141,11 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
         />
       ))}
 
-      {/* Subtle vignette for cozy focus */}
+      {/* Subtle vignette for cozy focus - adjusted for red theme */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          boxShadow: 'inset 0 0 180px 60px hsl(140 25% 6% / 0.35)',
+          boxShadow: 'inset 0 0 180px 60px hsl(355 50% 6% / 0.3)',
         }}
       />
     </div>
