@@ -397,12 +397,12 @@ export const AIChat = () => {
               className={`max-w-[80%] rounded-2xl p-4 ${
                 message.role === "user"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-card border border-border shadow-sm"
+                  : "bg-secondary/80 border border-border shadow-sm"
               }`}
             >
               <p className={`whitespace-pre-wrap leading-relaxed ${
                 message.role === "assistant" 
-                  ? "text-foreground text-[15px]" 
+                  ? "text-secondary-foreground text-[15px] font-medium" 
                   : ""
               }`}>{message.content}</p>
               {message.movies && message.movies.length > 0 && (
