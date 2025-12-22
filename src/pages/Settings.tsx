@@ -13,13 +13,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { PremiumBadge } from "@/components/PremiumBadge";
 import { BooviGold } from "@/components/BooviGold";
-import { useChristmas } from "@/hooks/useChristmasMode";
+import { useSeasonal } from "@/hooks/useChristmasMode";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { isPremium, isAdmin, togglePremium, setAdminStatus, isLoading: premiumLoading } = usePremium();
-  const { isChristmasSeason, settings: christmasSettings, toggleChristmasMode, toggleSnowfall } = useChristmas();
+  const { isChristmas, settings: seasonalSettings, toggleSnowfall } = useSeasonal();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
   const [autoPlayTrailers, setAutoPlayTrailers] = useState(false);
@@ -223,47 +223,37 @@ const Settings = () => {
             />
           </div>
 
-          {/* Christmas Theme Toggle */}
-          {isChristmasSeason && (
+          {/* Christmas Snowfall Toggle (only visible during Christmas) */}
+          {isChristmas && (
             <>
               <div className="flex items-center justify-between border-t border-border pt-4">
                 <div className="space-y-1">
-                  <Label htmlFor="christmas-mode" className="flex items-center gap-2">
-                    <Snowflake className="w-4 h-4 text-christmas-green" />
-                    Christmas Theme 🎄
+                  <Label htmlFor="christmas-info" className="flex items-center gap-2">
+                    <Snowflake className="w-4 h-4 text-primary" />
+                    Christmas Mode Active 🎄
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    Enable festive decorations and Christmas movies
+                    Festive theme is automatically enabled (Dec 23-31)
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pl-6">
+                <div className="space-y-1">
+                  <Label htmlFor="snowfall">Snowfall Effect</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Show falling snow animation
                   </p>
                 </div>
                 <Switch
-                  id="christmas-mode"
-                  checked={christmasSettings.enabled}
+                  id="snowfall"
+                  checked={seasonalSettings.snowfall}
                   onCheckedChange={(checked) => {
-                    toggleChristmasMode(checked);
-                    toast.success(checked ? "Christmas mode enabled! 🎄" : "Christmas mode disabled");
+                    toggleSnowfall(checked);
+                    toast.success(checked ? "Let it snow! ❄️" : "Snowfall disabled");
                   }}
                 />
               </div>
-
-              {christmasSettings.enabled && (
-                <div className="flex items-center justify-between pl-6">
-                  <div className="space-y-1">
-                    <Label htmlFor="snowfall">Snowfall Effect</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Show falling snow animation
-                    </p>
-                  </div>
-                  <Switch
-                    id="snowfall"
-                    checked={christmasSettings.snowfall}
-                    onCheckedChange={(checked) => {
-                      toggleSnowfall(checked);
-                      toast.success(checked ? "Let it snow! ❄️" : "Snowfall disabled");
-                    }}
-                  />
-                </div>
-              )}
             </>
           )}
         </Card>

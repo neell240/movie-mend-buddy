@@ -1,25 +1,25 @@
-import { useEffect } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Wrench, TreePine } from "lucide-react";
+import { Sparkles, Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useWatchlist } from "@/hooks/useWatchlist";
-import { useChristmas } from "@/hooks/useChristmasMode";
+import { useSeasonal } from "@/hooks/useChristmasMode";
 import { AdventCalendar } from "@/components/christmas/AdventCalendar";
 import { ChristmasMoviesSection } from "@/components/christmas/ChristmasMoviesSection";
 import { ChristmasBoovi } from "@/components/christmas/ChristmasBoovi";
+import { ChristmasBanner } from "@/components/christmas/ChristmasBanner";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
   const { watchlist } = useWatchlist();
-  const { isActive: isChristmasActive } = useChristmas();
+  const { isChristmas } = useSeasonal();
   
   const { data: moviesData, isLoading } = useDiscoverMovies({
     watchProviders: preferences.platforms.length > 0 
@@ -41,13 +41,13 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {isChristmasActive ? (
+              {isChristmas ? (
                 <ChristmasBoovi mood="happy" size="sm" />
               ) : (
                 <Sparkles className="w-6 h-6 text-primary" />
               )}
               <h1 className="text-xl font-bold">
-                {isChristmasActive ? "🎄 MovieMend" : "MovieMend"}
+                {isChristmas ? "MovieMend 🎄" : "MovieMend"}
               </h1>
             </div>
             <div className="flex items-center gap-2">
@@ -74,13 +74,18 @@ const Index = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+        {/* Christmas Banner */}
+        {isChristmas && (
+          <ChristmasBanner />
+        )}
+
         {/* Christmas Advent Calendar */}
-        {isChristmasActive && (
+        {isChristmas && (
           <AdventCalendar />
         )}
 
         {/* Christmas Movies Section */}
-        {isChristmasActive && (
+        {isChristmas && (
           <ChristmasMoviesSection limit={6} />
         )}
 
