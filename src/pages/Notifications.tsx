@@ -13,7 +13,7 @@ const Notifications = () => {
   return (
     <div className="min-h-screen pb-20">
       <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-4">
+        <div className="max-w-lg mx-auto px-4 py-4 bg-card rounded-b-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
@@ -24,7 +24,7 @@ const Notifications = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="text-xl font-bold">Notifications</h1>
+                <h1 className="text-xl font-bold text-card-foreground">Notifications</h1>
                 {unreadCount > 0 && (
                   <p className="text-xs text-muted-foreground">
                     {unreadCount} unread
