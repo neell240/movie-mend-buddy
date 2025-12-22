@@ -3,7 +3,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { MovieCard } from "@/components/MovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Wrench } from "lucide-react";
+import { Sparkles, Settings, Wrench, Snowflake } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,7 +22,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
   const { watchlist } = useWatchlist();
-  const { isChristmas, showSnowfall } = useSeasonal();
+  const { isChristmas, showSnowfall, toggleSnowfall } = useSeasonal();
   const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
   
   // Parse preferences safely - filter out NaN values
@@ -83,6 +83,17 @@ const Index = () => {
                 </h1>
               </div>
               <div className="flex items-center gap-2">
+                {isChristmas && (
+                  <Button 
+                    size="icon" 
+                    variant="ghost"
+                    onClick={() => toggleSnowfall(!showSnowfall)}
+                    title={showSnowfall ? "Turn off snow" : "Turn on snow"}
+                    className={`text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)] transition-all ${showSnowfall ? 'bg-[hsl(355,45%,22%)]' : ''}`}
+                  >
+                    <Snowflake className={`w-5 h-5 ${showSnowfall ? 'animate-pulse' : 'opacity-60'}`} />
+                  </Button>
+                )}
                 <NotificationBell />
                 <Button 
                   size="icon" 

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence, TargetAndTransition } from "framer-motion";
 import { cn } from "@/lib/utils";
-import booviSanta from "@/assets/boovi-christmas-santa.png";
+import booviPopcorn from "@/assets/boovi-christmas-popcorn.png";
 
 export type BooviReaction = 
   | "wave" 
@@ -87,7 +87,7 @@ export const BooviReactionOverlay = ({
       
       {/* Boovi image */}
       <img
-        src={booviSanta}
+        src={booviPopcorn}
         alt="Boovi"
         className="w-24 h-24 object-contain"
       />

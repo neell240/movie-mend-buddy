@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Gift, Calendar, Sparkles, Play } from "lucide-react";
-import booviSanta from "@/assets/boovi-christmas-santa.png";
+import booviPopcorn from "@/assets/boovi-christmas-popcorn.png";
 import { useSeasonal } from "@/hooks/useChristmasMode";
 
 // Daily Christmas movie picks (25 days)
@@ -84,7 +84,7 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
         <div className="relative z-10 p-6 flex items-center gap-5">
           <div className="relative flex-shrink-0">
             <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-gold))] opacity-20 blur-xl scale-125" />
-            <img src={booviSanta} alt="Christmas Boovi" className="w-20 h-20 object-contain relative z-10" />
+            <img src={booviPopcorn} alt="Christmas Boovi" className="w-20 h-20 object-contain relative z-10" />
           </div>
           <div>
             <h3 className="font-bold text-xl text-[hsl(145,45%,15%)]">Hope you had a wonderful Christmas! 🎄</h3>
@@ -121,7 +121,7 @@ export const AdventCalendar = ({ className }: AdventCalendarProps) => {
             <div className="absolute inset-0 rounded-full bg-[hsl(var(--christmas-gold))] opacity-25 blur-2xl scale-150" />
             <div className="absolute inset-0 rounded-full bg-white opacity-10 blur-xl scale-125" />
             <img 
-              src={booviSanta} 
+              src={booviPopcorn} 
               alt="Christmas Boovi" 
               className="w-24 h-24 object-contain relative z-10 animate-boovi-float drop-shadow-md"
             />
