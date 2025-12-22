@@ -56,63 +56,64 @@ All colors MUST be HSL.
 
   /* ============================================
      CHRISTMAS THEME - COZY, PREMIUM, MAGICAL
-     Strict palette from design spec
+     Santa Red primary, reduced green dominance
      ============================================ */
   .theme-christmas {
-    /* Evergreen (Primary BG): #1D351D */
-    --background: 120 32% 16%;
-    /* Cream text on dark: #F6EFE6 */
-    --foreground: 38 38% 93%;
+    /* Dark pine background (subtle, not dominant) */
+    --background: 140 25% 12%;
+    /* Warm cream text */
+    --foreground: 40 45% 95%;
 
-    /* Cream cards: #F6EFE6 */
-    --card: 38 38% 93%;
-    /* Dark text on cream: #1D351D */
-    --card-foreground: 120 32% 16%;
+    /* Warm ivory cards for readability */
+    --card: 42 50% 96%;
+    /* Dark text on cards for contrast */
+    --card-foreground: 20 15% 18%;
 
-    --popover: 38 35% 90%;
-    --popover-foreground: 120 32% 16%;
+    --popover: 42 45% 94%;
+    --popover-foreground: 20 15% 18%;
 
-    /* Santa Red CTA: #8B1B1B */
-    --primary: 0 67% 33%;
+    /* SANTA RED as primary accent! */
+    --primary: 355 72% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Muted Pine: #325632 */
-    --secondary: 120 28% 26%;
-    --secondary-foreground: 38 38% 93%;
+    /* Muted forest green (secondary, not dominant) */
+    --secondary: 145 25% 22%;
+    --secondary-foreground: 40 45% 95%;
 
-    /* Deep evergreen muted */
-    --muted: 120 30% 20%;
-    --muted-foreground: 38 30% 75%;
+    /* Subtle dark green muted */
+    --muted: 140 20% 16%;
+    --muted-foreground: 40 35% 80%;
 
     /* Santa red accent */
-    --accent: 0 67% 33%;
+    --accent: 355 72% 45%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 67% 33%;
+    --destructive: 355 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 120 25% 22%;
-    --input: 120 28% 18%;
-    --ring: 0 67% 33%;
+    --border: 140 20% 20%;
+    --input: 140 22% 16%;
+    --ring: 355 72% 45%;
 
-    --radius: 1.5rem;
+    --radius: 1.25rem;
 
-    /* ====== STRICT Christmas Palette ====== */
-    /* Evergreen (Primary BG): #1D351D */
-    --christmas-evergreen: 120 32% 16%;
-    --christmas-evergreen-light: 120 28% 22%;
-    /* Muted Pine: #325632 */
-    --christmas-pine: 120 28% 26%;
-    /* Santa Red: #8B1B1B */
-    --christmas-red: 0 67% 33%;
-    /* Cream: #F6EFE6 */
-    --christmas-cream: 38 38% 93%;
-    /* Warm Gold: #E6BE9A */
-    --christmas-gold: 30 60% 75%;
-    /* Snow White: #FAFAFA */
+    /* ====== Christmas Palette ====== */
+    /* Santa Red (PRIMARY ACCENT) */
+    --christmas-red: 355 72% 45%;
+    --christmas-red-dark: 355 72% 35%;
+    /* Soft Gold highlights */
+    --christmas-gold: 42 85% 65%;
+    --christmas-gold-soft: 42 70% 75%;
+    /* Warm Ivory/Cream cards */
+    --christmas-cream: 42 50% 96%;
+    --christmas-ivory: 45 55% 92%;
+    /* Forest green (subtle, background) */
+    --christmas-pine: 145 30% 18%;
+    --christmas-forest: 145 25% 22%;
+    /* Snow white */
     --christmas-snow: 0 0% 98%;
-    /* Cocoa Brown: #4A2E2E */
-    --christmas-cocoa: 0 25% 24%;
+    /* Cocoa for text shadows */
+    --christmas-cocoa: 20 25% 22%;
   }
 
   /* New Year Theme (Jan 1-7) - Fresh, celebratory */
@@ -233,69 +234,88 @@ All colors MUST be HSL.
      CHRISTMAS THEME SPECIFIC STYLES
      ============================================ */
 
-  /* Christmas gradient background - deep evergreen */
+  /* Christmas gradient background - dark pine to forest */
   .theme-christmas body,
   .theme-christmas {
     background: linear-gradient(
       175deg, 
-      hsl(120 32% 16%) 0%, 
-      hsl(120 28% 14%) 50%, 
-      hsl(120 28% 26%) 100%
+      hsl(140 25% 12%) 0%, 
+      hsl(145 28% 10%) 50%, 
+      hsl(140 22% 14%) 100%
     );
   }
 
-  /* Vignette effect for focus */
-  .theme-christmas .christmas-vignette {
-    box-shadow: inset 0 0 150px 50px hsl(120 32% 8% / 0.4);
+  /* Grain/noise texture overlay */
+  .theme-christmas .christmas-grain {
+    position: relative;
+  }
+  
+  .theme-christmas .christmas-grain::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
   }
 
-  /* Premium cream cards - warm shadows */
+  /* Premium warm ivory cards */
   .theme-christmas .cozy-card {
     background: linear-gradient(
-      145deg, 
-      hsl(38 38% 96%) 0%, 
-      hsl(38 35% 92%) 100%
+      155deg, 
+      hsl(42 55% 98%) 0%, 
+      hsl(45 50% 95%) 100%
     );
-    border-radius: 1.5rem;
+    border-radius: 1.25rem;
     box-shadow: 
-      0 25px 60px -15px hsl(0 25% 15% / 0.25),
-      0 10px 25px -10px hsl(0 25% 15% / 0.15),
-      inset 0 2px 4px hsl(0 0% 100% / 0.8),
-      inset 0 -1px 2px hsl(30 60% 75% / 0.2);
-    border: 1px solid hsl(30 60% 75% / 0.25);
+      0 20px 50px -15px hsl(20 30% 10% / 0.2),
+      0 8px 20px -8px hsl(20 30% 10% / 0.12),
+      inset 0 2px 4px hsl(0 0% 100% / 0.9),
+      inset 0 -1px 2px hsl(42 85% 65% / 0.15);
+    border: 1px solid hsl(42 60% 88% / 0.6);
   }
 
-  /* Hero card glassmorphism */
+  /* Hero card with subtle glass effect */
   .theme-christmas .hero-glass {
     background: linear-gradient(
-      145deg, 
-      hsl(120 32% 20% / 0.92) 0%, 
-      hsl(120 28% 16% / 0.95) 100%
+      150deg, 
+      hsl(145 28% 18% / 0.95) 0%, 
+      hsl(140 25% 14% / 0.98) 100%
     );
-    backdrop-filter: blur(20px);
-    border-radius: 1.5rem;
+    backdrop-filter: blur(16px);
+    border-radius: 1.25rem;
     box-shadow: 
-      0 25px 60px -15px hsl(120 32% 8% / 0.5),
-      0 10px 25px -10px hsl(120 32% 8% / 0.3),
-      inset 0 1px 2px hsl(0 0% 100% / 0.1);
-    border: 1px solid hsl(120 35% 28% / 0.3);
+      0 20px 50px -15px hsl(140 30% 6% / 0.4),
+      0 8px 20px -8px hsl(140 30% 6% / 0.25),
+      inset 0 1px 2px hsl(0 0% 100% / 0.08);
+    border: 1px solid hsl(145 30% 25% / 0.3);
   }
 
-  /* Santa red CTA button glow */
+  /* Santa red CTA with premium glow */
   .theme-christmas .cta-glow {
+    background: linear-gradient(135deg, hsl(355 72% 48%) 0%, hsl(355 72% 40%) 100%);
     box-shadow: 
-      0 8px 25px hsl(0 67% 33% / 0.4),
-      0 4px 12px hsl(0 67% 33% / 0.25),
-      inset 0 1px 1px hsl(0 0% 100% / 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      0 8px 25px hsl(355 72% 45% / 0.4),
+      0 4px 12px hsl(355 72% 45% / 0.25),
+      inset 0 1px 1px hsl(0 0% 100% / 0.25);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .theme-christmas .cta-glow:hover {
+    background: linear-gradient(135deg, hsl(355 72% 52%) 0%, hsl(355 72% 44%) 100%);
     box-shadow: 
-      0 12px 35px hsl(0 67% 33% / 0.5),
-      0 6px 18px hsl(0 67% 33% / 0.3),
-      inset 0 1px 1px hsl(0 0% 100% / 0.25);
+      0 12px 35px hsl(355 72% 45% / 0.5),
+      0 6px 18px hsl(355 72% 45% / 0.3),
+      inset 0 1px 1px hsl(0 0% 100% / 0.3);
     transform: translateY(-2px) scale(1.02);
+  }
+
+  .theme-christmas .cta-glow:active {
+    transform: translateY(0) scale(0.98);
   }
 
   /* Warm gold shimmer */

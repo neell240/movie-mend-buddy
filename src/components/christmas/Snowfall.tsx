@@ -8,6 +8,7 @@ interface Snowflake {
   duration: number;
   size: number;
   opacity: number;
+  layer: 'back' | 'mid' | 'front'; // Parallax layers
 }
 
 interface Sparkle {
@@ -30,31 +31,64 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
     setMounted(true);
   }, []);
 
-  // Memoize snowflakes to prevent re-renders
+  // Layered snowflakes for parallax depth effect
   const snowflakes = useMemo<Snowflake[]>(() => {
     if (!enabled) return [];
     
-    // Subtle, magical snowfall - 30 soft flakes
-    return Array.from({ length: 30 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 15,
-      duration: 20 + Math.random() * 15, // Very slow: 20-35 seconds
-      size: 2 + Math.random() * 3, // Soft: 2-5px
-      opacity: 0.2 + Math.random() * 0.25, // Gentle: 0.2-0.45
-    }));
+    const flakes: Snowflake[] = [];
+    
+    // Back layer (small, slow, blurred)
+    for (let i = 0; i < 15; i++) {
+      flakes.push({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 20,
+        duration: 30 + Math.random() * 15,
+        size: 1.5 + Math.random() * 1.5,
+        opacity: 0.15 + Math.random() * 0.1,
+        layer: 'back',
+      });
+    }
+    
+    // Mid layer (medium)
+    for (let i = 15; i < 30; i++) {
+      flakes.push({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 15,
+        duration: 20 + Math.random() * 10,
+        size: 2 + Math.random() * 2,
+        opacity: 0.25 + Math.random() * 0.15,
+        layer: 'mid',
+      });
+    }
+    
+    // Front layer (larger, faster, sharper)
+    for (let i = 30; i < 40; i++) {
+      flakes.push({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 10,
+        duration: 12 + Math.random() * 8,
+        size: 3 + Math.random() * 2,
+        opacity: 0.35 + Math.random() * 0.2,
+        layer: 'front',
+      });
+    }
+    
+    return flakes;
   }, [enabled]);
 
-  // Occasional sparkles
+  // Occasional gold sparkles
   const sparkles = useMemo<Sparkle[]>(() => {
     if (!enabled) return [];
     
-    return Array.from({ length: 8 }, (_, i) => ({
+    return Array.from({ length: 6 }, (_, i) => ({
       id: i,
-      left: 10 + Math.random() * 80,
-      top: 10 + Math.random() * 60,
-      delay: Math.random() * 8,
-      size: 4 + Math.random() * 4,
+      left: 15 + Math.random() * 70,
+      top: 10 + Math.random() * 50,
+      delay: Math.random() * 10,
+      size: 3 + Math.random() * 3,
     }));
   }, [enabled]);
 
@@ -68,7 +102,7 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
       )}
       aria-hidden="true"
     >
-      {/* Snowflakes */}
+      {/* Snowflakes with parallax layers */}
       {snowflakes.map((flake) => (
         <div
           key={flake.id}
@@ -80,13 +114,16 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
             opacity: flake.opacity,
             animationDelay: `${flake.delay}s`,
             animationDuration: `${flake.duration}s`,
-            filter: flake.size > 3.5 ? 'blur(0.5px)' : 'none',
-            boxShadow: `0 0 ${flake.size * 2}px hsl(0 0% 100% / 0.2)`,
+            filter: flake.layer === 'back' ? 'blur(1px)' : flake.layer === 'front' ? 'none' : 'blur(0.3px)',
+            boxShadow: flake.layer === 'front' 
+              ? `0 0 ${flake.size * 2}px hsl(0 0% 100% / 0.3)` 
+              : 'none',
+            zIndex: flake.layer === 'back' ? 29 : flake.layer === 'front' ? 31 : 30,
           }}
         />
       ))}
 
-      {/* Occasional sparkles */}
+      {/* Gold sparkles for magical effect */}
       {sparkles.map((sparkle) => (
         <div
           key={`sparkle-${sparkle.id}`}
@@ -97,17 +134,18 @@ export const Snowfall = ({ enabled = true, className }: SnowfallProps) => {
             width: `${sparkle.size}px`,
             height: `${sparkle.size}px`,
             animationDelay: `${sparkle.delay}s`,
-            animationDuration: '4s',
-            background: 'radial-gradient(circle, hsl(30 60% 85%) 0%, transparent 70%)',
+            animationDuration: '5s',
+            background: 'radial-gradient(circle, hsl(42 85% 75%) 0%, transparent 70%)',
+            borderRadius: '50%',
           }}
         />
       ))}
 
-      {/* Vignette effect for cozy focus */}
+      {/* Subtle vignette for cozy focus */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          boxShadow: 'inset 0 0 200px 80px hsl(120 32% 8% / 0.35)',
+          boxShadow: 'inset 0 0 180px 60px hsl(140 25% 6% / 0.35)',
         }}
       />
     </div>

@@ -52,7 +52,7 @@ const Index = () => {
         <ChristmasOnboarding onComplete={completeOnboarding} />
       )}
       
-      <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16">
+      <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16 christmas-grain">
         {/* Header */}
         <header 
           className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
