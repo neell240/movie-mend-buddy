@@ -12,7 +12,7 @@ import { BottomNav } from "@/components/BottomNav";
 const CHRISTMAS_MOVIE_IDS = [
   // Classic Christmas
   771,    // Home Alone
-  772,    // Home Alone 2
+  772,    // Home Alone 2: Lost in New York
   13183,  // The Polar Express
   10719,  // Elf
   11970,  // A Christmas Carol (2009)
@@ -21,43 +21,55 @@ const CHRISTMAS_MOVIE_IDS = [
   12133,  // The Santa Clause
   10437,  // The Santa Clause 2
   10545,  // The Santa Clause 3
-  508965, // Klaus
-  14564,  // The Grinch (2018)
-  14560,  // How the Grinch Stole Christmas (2000)
-  11395,  // The Holiday
-  9800,   // Love Actually
-  12684,  // Scrooged
-  2593,   // Gremlins
-  34544,  // Arthur Christmas
-  4148,   // Jingle All the Way
   13673,  // It's a Wonderful Life
-  
-  // More Christmas favorites
-  850,    // National Lampoon's Christmas Vacation
-  10137,  // The Muppet Christmas Carol
-  14585,  // The Family Stone
-  10717,  // Bad Santa
   14462,  // A Christmas Story
-  8388,   // Fred Claus
-  653562, // Violent Night
+  
+  // Modern Christmas Favorites
+  508965, // Klaus
   411729, // The Christmas Chronicles
   594328, // The Christmas Chronicles 2
-  11000,  // Eight Crazy Nights
-  42260,  // Last Christmas
+  14564,  // The Grinch (2018)
+  532199, // Noelle
+  830784, // Spirited
   520946, // A Boy Called Christmas
+  34544,  // Arthur Christmas
+  640295, // Jingle Jangle
+  
+  // Christmas Romance / Cozy Vibes
+  9800,   // Love Actually
+  11395,  // The Holiday
+  42260,  // Last Christmas
+  645886, // Holidate
+  554993, // Happiest Season
+  508442, // Let It Snow
+  532067, // The Knight Before Christmas
+  14585,  // The Family Stone
+  
+  // Christmas Comedy
+  850,    // National Lampoon's Christmas Vacation
+  10717,  // Bad Santa
+  12684,  // Scrooged
+  4148,   // Jingle All the Way
+  8388,   // Fred Claus
+  283995, // Office Christmas Party
+  364689, // A Bad Moms Christmas
+  282756, // The Night Before
+  653562, // Violent Night
+  11000,  // Eight Crazy Nights
+  
+  // "Is It a Christmas Movie?" Debate Picks
+  562,    // Die Hard
+  671,    // Harry Potter and the Philosopher's Stone
+  2593,   // Gremlins
   9350,   // Trading Places
   258230, // Krampus
-  283995, // Office Christmas Party
+  
+  // More Holiday Favorites
+  14560,  // How the Grinch Stole Christmas (2000)
+  10137,  // The Muppet Christmas Carol
   429300, // Daddy's Home 2
-  414419, // Pottersville
-  532199, // Noelle
-  282756, // The Night Before
-  364689, // A Bad Moms Christmas
   447200, // Daddy's Home
-  532067, // The Knight Before Christmas
-  508442, // Let It Snow
-  554993, // Happiest Season
-  640295, // Jingle Jangle
+  414419, // Pottersville
 ];
 
 export default function ChristmasMovies() {
