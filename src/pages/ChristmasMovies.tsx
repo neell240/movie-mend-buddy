@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MovieCard } from "@/components/MovieCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TreePine, ArrowLeft, Snowflake, Gift } from "lucide-react";
+import { TreePine, ArrowLeft, Snowflake, Gift, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { BottomNav } from "@/components/BottomNav";
 
 // Extended list of Christmas movie IDs from TMDB
@@ -81,26 +82,51 @@ const CHRISTMAS_MOVIE_IDS = [
 
 export default function ChristmasMovies() {
   const navigate = useNavigate();
+  const [randomMovie, setRandomMovie] = useState<any>(null);
+  const [showRandomPicker, setShowRandomPicker] = useState(false);
 
-  const { data: movies, isLoading } = useQuery({
+  const { data: movies, isLoading, error } = useQuery({
     queryKey: ['christmas-movies-full'],
     queryFn: async () => {
-      const moviePromises = CHRISTMAS_MOVIE_IDS.map(async (id) => {
-        try {
-          const { data, error } = await supabase.functions.invoke('tmdb-details', {
-            body: { movieId: id }
-          });
-          if (error) return null;
-          return data;
-        } catch {
-          return null;
-        }
-      });
-      const results = await Promise.all(moviePromises);
-      return results.filter(Boolean);
+      // Batch requests in smaller chunks to avoid overwhelming the API
+      const chunkSize = 10;
+      const results: any[] = [];
+      
+      for (let i = 0; i < CHRISTMAS_MOVIE_IDS.length; i += chunkSize) {
+        const chunk = CHRISTMAS_MOVIE_IDS.slice(i, i + chunkSize);
+        const chunkPromises = chunk.map(async (id) => {
+          try {
+            const { data, error } = await supabase.functions.invoke('tmdb-details', {
+              body: { movieId: id }
+            });
+            if (error) return null;
+            return data;
+          } catch {
+            return null;
+          }
+        });
+        const chunkResults = await Promise.all(chunkPromises);
+        results.push(...chunkResults.filter(Boolean));
+      }
+      
+      return results;
     },
     staleTime: 1000 * 60 * 60,
+    retry: 2,
   });
+
+  const pickRandomMovie = () => {
+    if (movies && movies.length > 0) {
+      const randomIndex = Math.floor(Math.random() * movies.length);
+      setRandomMovie(movies[randomIndex]);
+      setShowRandomPicker(true);
+    }
+  };
+
+  const closeRandomPicker = () => {
+    setShowRandomPicker(false);
+    setRandomMovie(null);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20 lg:pb-4">
@@ -153,6 +179,72 @@ export default function ChristmasMovies() {
 
       {/* Content */}
       <main className="p-4 max-w-7xl mx-auto">
+        {/* Random Movie Picker Modal */}
+        <AnimatePresence>
+          {showRandomPicker && randomMovie && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeRandomPicker}
+            >
+              <motion.div
+                className="p-6 rounded-2xl max-w-sm w-full text-center"
+                style={{
+                  background: "linear-gradient(135deg, hsl(355 45% 18%), hsl(145 30% 20%))",
+                  border: "2px solid hsl(42 70% 50%)",
+                  boxShadow: "0 0 40px hsl(42 70% 40% / 0.5)",
+                }}
+                initial={{ scale: 0.8, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.8, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <motion.div
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Gift className="w-12 h-12 mx-auto mb-4 text-[hsl(42,85%,60%)]" />
+                </motion.div>
+                <h3 className="text-lg font-bold text-[hsl(42,85%,75%)] mb-2">
+                  🎄 Your Random Pick!
+                </h3>
+                <p className="text-[hsl(45,50%,85%)] font-medium mb-4">
+                  {randomMovie.title}
+                </p>
+                {randomMovie.poster_path && (
+                  <img 
+                    src={`https://image.tmdb.org/t/p/w300${randomMovie.poster_path}`}
+                    alt={randomMovie.title}
+                    className="w-32 mx-auto rounded-lg mb-4 shadow-lg"
+                  />
+                )}
+                <div className="flex gap-2 justify-center">
+                  <Button
+                    variant="outline"
+                    onClick={pickRandomMovie}
+                    className="gap-2 border-[hsl(42,50%,40%)] text-[hsl(42,85%,75%)] hover:bg-[hsl(355,40%,25%)]"
+                  >
+                    <Shuffle className="w-4 h-4" />
+                    Pick Again
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      closeRandomPicker();
+                      navigate(`/movie/${randomMovie.id}`);
+                    }}
+                    className="bg-[hsl(355,50%,40%)] hover:bg-[hsl(355,50%,50%)] text-white"
+                  >
+                    View Movie
+                  </Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Hero Banner */}
         <motion.div 
           className="mb-6 p-6 rounded-2xl text-center"
@@ -174,9 +266,19 @@ export default function ChristmasMovies() {
           <h2 className="text-lg font-bold text-[hsl(42,85%,75%)] mb-2">
             🎅 Holiday Movie Marathon
           </h2>
-          <p className="text-sm text-[hsl(45,50%,75%)]">
+          <p className="text-sm text-[hsl(45,50%,75%)] mb-4">
             From heartwarming classics to hilarious comedies, find your perfect Christmas movie
           </p>
+          
+          {/* Random Movie Button */}
+          <Button
+            onClick={pickRandomMovie}
+            disabled={isLoading || !movies?.length}
+            className="gap-2 bg-[hsl(42,70%,45%)] hover:bg-[hsl(42,70%,55%)] text-[hsl(355,45%,12%)] font-semibold"
+          >
+            <Shuffle className="w-4 h-4" />
+            🎲 Pick Random Movie
+          </Button>
         </motion.div>
 
         {/* Movies Grid */}
