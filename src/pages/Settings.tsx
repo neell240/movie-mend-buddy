@@ -356,54 +356,6 @@ const Settings = () => {
           </Card>
         )}
 
-        {/* Developer Tools (Admin Only) */}
-        {user && (
-          <Card className="p-6 space-y-4 border-dashed">
-            <div className="flex items-center gap-3 mb-4">
-              <Wrench className="w-5 h-5 text-orange-500" />
-              <h2 className="text-lg font-semibold">Developer Tools</h2>
-            </div>
-
-            <p className="text-sm text-muted-foreground">
-              Test premium features without real payments
-            </p>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <Label htmlFor="admin-mode">Enable Admin Mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  Grant access to dev tools
-                </p>
-              </div>
-              <Switch
-                id="admin-mode"
-                checked={isAdmin}
-                onCheckedChange={handleAdminToggle}
-                disabled={premiumLoading}
-              />
-            </div>
-
-            {isAdmin && (
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <div className="space-y-1">
-                  <Label htmlFor="premium-test" className="flex items-center gap-2">
-                    <Crown className="w-4 h-4 text-amber-400" />
-                    Premium Test Mode
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Simulate premium membership
-                  </p>
-                </div>
-                <Switch
-                  id="premium-test"
-                  checked={isPremium}
-                  onCheckedChange={handlePremiumToggle}
-                  disabled={premiumLoading}
-                />
-              </div>
-            )}
-          </Card>
-        )}
 
         {/* About */}
         <Card className="p-6 space-y-4">
