@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { usePreferences, REGIONS, getPlatformsForRegion } from "@/hooks/usePreferences";
 import {
@@ -63,15 +63,26 @@ const Preferences = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/80 border-b border-border">
+      <header className="sticky top-0 z-40 backdrop-blur-lg bg-background/95 border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-4">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Sparkles className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-bold">MovieMend</h1>
+          <div className="flex items-center justify-between mb-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="text-foreground"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <h1 className="text-xl font-bold text-foreground">MovieMend</h1>
+            </div>
+            <div className="w-10" /> {/* Spacer for centering */}
           </div>
-          <h2 className="text-2xl font-bold text-center mb-1">Select Your Preferences</h2>
+          <h2 className="text-2xl font-bold text-center mb-1 text-foreground">Select Your Preferences</h2>
           <p className="text-sm text-muted-foreground text-center">
             Choose your region, languages, genres, and platforms for personalized recommendations
           </p>
@@ -81,7 +92,7 @@ const Preferences = () => {
       <main className="max-w-lg mx-auto px-4 py-6">
         {/* Region Selection */}
         <section className="mb-8">
-          <h3 className="font-semibold mb-3">Region</h3>
+          <h3 className="font-semibold mb-3 text-foreground">Region</h3>
           <Select value={selectedRegion} onValueChange={handleRegionChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select your region" />
@@ -101,7 +112,7 @@ const Preferences = () => {
 
         {/* Languages */}
         <section className="mb-8">
-          <h3 className="font-semibold mb-3">Languages</h3>
+          <h3 className="font-semibold mb-3 text-foreground">Languages</h3>
           <div className="flex flex-wrap gap-2">
             {languages.map((language) => (
               <Badge
@@ -118,7 +129,7 @@ const Preferences = () => {
 
         {/* Favorite Genres */}
         <section className="mb-8">
-          <h3 className="font-semibold mb-3">Favorite Genres</h3>
+          <h3 className="font-semibold mb-3 text-foreground">Favorite Genres</h3>
           <div className="flex flex-wrap gap-2">
             {genres.map((genre) => (
               <Badge
@@ -135,16 +146,16 @@ const Preferences = () => {
 
         {/* Streaming Platforms */}
         <section className="mb-8">
-          <h3 className="font-semibold mb-3">
+          <h3 className="font-semibold mb-3 text-foreground">
             Streaming Platforms in {REGIONS.find(r => r.code === selectedRegion)?.name}
           </h3>
           <div className="space-y-2">
             {availablePlatforms.map((platform) => (
               <div
                 key={platform.id}
-                className="flex items-center justify-between p-4 bg-card rounded-xl border border-border"
+                className="flex items-center justify-between p-4 bg-white dark:bg-zinc-800 rounded-xl border border-border shadow-sm"
               >
-                <span className="font-medium">{platform.name}</span>
+                <span className="font-medium text-zinc-900 dark:text-zinc-100">{platform.name}</span>
                 <Switch
                   checked={selectedPlatforms.includes(platform.id)}
                   onCheckedChange={() => togglePlatform(platform.id)}
