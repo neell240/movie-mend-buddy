@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChristmasBoovi } from "./ChristmasBoovi";
 import { Button } from "@/components/ui/button";
-import { Snowfall } from "./Snowfall";
+// Snowfall disabled to reduce animation load
+// import { Snowfall } from "./Snowfall";
 import { Gift, Users, Sparkles, Film, Heart, Calendar } from "lucide-react";
 
 const ONBOARDING_KEY = "moviemend_christmas_onboarding_2024";
@@ -167,7 +168,6 @@ export const ChristmasOnboarding = ({ onComplete }: ChristmasOnboardingProps) =>
           background: "linear-gradient(175deg, hsl(355 55% 22%) 0%, hsl(355 50% 16%) 50%, hsl(355 48% 14%) 100%)",
         }}
       >
-        <Snowfall />
         
         {/* Decorative glows */}
         <div className="absolute top-20 left-10 w-40 h-40 bg-[hsl(42,85%,65%)] opacity-15 blur-3xl rounded-full" />

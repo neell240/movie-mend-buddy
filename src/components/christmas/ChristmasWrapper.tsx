@@ -1,17 +1,16 @@
 import { useSeasonal } from "@/hooks/useChristmasMode";
-import { Snowfall } from "./Snowfall";
 import { useEffect } from "react";
 
 export const ChristmasWrapper = () => {
-  const { isChristmas, isNewYear, showSnowfall } = useSeasonal();
+  const { isChristmas, isNewYear } = useSeasonal();
 
   // Apply theme class to body
   useEffect(() => {
     const body = document.body;
-    
+
     // Remove all theme classes first
     body.classList.remove('theme-christmas', 'theme-newyear');
-    
+
     // Apply appropriate theme
     if (isChristmas) {
       body.classList.add('theme-christmas');
@@ -24,9 +23,6 @@ export const ChristmasWrapper = () => {
     };
   }, [isChristmas, isNewYear]);
 
-  return (
-    <>
-      <Snowfall enabled={showSnowfall} />
-    </>
-  );
+  // Snowfall disabled (requested) to eliminate potential perf/crash source.
+  return null;
 };

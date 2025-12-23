@@ -7,7 +7,7 @@ import { TreePine, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
-// Christmas movie IDs from TMDB
+// Christmas movie IDs from TMDB (kept small to avoid API overload)
 const CHRISTMAS_MOVIE_IDS = [
   771, 772, 13183, 10719, 11970, 17895, 627, 12133, 10437, 10545,
   508965, 14564, 11395, 9800, 12684, 2593, 34544, 14560, 4148, 13673,
@@ -21,23 +21,45 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
   const navigate = useNavigate();
 
   const { data: movies, isLoading } = useQuery({
-    queryKey: ['christmas-movies'],
+    queryKey: ['christmas-movies', limit],
     queryFn: async () => {
-      const moviePromises = CHRISTMAS_MOVIE_IDS.slice(0, limit).map(async (id) => {
-        try {
-          const { data, error } = await supabase.functions.invoke('tmdb-details', {
-            body: { movieId: id }
-          });
-          if (error) return null;
-          return data;
-        } catch {
-          return null;
+      const ids = CHRISTMAS_MOVIE_IDS.slice(0, limit);
+      const chunkSize = 4;
+      const delayMsBetweenChunks = 200;
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+      const results: any[] = [];
+
+      for (let i = 0; i < ids.length; i += chunkSize) {
+        const chunk = ids.slice(i, i + chunkSize);
+
+        const chunkResults = await Promise.all(
+          chunk.map(async (id) => {
+            try {
+              const { data, error } = await supabase.functions.invoke('tmdb-details', {
+                body: { movieId: id },
+              });
+              if (error) return null;
+              return data;
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        results.push(...chunkResults.filter(Boolean));
+
+        if (i + chunkSize < ids.length) {
+          await sleep(delayMsBetweenChunks);
         }
-      });
-      const results = await Promise.all(moviePromises);
-      return results.filter(Boolean);
+      }
+
+      return results;
     },
     staleTime: 1000 * 60 * 60,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   return (

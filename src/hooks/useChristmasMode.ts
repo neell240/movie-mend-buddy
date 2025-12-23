@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, createContext, useContext, createElement } from 'react';
 import type { ReactNode } from 'react';
+import { safeJsonParse } from '@/lib/safeJsonParse';
 
 type SeasonalMode = 'normal' | 'christmas' | 'newyear';
 
@@ -44,13 +45,17 @@ const isChristmasDay = (): boolean => {
 };
 
 const defaultSettings: SeasonalSettings = {
-  snowfall: true,
+  // Disable by default (prevents extra animation load on fragile devices)
+  snowfall: false,
 };
 
 export const useSeasonalMode = () => {
   const [settings, setSettings] = useState<SeasonalSettings>(() => {
     const stored = localStorage.getItem(SEASONAL_SETTINGS_KEY);
-    return stored ? JSON.parse(stored) : defaultSettings;
+    return safeJsonParse(stored, defaultSettings, {
+      storageKey: SEASONAL_SETTINGS_KEY,
+      clearOnError: true,
+    });
   });
 
   const [mode, setMode] = useState<SeasonalMode>(getSeasonalMode);
