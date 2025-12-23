@@ -42,6 +42,7 @@ const CHRISTMAS_MOVIE_IDS = [
   // 🎬 Animated Christmas Hits
   34544,  // Arthur Christmas
   81188,  // Rise of the Guardians
+  13493,  // A Charlie Brown Christmas
   
   // ☕ Cozy & Romantic Christmas
   9800,   // Love Actually
