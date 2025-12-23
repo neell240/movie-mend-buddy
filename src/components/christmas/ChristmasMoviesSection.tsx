@@ -61,7 +61,7 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
         </div>
         <Button
           size="sm"
-          onClick={() => navigate("/search?q=christmas")}
+          onClick={() => navigate("/christmas-movies")}
           className="text-xs rounded-xl cta-glow text-white"
         >
           <Sparkles className="w-3 h-3 mr-1" />

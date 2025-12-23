@@ -24,6 +24,7 @@ import Notifications from "./pages/Notifications";
 import Social from "./pages/Social";
 import Install from "./pages/Install";
 import BooviDemo from "./pages/BooviDemo";
+import ChristmasMovies from "./pages/ChristmasMovies";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -91,6 +92,7 @@ const App = () => {
                 <Route path="/social" element={<Social />} />
                 <Route path="/install" element={<Install />} />
                 <Route path="/boovi-demo" element={<BooviDemo />} />
+                <Route path="/christmas-movies" element={<ChristmasMovies />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
