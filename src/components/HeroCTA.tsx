@@ -94,7 +94,7 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
                 onChange={(e) => setMoodInput(e.target.value)}
                 className={`pl-10 pr-4 py-5 rounded-xl text-sm ${
                   isChristmas 
-                    ? "bg-[hsl(355,45%,12%)/0.6] border-[hsl(42,85%,65%)/0.3] text-[hsl(45,60%,96%)] placeholder:text-[hsl(42,45%,60%)] focus:border-[hsl(42,85%,65%)] focus:ring-[hsl(42,85%,65%)/0.3]"
+                    ? "bg-zinc-900/80 border-amber-400/30 text-white placeholder:text-amber-200/60 focus:border-amber-400 focus:ring-amber-400/30 caret-white"
                     : "bg-background border-border text-foreground placeholder:text-muted-foreground"
                 }`}
               />
