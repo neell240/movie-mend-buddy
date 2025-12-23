@@ -10,54 +10,61 @@ import { BottomNav } from "@/components/BottomNav";
 
 // Extended list of Christmas movie IDs from TMDB
 const CHRISTMAS_MOVIE_IDS = [
-  // Classic Christmas
-  771,    // Home Alone
-  772,    // Home Alone 2: Lost in New York
-  13183,  // The Polar Express
-  10719,  // Elf
+  // 🎄 All-Time Christmas Classics
+  771,    // Home Alone (1990)
+  772,    // Home Alone 2: Lost in New York (1992)
+  10719,  // Elf (2003)
+  13183,  // The Polar Express (2004)
   11970,  // A Christmas Carol (2009)
-  17895,  // The Nightmare Before Christmas
-  627,    // Miracle on 34th Street
-  12133,  // The Santa Clause
+  12684,  // Scrooged (1988)
+  13673,  // It's a Wonderful Life (1946)
+  627,    // Miracle on 34th Street (1947)
+  11881,  // Miracle on 34th Street (1994)
+  12133,  // The Santa Clause (1994)
   10437,  // The Santa Clause 2
   10545,  // The Santa Clause 3
-  13673,  // It's a Wonderful Life
-  14462,  // A Christmas Story
-  
-  // Modern Christmas Favorites
-  508965, // Klaus
-  411729, // The Christmas Chronicles
-  594328, // The Christmas Chronicles 2
+  14560,  // How the Grinch Stole Christmas (2000)
   14564,  // The Grinch (2018)
-  532199, // Noelle
-  830784, // Spirited
-  520946, // A Boy Called Christmas
-  34544,  // Arthur Christmas
-  640295, // Jingle Jangle
+  14462,  // A Christmas Story
+  17895,  // The Nightmare Before Christmas
   
-  // Christmas Romance / Cozy Vibes
+  // 🎁 Modern Christmas Favorites
+  411729, // The Christmas Chronicles (2018)
+  594328, // The Christmas Chronicles: Part Two (2020)
+  508965, // Klaus (2019)
+  532199, // Noelle (2019)
+  42260,  // Last Christmas (2019)
+  640295, // Jingle Jangle: A Christmas Journey (2020)
+  830784, // Spirited (2022)
+  520946, // A Boy Called Christmas
+  653562, // Violent Night
+  
+  // 🎬 Animated Christmas Hits
+  34544,  // Arthur Christmas
+  81188,  // Rise of the Guardians
+  
+  // ☕ Cozy & Romantic Christmas
   9800,   // Love Actually
   11395,  // The Holiday
-  42260,  // Last Christmas
-  645886, // Holidate
-  554993, // Happiest Season
+  12759,  // Four Christmases
+  11159,  // While You Were Sleeping
   508442, // Let It Snow
+  554993, // Happiest Season
   532067, // The Knight Before Christmas
+  645886, // Holidate
   14585,  // The Family Stone
   
-  // Christmas Comedy
+  // 😂 Christmas Comedy
   850,    // National Lampoon's Christmas Vacation
   10717,  // Bad Santa
-  12684,  // Scrooged
   4148,   // Jingle All the Way
   8388,   // Fred Claus
   283995, // Office Christmas Party
   364689, // A Bad Moms Christmas
   282756, // The Night Before
-  653562, // Violent Night
   11000,  // Eight Crazy Nights
   
-  // "Is It a Christmas Movie?" Debate Picks
+  // 🎬 "Is It a Christmas Movie?" Picks
   562,    // Die Hard
   671,    // Harry Potter and the Philosopher's Stone
   2593,   // Gremlins
@@ -65,7 +72,6 @@ const CHRISTMAS_MOVIE_IDS = [
   258230, // Krampus
   
   // More Holiday Favorites
-  14560,  // How the Grinch Stole Christmas (2000)
   10137,  // The Muppet Christmas Carol
   429300, // Daddy's Home 2
   447200, // Daddy's Home
