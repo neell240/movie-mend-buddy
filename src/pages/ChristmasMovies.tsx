@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { BottomNav } from "@/components/BottomNav";
 
-// Curated list of top Christmas movies (reduced to prevent API overload)
+// Curated list of top Christmas movies (further reduced + safer for API limits)
 const CHRISTMAS_MOVIE_IDS = [
   // 🎄 Essential Classics
   771,    // Home Alone
@@ -18,24 +18,16 @@ const CHRISTMAS_MOVIE_IDS = [
   13183,  // The Polar Express
   17895,  // The Nightmare Before Christmas
   13673,  // It's a Wonderful Life
-  14560,  // How the Grinch Stole Christmas
-  
+
   // 🎁 Modern Favorites
-  411729, // The Christmas Chronicles
   508965, // Klaus
   830784, // Spirited
-  653562, // Violent Night
-  
-  // ☕ Cozy & Romantic
-  9800,   // Love Actually
-  11395,  // The Holiday
-  554993, // Happiest Season
-  
-  // 😂 Comedy Picks
+
+  // 😂 Comedy / Alt picks
   850,    // National Lampoon's Christmas Vacation
-  562,    // Die Hard
   10137,  // The Muppet Christmas Carol
   12133,  // The Santa Clause
+  562,    // Die Hard
 ];
 
 export default function ChristmasMovies() {
@@ -47,15 +39,20 @@ export default function ChristmasMovies() {
     queryKey: ['christmas-movies-full'],
     queryFn: async () => {
       // Batch requests in smaller chunks to avoid overwhelming the API
-      const chunkSize = 10;
+      // (Lower concurrency + small delay between chunks)
+      const chunkSize = 4;
+      const delayMsBetweenChunks = 250;
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
       const results: any[] = [];
-      
+
       for (let i = 0; i < CHRISTMAS_MOVIE_IDS.length; i += chunkSize) {
         const chunk = CHRISTMAS_MOVIE_IDS.slice(i, i + chunkSize);
+
         const chunkPromises = chunk.map(async (id) => {
           try {
             const { data, error } = await supabase.functions.invoke('tmdb-details', {
-              body: { movieId: id }
+              body: { movieId: id },
             });
             if (error) return null;
             return data;
@@ -63,10 +60,16 @@ export default function ChristmasMovies() {
             return null;
           }
         });
+
         const chunkResults = await Promise.all(chunkPromises);
         results.push(...chunkResults.filter(Boolean));
+
+        // Brief pause to reduce rate-limit spikes
+        if (i + chunkSize < CHRISTMAS_MOVIE_IDS.length) {
+          await sleep(delayMsBetweenChunks);
+        }
       }
-      
+
       return results;
     },
     staleTime: 1000 * 60 * 60,
