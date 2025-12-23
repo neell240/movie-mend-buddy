@@ -140,8 +140,8 @@ const Settings = () => {
           </div>
           
           <Button
-            variant="outline"
-            className="w-full justify-start"
+            variant="secondary"
+            className="w-full justify-start bg-secondary text-secondary-foreground hover:bg-secondary/80"
             onClick={() => navigate("/profile")}
           >
             <User className="w-4 h-4 mr-2" />
@@ -149,8 +149,8 @@ const Settings = () => {
           </Button>
 
           <Button
-            variant="outline"
-            className="w-full justify-start"
+            variant="secondary"
+            className="w-full justify-start bg-secondary text-secondary-foreground hover:bg-secondary/80"
             onClick={() => navigate("/preferences")}
           >
             <Globe className="w-4 h-4 mr-2" />
@@ -194,8 +194,8 @@ const Settings = () => {
           </div>
 
           <Button
-            variant="outline"
-            className="w-full justify-start"
+            variant="secondary"
+            className="w-full justify-start bg-secondary text-secondary-foreground hover:bg-secondary/80"
             onClick={() => navigate("/notifications")}
           >
             View All Notifications
@@ -321,15 +321,15 @@ const Settings = () => {
 
           <div className="border-t border-border pt-4 mt-4">
             <Button
-              variant="outline"
-              className="w-full justify-start"
+              variant="secondary"
+              className="w-full justify-start bg-secondary text-secondary-foreground hover:bg-secondary/80"
             >
               Privacy Policy
             </Button>
 
             <Button
-              variant="outline"
-              className="w-full justify-start mt-2"
+              variant="secondary"
+              className="w-full justify-start mt-2 bg-secondary text-secondary-foreground hover:bg-secondary/80"
             >
               Terms of Service
             </Button>
@@ -420,8 +420,8 @@ const Settings = () => {
           </div>
 
           <Button
-            variant="outline"
-            className="w-full justify-start"
+            variant="secondary"
+            className="w-full justify-start bg-secondary text-secondary-foreground hover:bg-secondary/80"
           >
             Help & Support
           </Button>
