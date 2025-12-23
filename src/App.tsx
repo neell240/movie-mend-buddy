@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +8,7 @@ import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { ChristmasProvider } from "@/hooks/useChristmasMode";
 import { ChristmasWrapper } from "@/components/christmas/ChristmasWrapper";
 import { PWASplashScreen } from "@/components/PWASplashScreen";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
 import MovieDetails from "./pages/MovieDetails";
@@ -25,7 +26,14 @@ import Install from "./pages/Install";
 import BooviDemo from "./pages/BooviDemo";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -52,42 +60,44 @@ const App = () => {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ChristmasProvider>
-        <TooltipProvider>
-          {showSplash && (
-            <PWASplashScreen 
-              onComplete={handleSplashComplete}
-              minDisplayTime={isStandalone ? 2500 : 1800}
-            />
-          )}
-          <ChristmasWrapper />
-          <OfflineIndicator />
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/movie/:id" element={<MovieDetails />} />
-              <Route path="/filters" element={<Filters />} />
-              <Route path="/watchlist" element={<Watchlist />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/preferences" element={<Preferences />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/ai-chat" element={<AIChat />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/social" element={<Social />} />
-              <Route path="/install" element={<Install />} />
-              <Route path="/boovi-demo" element={<BooviDemo />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ChristmasProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ChristmasProvider>
+          <TooltipProvider>
+            {showSplash && (
+              <PWASplashScreen 
+                onComplete={handleSplashComplete}
+                minDisplayTime={isStandalone ? 2500 : 1800}
+              />
+            )}
+            <ChristmasWrapper />
+            <OfflineIndicator />
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/movie/:id" element={<MovieDetails />} />
+                <Route path="/filters" element={<Filters />} />
+                <Route path="/watchlist" element={<Watchlist />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/preferences" element={<Preferences />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/ai-chat" element={<AIChat />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/social" element={<Social />} />
+                <Route path="/install" element={<Install />} />
+                <Route path="/boovi-demo" element={<BooviDemo />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ChristmasProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 
