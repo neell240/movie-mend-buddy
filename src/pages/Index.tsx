@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useRef } from "react";
 import { BottomNav } from "@/components/BottomNav";
-import { MovieCard } from "@/components/MovieCard";
+import { EnhancedMovieCard } from "@/components/EnhancedMovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
+import { ChatWidget } from "@/components/ChatWidget";
+import { HeroCTA } from "@/components/HeroCTA";
+import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings, Wrench, Snowflake } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +27,7 @@ const Index = () => {
   const { watchlist } = useWatchlist();
   const { isChristmas, showSnowfall, toggleSnowfall } = useSeasonal();
   const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
+  const dailyPickRef = useRef<HTMLDivElement>(null);
   
   // Parse preferences safely - filter out NaN values
   const watchProviders = preferences.platforms.length > 0 
@@ -40,7 +44,9 @@ const Index = () => {
     sortBy: 'popularity.desc',
   });
 
-  
+  const scrollToDaily = () => {
+    dailyPickRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   return (
     <>
@@ -119,14 +125,19 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-          {/* Christmas Hero Banner */}
+          {/* Christmas Hero Banner with CTA */}
           {isChristmas && (
-            <ChristmasHeroBanner />
+            <div className="space-y-4">
+              <ChristmasHeroBanner />
+              <HeroCTA onScrollToDaily={scrollToDaily} />
+            </div>
           )}
 
           {/* Christmas Daily Pick */}
           {isChristmas && (
-            <ChristmasDailyPick />
+            <div ref={dailyPickRef}>
+              <ChristmasDailyPick />
+            </div>
           )}
 
           {/* Christmas Movies Section - BEFORE Popular */}
@@ -136,6 +147,9 @@ const Index = () => {
 
           {/* Personalized Recommendations - Always visible */}
           <PersonalizedRecommendations />
+
+          {/* Similar to Watchlist Section */}
+          <SimilarToWatchlistSection />
 
           {/* Movies Section */}
           <section 
@@ -176,7 +190,7 @@ const Index = () => {
             ) : moviesData?.results && moviesData.results.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {moviesData.results.slice(0, 18).map((movie) => (
-                  <MovieCard
+                  <EnhancedMovieCard
                     key={movie.id}
                     movie={movie}
                     onClick={() => navigate(`/movie/${movie.id}`)}
@@ -195,6 +209,9 @@ const Index = () => {
         </main>
 
         <BottomNav />
+        
+        {/* Floating Chat Widget */}
+        <ChatWidget />
       </div>
     </>
   );

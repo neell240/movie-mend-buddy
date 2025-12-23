@@ -289,7 +289,10 @@ export const ChristmasDailyPick = () => {
                 {/* Scratch overlay canvas */}
                 <canvas
                   ref={canvasRef}
-                  className="absolute inset-0 w-full h-full rounded-2xl cursor-pointer touch-none"
+                  tabIndex={0}
+                  role="button"
+                  aria-label="Scratch to reveal today's movie pick. Press Enter or Space to reveal instantly."
+                  className="absolute inset-0 w-full h-full rounded-2xl cursor-pointer touch-none focus:outline-none focus:ring-2 focus:ring-[hsl(42,85%,65%)] focus:ring-offset-2 focus:ring-offset-[hsl(355,45%,15%)]"
                   onMouseDown={() => { isDrawing.current = true; setIsScratching(true); }}
                   onMouseUp={() => { isDrawing.current = false; }}
                   onMouseLeave={() => { isDrawing.current = false; }}
@@ -297,6 +300,12 @@ export const ChristmasDailyPick = () => {
                   onTouchStart={() => { isDrawing.current = true; setIsScratching(true); }}
                   onTouchEnd={() => { isDrawing.current = false; }}
                   onTouchMove={handleScratch}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      completeReveal();
+                    }
+                  }}
                 />
 
                 {/* Scratch instruction */}
@@ -309,6 +318,9 @@ export const ChristmasDailyPick = () => {
                     <PartyPopper className="w-8 h-8 text-white mb-2" />
                     <p className="text-white font-semibold text-sm">
                       Scratch to reveal! ✨
+                    </p>
+                    <p className="text-white/70 text-xs mt-1">
+                      Or press Enter/Space
                     </p>
                   </motion.div>
                 )}
