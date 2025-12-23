@@ -28,6 +28,16 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.reload();
   };
 
+  private handleResetAndReload = () => {
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch {
+      // ignore
+    }
+    window.location.reload();
+  };
+
   private handleRetry = () => {
     this.setState({ hasError: false, error: undefined });
   };
@@ -44,7 +54,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="space-y-2">
               <h1 className="text-2xl font-bold">Something went wrong</h1>
               <p className="text-muted-foreground">
-                Don't worry, this happens sometimes. Try refreshing the page.
+                Try again, or reset the app if it keeps happening.
               </p>
             </div>
 
@@ -54,7 +64,10 @@ export class ErrorBoundary extends Component<Props, State> {
               </Button>
               <Button onClick={this.handleReload} className="gap-2">
                 <RefreshCw className="w-4 h-4" />
-                Reload Page
+                Reload
+              </Button>
+              <Button onClick={this.handleResetAndReload} variant="destructive">
+                Reset & Reload
               </Button>
             </div>
           </div>

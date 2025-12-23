@@ -6,7 +6,7 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Wrench, Snowflake } from "lucide-react";
+import { Sparkles, Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,13 +19,14 @@ import { ChristmasBoovi } from "@/components/christmas/ChristmasBoovi";
 import { ChristmasHeroBanner } from "@/components/christmas/ChristmasHeroBanner";
 import { ChristmasDailyPick } from "@/components/christmas/ChristmasDailyPick";
 import { ChristmasOnboarding, useChristmasOnboarding } from "@/components/christmas/ChristmasOnboarding";
-import { Snowfall } from "@/components/christmas/Snowfall";
+// Snowfall disabled globally (see ChristmasWrapper)
+// import { Snowfall } from "@/components/christmas/Snowfall";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
   const { watchlist } = useWatchlist();
-  const { isChristmas, showSnowfall, toggleSnowfall } = useSeasonal();
+  const { isChristmas } = useSeasonal();
   const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
   const dailyPickRef = useRef<HTMLDivElement>(null);
   
@@ -50,9 +51,6 @@ const Index = () => {
 
   return (
     <>
-      {/* Global Snowfall for Christmas */}
-      {isChristmas && <Snowfall enabled={showSnowfall} />}
-
       {/* Christmas First-Launch Onboarding */}
       {isChristmas && showOnboarding && (
         <ChristmasOnboarding onComplete={completeOnboarding} />
@@ -89,17 +87,6 @@ const Index = () => {
                 </h1>
               </div>
               <div className="flex items-center gap-2">
-                {isChristmas && (
-                  <Button 
-                    size="icon" 
-                    variant="ghost"
-                    onClick={() => toggleSnowfall(!showSnowfall)}
-                    title={showSnowfall ? "Turn off snow" : "Turn on snow"}
-                    className={`text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)] transition-all ${showSnowfall ? 'bg-[hsl(355,45%,22%)]' : ''}`}
-                  >
-                    <Snowflake className={`w-5 h-5 ${showSnowfall ? 'animate-pulse' : 'opacity-60'}`} />
-                  </Button>
-                )}
                 <NotificationBell />
                 <Button
                   size="icon" 

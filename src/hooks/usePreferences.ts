@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { safeJsonParse } from '@/lib/safeJsonParse';
 
 export interface UserPreferences {
   region: string;
@@ -19,7 +20,10 @@ const defaultPreferences: UserPreferences = {
 export const usePreferences = () => {
   const [preferences, setPreferencesState] = useState<UserPreferences>(() => {
     const stored = localStorage.getItem(PREFERENCES_KEY);
-    return stored ? JSON.parse(stored) : defaultPreferences;
+    return safeJsonParse(stored, defaultPreferences, {
+      storageKey: PREFERENCES_KEY,
+      clearOnError: true,
+    });
   });
 
   const updatePreferences = (updates: Partial<UserPreferences>) => {

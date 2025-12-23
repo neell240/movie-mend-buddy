@@ -33,32 +33,7 @@ export const PWASplashScreen = ({
         >
           {/* Christmas decorations */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Snowflakes - reduced count on mobile for performance */}
-            {Array.from({ length: 20 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute bg-white/60 rounded-full"
-                initial={{ 
-                  x: `${Math.random() * 100}%`,
-                  y: -20,
-                  opacity: 0.4 + Math.random() * 0.6
-                }}
-                animate={{
-                  y: '120vh',
-                  x: `${Math.random() * 100}%`,
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 4,
-                  repeat: Infinity,
-                  delay: Math.random() * 3,
-                  ease: "linear"
-                }}
-                style={{
-                  width: 2 + Math.random() * 3,
-                  height: 2 + Math.random() * 3,
-                }}
-              />
-            ))}
+            {/* Snowflakes disabled to reduce animation load */}
 
             {/* Christmas lights - responsive count */}
             <div className="absolute top-0 left-0 right-0 flex justify-center gap-2 sm:gap-3 md:gap-4 py-3 sm:py-4 px-2">
