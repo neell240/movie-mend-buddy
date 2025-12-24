@@ -424,16 +424,17 @@ export const AIChat = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Messages area - scrollable */}
+      <div className="flex-1 overflow-y-auto px-3 py-3 sm:p-4 space-y-3 sm:space-y-4">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex gap-3 ${
+            className={`flex gap-2 sm:gap-3 ${
               message.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
             {message.role === "assistant" && (
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10">
                 <BooviAnimated 
                   animation={
                     message.emotionalState === "celebrating" ? "celebrate" :
@@ -446,19 +447,19 @@ export const AIChat = () => {
               </div>
             )}
             <div
-              className={`max-w-[80%] rounded-2xl p-4 ${
+              className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-3 sm:p-4 ${
                 message.role === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary/80 border border-border shadow-sm"
               }`}
             >
-              <p className={`whitespace-pre-wrap leading-relaxed ${
+              <p className={`whitespace-pre-wrap leading-relaxed text-sm sm:text-[15px] ${
                 message.role === "assistant" 
-                  ? "text-secondary-foreground text-[15px] font-medium" 
+                  ? "text-secondary-foreground font-medium" 
                   : ""
               }`}>{message.content}</p>
               {message.movies && message.movies.length > 0 && (
-                <div className="grid grid-cols-2 gap-3 mt-4">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-3 sm:mt-4">
                   {message.movies.map((movie) => (
                     <MovieCard
                       key={movie.id}
@@ -472,13 +473,13 @@ export const AIChat = () => {
           </div>
         ))}
         {(isLoading || isFetchingMovies) && (
-          <div className="flex gap-3 justify-start">
-            <div className="flex-shrink-0">
+          <div className="flex gap-2 sm:gap-3 justify-start">
+            <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10">
               <BooviAnimated animation="think" size="sm" />
             </div>
-            <Card className="p-3 flex items-center gap-2">
+            <Card className="p-2 sm:p-3 flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs sm:text-sm text-muted-foreground">
                 {isFetchingMovies ? "Finding movies..." : "Thinking..."}
               </span>
             </Card>
@@ -487,9 +488,10 @@ export const AIChat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t border-border space-y-3">
+      {/* Input area - fixed at bottom */}
+      <div className="shrink-0 p-3 sm:p-4 border-t border-border space-y-2 sm:space-y-3 bg-background">
         {messages.length <= 1 && showWelcome && (
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
             {quickSuggestions.map((suggestion, index) => (
               <Button
                 key={index}
@@ -497,7 +499,7 @@ export const AIChat = () => {
                 size="sm"
                 onClick={() => handleSuggestionClick(suggestion)}
                 disabled={isLoading}
-                className="whitespace-nowrap text-xs shrink-0 hover:bg-primary/10 hover:text-primary hover:border-primary/50"
+                className="whitespace-nowrap text-[11px] sm:text-xs shrink-0 h-8 px-2.5 sm:px-3 hover:bg-primary/10 hover:text-primary hover:border-primary/50 active:scale-95 transition-transform"
               >
                 {suggestion}
               </Button>
@@ -511,9 +513,13 @@ export const AIChat = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 h-10 sm:h-11 text-sm sm:text-base"
           />
-          <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>
+          <Button 
+            onClick={sendMessage} 
+            disabled={isLoading || !input.trim()}
+            className="h-10 sm:h-11 px-4 sm:px-6 active:scale-95 transition-transform"
+          >
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send"}
           </Button>
         </div>
