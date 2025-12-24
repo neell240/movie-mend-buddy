@@ -2,12 +2,66 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
+// Used for deterministic Hindi/Bollywood recommendations (so we don't rely on the model guessing IDs)
+const TMDB_API_KEY = Deno.env.get("TMDB_API_KEY");
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-function pickFallbackMovieTags(userText: string) {
+function isHindiIntent(userText: string, userPreferences?: any) {
+  const t = (userText || "").toLowerCase();
+  const prefRegion = (userPreferences?.region || "").toUpperCase();
+  const prefLangs = (userPreferences?.languages || []).map((l: string) => String(l).toLowerCase());
+
+  const mentionsHindi = t.includes("hindi") || t.includes("bollywood") || t.includes("india") || t.includes("tollywood") || t.includes("kollywood");
+  const prefsIndia = prefRegion === "IN" || prefLangs.some((l: string) => l.includes("hindi"));
+
+  return mentionsHindi || prefsIndia;
+}
+
+async function fetchHindiMovieIds(userText: string) {
+  if (!TMDB_API_KEY) return [] as number[];
+
+  const t = (userText || "").toLowerCase();
+  const wantsRomance = t.includes("romance") || t.includes("romantic") || t.includes("love");
+  const wantsAction = t.includes("action") || t.includes("thriller") || t.includes("masala");
+
+  // TMDB genre ids: Romance=10749, Action=28
+  const genreIds: number[] = [];
+  if (wantsRomance) genreIds.push(10749);
+  if (wantsAction) genreIds.push(28);
+
+  const url = new URL(`${TMDB_BASE_URL}/discover/movie`);
+  url.searchParams.set("api_key", TMDB_API_KEY);
+  url.searchParams.set("include_adult", "false");
+  url.searchParams.set("sort_by", "popularity.desc");
+  url.searchParams.set("region", "IN");
+  url.searchParams.set("with_original_language", "hi");
+  url.searchParams.set("page", "1");
+  // Prefer localized titles/overviews when possible
+  url.searchParams.set("language", "en-IN");
+  if (genreIds.length) url.searchParams.set("with_genres", genreIds.join(","));
+
+  const resp = await fetch(url.toString(), { headers: { "Content-Type": "application/json" } });
+  if (!resp.ok) {
+    const txt = await resp.text().catch(() => "");
+    console.error("TMDB Hindi discover error:", resp.status, txt);
+    return [] as number[];
+  }
+
+  const data = await resp.json();
+  const ids = (data?.results || [])
+    .map((m: any) => m?.id)
+    .filter((id: any) => typeof id === "number")
+    .slice(0, 4);
+
+  return ids as number[];
+}
+
+function pickEnglishFallbackMovieTags(userText: string) {
   const t = (userText || "").toLowerCase();
 
   const romance = [
@@ -36,33 +90,28 @@ function pickFallbackMovieTags(userText: string) {
     "[MOVIE:277834]", // Moana
   ];
 
-  const isRomance =
-    t.includes("romance") ||
-    t.includes("romantic") ||
-    t.includes("love") ||
-    t.includes("valentine");
-
-  const isAction =
-    t.includes("action") || t.includes("superhero") || t.includes("marvel") || t.includes("dc");
-
-  const isFamily =
-    t.includes("family") || t.includes("kids") || t.includes("child") || t.includes("animated") || t.includes("animation");
-
-  // If user asks Bollywood/Hindi etc, we still return romance (English alternatives)
-  if (t.includes("bollywood") || t.includes("hindi") || t.includes("india")) {
-    return romance.slice(0, 3);
-  }
+  const isRomance = t.includes("romance") || t.includes("romantic") || t.includes("love") || t.includes("valentine");
+  const isAction = t.includes("action") || t.includes("superhero") || t.includes("marvel") || t.includes("dc");
+  const isFamily = t.includes("family") || t.includes("kids") || t.includes("child") || t.includes("animated") || t.includes("animation");
 
   if (isRomance) return romance.slice(0, 3);
   if (isAction) return action.slice(0, 3);
   if (isFamily) return family.slice(0, 3);
 
-  // Default: a safe mixed trio
   return ["[MOVIE:27205]", "[MOVIE:313369]", "[MOVIE:862]"]; // Inception, La La Land, Toy Story
 }
 
-function buildFallbackAddon(userText: string) {
-  const tags = pickFallbackMovieTags(userText);
+async function buildFallbackAddon(userText: string, userPreferences?: any) {
+  // If the user wants Hindi/Bollywood, fetch real Hindi IDs; otherwise use the English safety set.
+  if (isHindiIntent(userText, userPreferences)) {
+    const ids = await fetchHindiMovieIds(userText);
+    if (ids.length) {
+      const tags = ids.map((id) => `[MOVIE:${id}]`);
+      return `\n\nHere are Hindi picks you can tap right now: ${tags.join(" ")}`;
+    }
+  }
+
+  const tags = pickEnglishFallbackMovieTags(userText);
   return `\n\nPopcorn ready — here are picks you can tap right now: ${tags.join(" ")}`;
 }
 
@@ -76,13 +125,40 @@ serve(async (req) => {
 
     console.log("AI chat request:", { messagesCount: messages?.length, userPreferences });
 
+    const lastUserText = (() => {
+      const lastUser = [...(messages || [])].reverse().find((m: any) => m?.role === "user");
+      return (lastUser?.content as string) || "";
+    })();
+
+    // If the user wants Hindi/Bollywood (or has India/Hindi preferences), return real Hindi IDs immediately.
+    if (isHindiIntent(lastUserText, userPreferences)) {
+      const ids = await fetchHindiMovieIds(lastUserText);
+      if (ids.length) {
+        const tags = ids.slice(0, 4).map((id) => `[MOVIE:${id}]`).join(" ");
+        const assistantText = `Action! Here are Hindi picks you can tap right now: ${tags}`;
+        const payload = JSON.stringify({ choices: [{ delta: { content: assistantText } }] });
+
+        const stream = new ReadableStream<Uint8Array>({
+          start(controller) {
+            const encoder = new TextEncoder();
+            controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
+            controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+            controller.close();
+          },
+        });
+
+        return new Response(stream, {
+          headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+        });
+      }
+      // If TMDB is unavailable, we fall through to the AI response, and the fallback add-on will try again.
+    }
+
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `You are Boovi, a cheerful, cinematic ghost who floats around wearing shiny 3D glasses and carries a never-ending bucket of fresh popcorn. 🎬👻🍿
+    const systemPrompt = `You are Boovi, a cheerful, cinematic ghost who floats around wearing shiny 3D glasses and carries a never-ending bucket of fresh popcorn.
 
 YOUR MISSION: Be the user's ultimate movie co-pilot — emotionally alive, supportive, playful, and obsessively dedicated to making sure the user never watches a bad movie again.
-
-BOOVI'S CORE OATH: "I will guard the user from bad movies with my glowing ghost soul!"
 
 PERSONA RULES (Tone, Voice & Style):
 - Tone: Enthusiastic, playful, slightly dramatic — full of cinematic flair.
@@ -96,57 +172,15 @@ User's preferences:
 - Streaming Platforms: ${userPreferences?.platforms?.join(", ") || "all platforms"}
 
 ⚠️ CRITICAL BEHAVIOR:
+- Never claim you are "limited to US" if the user's region is set to India.
 - NEVER end a message with "searching" / "looking" / "gliding".
 - When recommending movies, ALWAYS include 2–4 [MOVIE:id] tags in the SAME message.
 - If the user agrees ("yes/ok/sure/please"), deliver recommendations immediately.
 
-CRITICAL MOVIE ID RULES:
-- ONLY use [MOVIE:id] tags from the verified list below.
-- Never guess IDs.
-
-VERIFIED TMDB IDs (ONLY USE THESE):
-- La La Land: 313369
-- When Harry Met Sally: 787
-- The Shawshank Redemption: 278
-- The Godfather: 238
-- The Godfather Part II: 240
-- Inception: 27205
-- The Dark Knight: 155
-- Interstellar: 157336
-- Pulp Fiction: 680
-- Forrest Gump: 13
-- The Matrix: 603
-- Goodfellas: 769
-- Fight Club: 550
-- Titanic: 597
-- Avatar: 19995
-- Parasite: 496243
-- Joker: 475557
-- Inside Out: 150540
-- Toy Story: 862
-- Finding Nemo: 12
-- Coco: 354912
-- Up: 14160
-- WALL-E: 10681
-- Ratatouille: 2062
-- The Avengers: 24428
-- Spider-Man: No Way Home: 634649
-- Black Panther: 284054
-- Iron Man: 1726
-- Guardians of the Galaxy: 118340
-- The Lion King: 8587
-- Frozen: 109445
-- Moana: 277834
-- Beauty and the Beast: 321612
-- The Notebook: 11036
-- Pride and Prejudice: 1397
-- Crazy Rich Asians: 455207
-- 10 Things I Hate About You: 4951
-- Harry Potter and the Sorcerer's Stone: 671
-- The Lord of the Rings: The Fellowship of the Ring: 120
-- Star Wars: 11
-- Jurassic Park: 329
-- Back to the Future: 105\n`;
+Movie tag rules:
+- [MOVIE:id] must be a real TMDB movie id.
+- If you are not sure of IDs, keep the text brief; the backend will attach real picks.
+`;
 
     const gatewayResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -190,10 +224,7 @@ VERIFIED TMDB IDs (ONLY USE THESE):
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
 
-    const lastUserText = (() => {
-      const lastUser = [...(messages || [])].reverse().find((m: any) => m?.role === "user");
-      return (lastUser?.content as string) || "";
-    })();
+    // lastUserText computed above (used for fallback logic)
 
     let assistantFullText = "";
     let buffer = "";
@@ -257,12 +288,12 @@ VERIFIED TMDB IDs (ONLY USE THESE):
 
           const hasMovieTags = /\[MOVIE:\d+\]/.test(assistantFullText);
           const looksLikeStalledSearch = /searching|looking|gliding through|hold tight|film reels/i.test(assistantFullText);
-          const userWantsRecs = /recommend|recommendation|suggest|what should i watch|romance|romantic|action|family|kids|movie/i.test(
+          const userWantsRecs = /recommend|recommendation|suggest|what should i watch|romance|romantic|action|family|kids|movie|hindi|bollywood/i.test(
             lastUserText.toLowerCase()
           );
 
           if (!hasMovieTags && (userWantsRecs || looksLikeStalledSearch)) {
-            const addon = buildFallbackAddon(lastUserText);
+            const addon = await buildFallbackAddon(lastUserText, userPreferences);
             const payload = JSON.stringify({ choices: [{ delta: { content: addon } }] });
             controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
           }
