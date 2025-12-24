@@ -243,10 +243,10 @@ export const ChristmasDailyPick = () => {
                 <Gift className="w-5 h-5 text-white" />
               </motion.div>
               <div>
-                <span className="text-sm font-bold text-[hsl(20,15%,18%)]">
+                <span className="text-sm font-bold text-zinc-900">
                   Today's Movie Pick
                 </span>
-                <p className="text-xs text-[hsl(20,15%,40%)]">
+                <p className="text-xs text-zinc-600">
                   December {today.getDate()}
                 </p>
               </div>
@@ -396,13 +396,13 @@ export const ChristmasDailyPick = () => {
                     transition={{ delay: 0.15 }}
                     className="flex items-center gap-2 mb-1"
                   >
-                    <span className="text-xs font-semibold text-[hsl(355,72%,45%)] uppercase tracking-wider">
+                    <span className="text-xs font-semibold text-red-700 uppercase tracking-wider">
                       🎄 Christmas Classic
                     </span>
                   </motion.div>
                   
                   <motion.h3 
-                    className="text-xl font-bold text-[hsl(20,15%,15%)] mb-1 leading-tight"
+                    className="text-xl font-bold text-zinc-900 mb-1 leading-tight"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
@@ -411,7 +411,7 @@ export const ChristmasDailyPick = () => {
                   </motion.h3>
                   
                   <motion.p 
-                    className="text-sm text-[hsl(20,15%,45%)] mb-4"
+                    className="text-sm text-zinc-600 mb-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.25 }}

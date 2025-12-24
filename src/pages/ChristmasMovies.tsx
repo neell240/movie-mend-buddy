@@ -106,7 +106,7 @@ export default function ChristmasMovies() {
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="text-[hsl(45,50%,85%)] hover:bg-[hsl(355,40%,25%)]"
+            className="text-amber-100 hover:bg-[hsl(355,40%,25%)]"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -119,10 +119,10 @@ export default function ChristmasMovies() {
               <TreePine className="w-6 h-6 text-[hsl(145,40%,45%)]" />
             </motion.div>
             <div>
-              <h1 className="text-xl font-bold text-[hsl(42,85%,70%)]">
+              <h1 className="text-xl font-bold text-amber-200">
                 Christmas Movies 🎄
               </h1>
-              <p className="text-xs text-[hsl(45,50%,75%)]">
+              <p className="text-xs text-amber-100/80">
                 {movies?.length || 0} holiday favorites
               </p>
             </div>
@@ -169,10 +169,10 @@ export default function ChristmasMovies() {
                 >
                   <Gift className="w-12 h-12 mx-auto mb-4 text-[hsl(42,85%,60%)]" />
                 </motion.div>
-                <h3 className="text-lg font-bold text-[hsl(42,85%,75%)] mb-2">
+                <h3 className="text-lg font-bold text-amber-200 mb-2">
                   🎄 Your Random Pick!
                 </h3>
-                <p className="text-[hsl(45,50%,85%)] font-medium mb-4">
+                <p className="text-amber-100 font-medium mb-4">
                   {randomMovie.title}
                 </p>
                 {randomMovie.poster_path && (
@@ -186,7 +186,7 @@ export default function ChristmasMovies() {
                   <Button
                     variant="outline"
                     onClick={pickRandomMovie}
-                    className="gap-2 border-[hsl(42,50%,40%)] text-[hsl(42,85%,75%)] hover:bg-[hsl(355,40%,25%)]"
+                    className="gap-2 border-amber-400/50 text-amber-200 hover:bg-[hsl(355,40%,25%)] hover:text-amber-100"
                   >
                     <Shuffle className="w-4 h-4" />
                     Pick Again
@@ -224,10 +224,10 @@ export default function ChristmasMovies() {
           >
             <Gift className="w-10 h-10 text-[hsl(42,85%,60%)]" />
           </motion.div>
-          <h2 className="text-lg font-bold text-[hsl(42,85%,75%)] mb-2">
+          <h2 className="text-lg font-bold text-amber-200 mb-2">
             🎅 Holiday Movie Marathon
           </h2>
-          <p className="text-sm text-[hsl(45,50%,75%)] mb-4">
+          <p className="text-sm text-amber-100/90 mb-4">
             From heartwarming classics to hilarious comedies, find your perfect Christmas movie
           </p>
           
@@ -279,8 +279,8 @@ export default function ChristmasMovies() {
           </motion.div>
         ) : (
           <div className="text-center py-12">
-            <TreePine className="w-12 h-12 mx-auto mb-4 text-[hsl(145,30%,40%)]" />
-            <p className="text-[hsl(45,50%,70%)]">No Christmas movies found</p>
+            <TreePine className="w-12 h-12 mx-auto mb-4 text-green-400" />
+            <p className="text-amber-100/80">No Christmas movies found</p>
           </div>
         )}
       </main>
