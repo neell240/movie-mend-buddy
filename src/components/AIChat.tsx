@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { MovieCard } from "@/components/MovieCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePreferences } from "@/hooks/usePreferences";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -22,12 +22,48 @@ export const AIChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingMovies, setIsFetchingMovies] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [pendingQuery, setPendingQuery] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { preferences } = usePreferences();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Check for query parameter from ChatWidget/HeroCTA
+  useEffect(() => {
+    const query = searchParams.get("query");
+    if (query) {
+      setPendingQuery(query);
+      // Clear the query from URL to prevent re-sending on refresh
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  // Send pending query once conversation is ready
+  useEffect(() => {
+    if (pendingQuery && conversationId && !isLoading) {
+      const query = pendingQuery;
+      setPendingQuery(null);
+      
+      // Send the message
+      const userMessage: Message = { role: "user", content: query };
+      setMessages(prev => [...prev, userMessage]);
+      setIsLoading(true);
+      setShowWelcome(false);
+
+      // Save user message and get AI response
+      supabase.from("messages").insert([{
+        conversation_id: conversationId,
+        role: "user",
+        content: query,
+      }]).then(() => {
+        handleAIResponse([...messages, userMessage]);
+      });
+    }
+  }, [pendingQuery, conversationId, isLoading]);
 
   useEffect(() => {
     // Check authentication and load conversation
@@ -294,6 +330,21 @@ export const AIChat = () => {
           console.warn('⚠️ Filtered out unverified movie IDs:', invalidIds);
         }
         
+        // Show loading state for movie fetching
+        setIsFetchingMovies(true);
+        
+        // Clean the content immediately so user sees the text
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
+          const lastMessage = newMessages[newMessages.length - 1];
+          if (lastMessage.role === "assistant") {
+            lastMessage.content = cleanContent;
+            lastMessage.emotionalState = emotionalState;
+          }
+          return newMessages;
+        });
+        
         const movies: TMDBMovie[] = [];
         
         await Promise.all(
@@ -320,17 +371,17 @@ export const AIChat = () => {
           })
         );
 
+        // Update with movies
         setMessages(prev => {
           const newMessages = [...prev];
-          const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
           const lastMessage = newMessages[newMessages.length - 1];
           if (lastMessage.role === "assistant") {
-            lastMessage.content = cleanContent;
             lastMessage.movies = movies;
-            lastMessage.emotionalState = emotionalState;
           }
           return newMessages;
         });
+        
+        setIsFetchingMovies(false);
 
         // Save assistant message with movies
         if (conversationId) {
@@ -367,6 +418,7 @@ export const AIChat = () => {
       setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
+      setIsFetchingMovies(false);
     }
   };
 
@@ -419,13 +471,16 @@ export const AIChat = () => {
             </div>
           </div>
         ))}
-        {isLoading && (
+        {(isLoading || isFetchingMovies) && (
           <div className="flex gap-3 justify-start">
             <div className="flex-shrink-0">
               <BooviAnimated animation="think" size="sm" />
             </div>
-            <Card className="p-3">
+            <Card className="p-3 flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="text-sm text-muted-foreground">
+                {isFetchingMovies ? "Finding movies..." : "Thinking..."}
+              </span>
             </Card>
           </div>
         )}
