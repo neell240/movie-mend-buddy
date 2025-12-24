@@ -61,8 +61,8 @@ export const BottomNav = () => {
                 "relative flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 flex-1 lg:flex-none py-2 lg:px-4 lg:py-2 lg:rounded-lg transition-all duration-200",
                 isChristmas
                   ? isActive 
-                    ? "text-[hsl(42,85%,70%)]" 
-                    : "text-[hsl(45,50%,85%)] hover:text-[hsl(42,85%,75%)]"
+                    ? "text-amber-300" 
+                    : "text-amber-100 hover:text-amber-200"
                   : isActive 
                     ? "text-primary lg:bg-primary/10" 
                     : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"

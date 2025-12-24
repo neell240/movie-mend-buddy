@@ -60,7 +60,7 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
           variant="outline"
           className={`flex-1 min-w-[140px] gap-2 rounded-xl font-semibold ${
             isChristmas 
-              ? "border-[hsl(42,85%,65%)] text-[hsl(42,85%,65%)] hover:bg-[hsl(42,85%,65%)/0.1] hover:text-[hsl(42,85%,70%)]"
+              ? "border-amber-400 text-amber-300 hover:bg-amber-400/10 hover:text-amber-200 bg-zinc-900/50"
               : "border-primary text-primary hover:bg-primary/10"
           }`}
           size="lg"
@@ -123,7 +123,7 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
             onClick={() => navigate(`/ai-chat?query=${encodeURIComponent(`I want something ${mood.toLowerCase()}`)}`)}
             className={`text-xs px-3 py-1.5 rounded-full transition-all ${
               isChristmas 
-                ? "bg-[hsl(355,45%,20%)/0.6] text-[hsl(42,45%,85%)] hover:bg-[hsl(42,85%,65%)/0.2] hover:text-[hsl(42,85%,70%)] border border-[hsl(42,85%,65%)/0.2]"
+                ? "bg-zinc-900/60 text-amber-100 hover:bg-amber-400/20 hover:text-amber-200 border border-amber-400/30"
                 : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-transparent"
             }`}
           >

@@ -77,7 +77,7 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
           >
             <TreePine className="w-5 h-5 text-[hsl(145,30%,35%)]" />
           </motion.div>
-          <h2 className="text-lg font-bold text-[hsl(20,15%,18%)]">
+          <h2 className="text-lg font-bold text-zinc-900">
             Christmas Movies 🎄
           </h2>
         </div>
@@ -91,7 +91,7 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
         </Button>
       </div>
 
-      <p className="text-sm text-[hsl(20,15%,45%)]">
+      <p className="text-sm text-zinc-700">
         Cozy up with a perfect holiday film ☕🍿
       </p>
 
@@ -118,7 +118,7 @@ export const ChristmasMoviesSection = ({ limit = 12 }: ChristmasMoviesSectionPro
           ))}
         </div>
       ) : (
-        <p className="text-center text-[hsl(20,15%,50%)] py-8">
+        <p className="text-center text-zinc-600 py-8">
           No Christmas movies found
         </p>
       )}
