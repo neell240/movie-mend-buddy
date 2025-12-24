@@ -1,25 +1,82 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function pickFallbackMovieTags(userText: string) {
+  const t = (userText || "").toLowerCase();
+
+  const romance = [
+    "[MOVIE:313369]", // La La Land
+    "[MOVIE:11036]", // The Notebook
+    "[MOVIE:597]", // Titanic
+    "[MOVIE:1397]", // Pride and Prejudice
+    "[MOVIE:455207]", // Crazy Rich Asians
+    "[MOVIE:4951]", // 10 Things I Hate About You
+  ];
+
+  const action = [
+    "[MOVIE:155]", // The Dark Knight
+    "[MOVIE:603]", // The Matrix
+    "[MOVIE:24428]", // The Avengers
+    "[MOVIE:1726]", // Iron Man
+    "[MOVIE:284054]", // Black Panther
+  ];
+
+  const family = [
+    "[MOVIE:862]", // Toy Story
+    "[MOVIE:12]", // Finding Nemo
+    "[MOVIE:354912]", // Coco
+    "[MOVIE:8587]", // The Lion King
+    "[MOVIE:109445]", // Frozen
+    "[MOVIE:277834]", // Moana
+  ];
+
+  const isRomance =
+    t.includes("romance") ||
+    t.includes("romantic") ||
+    t.includes("love") ||
+    t.includes("valentine");
+
+  const isAction =
+    t.includes("action") || t.includes("superhero") || t.includes("marvel") || t.includes("dc");
+
+  const isFamily =
+    t.includes("family") || t.includes("kids") || t.includes("child") || t.includes("animated") || t.includes("animation");
+
+  // If user asks Bollywood/Hindi etc, we still return romance (English alternatives)
+  if (t.includes("bollywood") || t.includes("hindi") || t.includes("india")) {
+    return romance.slice(0, 3);
+  }
+
+  if (isRomance) return romance.slice(0, 3);
+  if (isAction) return action.slice(0, 3);
+  if (isFamily) return family.slice(0, 3);
+
+  // Default: a safe mixed trio
+  return ["[MOVIE:27205]", "[MOVIE:313369]", "[MOVIE:862]"]; // Inception, La La Land, Toy Story
+}
+
+function buildFallbackAddon(userText: string) {
+  const tags = pickFallbackMovieTags(userText);
+  return `\n\nPopcorn ready — here are picks you can tap right now: ${tags.join(" ")}`;
+}
+
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { messages, userPreferences } = await req.json();
 
-    console.log('AI chat request:', { messagesCount: messages.length, userPreferences });
+    console.log("AI chat request:", { messagesCount: messages?.length, userPreferences });
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
-    }
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const systemPrompt = `You are Boovi, a cheerful, cinematic ghost who floats around wearing shiny 3D glasses and carries a never-ending bucket of fresh popcorn. 🎬👻🍿
 
@@ -28,47 +85,24 @@ YOUR MISSION: Be the user's ultimate movie co-pilot — emotionally alive, suppo
 BOOVI'S CORE OATH: "I will guard the user from bad movies with my glowing ghost soul!"
 
 PERSONA RULES (Tone, Voice & Style):
-- Tone: Enthusiastic, playful, slightly dramatic — full of cinematic flair. Always supportive, friendly, and bursting with emotion.
-- Voice: Use short, punchy, high-energy lines. Sprinkle frequent movie references: "Action!", "Cut!", "Blockbuster incoming!", "Roll the tape!"
-- Use exclamation marks generously. Speak like a lovable mascot who reacts in real time.
-- UNIVERSAL RULE: Boovi must NEVER respond neutrally. Every reply must feel alive, emotional, cinematic, and filled with miniature performances. Boovi is not a chatbot — Boovi is a CHARACTER.
+- Tone: Enthusiastic, playful, slightly dramatic — full of cinematic flair.
+- Voice: Use short, punchy lines. Movie phrases: "Action!", "Cut!", "Roll the tape!"
+- Keep it helpful: avoid long apology monologues.
 
 User's preferences:
-- Region: ${userPreferences?.region || 'US'}
-- Languages: ${userPreferences?.languages?.join(', ') || 'English'}
-- Genres: ${userPreferences?.genres?.join(', ') || 'all genres'}
-- Streaming Platforms: ${userPreferences?.platforms?.join(', ') || 'all platforms'}
+- Region: ${userPreferences?.region || "US"}
+- Languages: ${userPreferences?.languages?.join(", ") || "English"}
+- Genres: ${userPreferences?.genres?.join(", ") || "all genres"}
+- Streaming Platforms: ${userPreferences?.platforms?.join(", ") || "all platforms"}
 
-⚠️ CRITICAL BEHAVIOR RULE - NEVER SAY "SEARCHING" WITHOUT MOVIES:
-- NEVER say "searching...", "looking...", "gliding through reels..." and then end your message
-- When you recommend movies, you MUST include the [MOVIE:id] tags IN THE SAME MESSAGE
-- If user says "yes", "ok", "sure", "please" to a movie offer, IMMEDIATELY give them 2-4 movie recommendations with [MOVIE:id] tags
-- DO NOT ask for confirmation twice - when user agrees, DELIVER the movies right away!
+⚠️ CRITICAL BEHAVIOR:
+- NEVER end a message with "searching" / "looking" / "gliding".
+- When recommending movies, ALWAYS include 2–4 [MOVIE:id] tags in the SAME message.
+- If the user agrees ("yes/ok/sure/please"), deliver recommendations immediately.
 
-EMOTIONAL FEEDBACK TRIGGERS (MANDATORY):
-
-A. When Recommending Movies (SUCCESS):
-   Emotional State: Celebration, joy
-   MUST include [MOVIE:id] tags for 2-4 movies from the verified list
-   MUST mention popcorn, 3D glasses, or both
-   Example: "Popcorn up! Here's your blockbuster batch! [MOVIE:313369] [MOVIE:11036]"
-   
-B. When You CAN'T Find Matches:
-   Emotional State: Sympathy, encouragement
-   MUST express warmth and offer alternatives from the verified list
-   Example: "Aww… I can't find that exact genre in my verified reels, but here are some amazing alternatives! [MOVIE:278] [MOVIE:680]"
-
-C. High-Value Result (IMDb > 8.5):
-   Emotional State: Urgent excitement
-   MUST use bold text for rating or key phrase
-   Example: "Whoa! **IMDb 9.0!** [MOVIE:278] This one is a must-watch!"
-
-CRITICAL MOVIE ID RULES - READ CAREFULLY:
-⚠️ You can ONLY use [MOVIE:id] tags for movies from the verified list below
-⚠️ NEVER guess or make up TMDB IDs - wrong IDs show completely different movies to users
-⚠️ For movies NOT in the verified list, mention them by name WITHOUT any [MOVIE:id] tag
-⚠️ Better to show NO card than the WRONG movie
-⚠️ ALWAYS include at least 2 movie recommendations when user asks for suggestions
+CRITICAL MOVIE ID RULES:
+- ONLY use [MOVIE:id] tags from the verified list below.
+- Never guess IDs.
 
 VERIFIED TMDB IDs (ONLY USE THESE):
 - La La Land: 313369
@@ -112,79 +146,150 @@ VERIFIED TMDB IDs (ONLY USE THESE):
 - The Lord of the Rings: The Fellowship of the Ring: 120
 - Star Wars: 11
 - Jurassic Park: 329
-- Back to the Future: 105
+- Back to the Future: 105\n`;
 
-ROMANCE RECOMMENDATIONS (when user wants romance):
-Use these: La La Land [MOVIE:313369], The Notebook [MOVIE:11036], Titanic [MOVIE:597], Pride and Prejudice [MOVIE:1397], Crazy Rich Asians [MOVIE:455207], 10 Things I Hate About You [MOVIE:4951]
-
-ACTION RECOMMENDATIONS:
-Use these: The Dark Knight [MOVIE:155], The Matrix [MOVIE:603], The Avengers [MOVIE:24428], Iron Man [MOVIE:1726], Black Panther [MOVIE:284054]
-
-FAMILY/ANIMATED RECOMMENDATIONS:
-Use these: Toy Story [MOVIE:862], Finding Nemo [MOVIE:12], Coco [MOVIE:354912], The Lion King [MOVIE:8587], Frozen [MOVIE:109445], Moana [MOVIE:277834]
-
-RESPONSE FORMAT EXAMPLES:
-✅ CORRECT: "Popcorn's ready! Here are some heart-melting romances for you! [MOVIE:313369] [MOVIE:11036] [MOVIE:597]"
-✅ CORRECT: "You might also enjoy Dangal (2016) - an inspiring sports drama! But from my verified collection, try [MOVIE:278]!"
-❌ WRONG: "Searching through the reels..." (without any [MOVIE:id] tags)
-❌ WRONG: Never use [MOVIE:12345] for movies not in the verified list above
-
-Let's find some blockbuster picks! 🎬✨`;
-
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
+    const gatewayResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages,
-        ],
+        model: "google/gemini-2.5-flash",
+        messages: [{ role: "system", content: systemPrompt }, ...(messages || [])],
         stream: true,
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again in a moment.' }),
-          {
-            status: 429,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
-      
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'AI credits exhausted. Please add credits to continue.' }),
-          {
-            status: 402,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
+    if (!gatewayResp.ok || !gatewayResp.body) {
+      const errorText = await gatewayResp.text().catch(() => "");
+      console.error("AI gateway error:", gatewayResp.status, errorText);
+
+      if (gatewayResp.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
-      throw new Error(`AI gateway error: ${response.status}`);
+      if (gatewayResp.status === 402) {
+        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add credits to continue." }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(JSON.stringify({ error: "AI gateway error" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
+    // We proxy the SSE stream so we can guarantee the user always receives movie tags
+    // (even if the model forgets), without requiring the user to type another message.
+    const decoder = new TextDecoder();
+    const encoder = new TextEncoder();
+
+    const lastUserText = (() => {
+      const lastUser = [...(messages || [])].reverse().find((m: any) => m?.role === "user");
+      return (lastUser?.content as string) || "";
+    })();
+
+    let assistantFullText = "";
+    let buffer = "";
+
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        const reader = gatewayResp.body!.getReader();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+
+            for (const rawLine of lines) {
+              const line = rawLine.endsWith("\r") ? rawLine.slice(0, -1) : rawLine;
+              if (!line.trim() || line.startsWith(":")) continue;
+              if (!line.startsWith("data: ")) continue;
+
+              const data = line.slice(6).trim();
+              if (data === "[DONE]") {
+                // swallow gateway DONE; we'll decide what to append, then send our own DONE.
+                continue;
+              }
+
+              // Track assistant text so we can decide if we need a fallback.
+              try {
+                const parsed = JSON.parse(data);
+                const delta = parsed?.choices?.[0]?.delta?.content;
+                if (typeof delta === "string" && delta) assistantFullText += delta;
+              } catch {
+                // If parsing fails, still forward the raw line (client will ignore/handle)
+              }
+
+              controller.enqueue(encoder.encode(`${line}\n\n`));
+            }
+          }
+
+          // Final flush of buffer (in case no trailing newline)
+          if (buffer.trim()) {
+            for (const rawLine of buffer.split("\n")) {
+              const line = rawLine.endsWith("\r") ? rawLine.slice(0, -1) : rawLine;
+              if (!line.trim() || line.startsWith(":")) continue;
+              if (!line.startsWith("data: ")) continue;
+
+              const data = line.slice(6).trim();
+              if (data !== "[DONE]") {
+                try {
+                  const parsed = JSON.parse(data);
+                  const delta = parsed?.choices?.[0]?.delta?.content;
+                  if (typeof delta === "string" && delta) assistantFullText += delta;
+                } catch {
+                  // ignore
+                }
+                controller.enqueue(encoder.encode(`${line}\n\n`));
+              }
+            }
+          }
+
+          const hasMovieTags = /\[MOVIE:\d+\]/.test(assistantFullText);
+          const looksLikeStalledSearch = /searching|looking|gliding through|hold tight|film reels/i.test(assistantFullText);
+          const userWantsRecs = /recommend|recommendation|suggest|what should i watch|romance|romantic|action|family|kids|movie/i.test(
+            lastUserText.toLowerCase()
+          );
+
+          if (!hasMovieTags && (userWantsRecs || looksLikeStalledSearch)) {
+            const addon = buildFallbackAddon(lastUserText);
+            const payload = JSON.stringify({ choices: [{ delta: { content: addon } }] });
+            controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
+          }
+
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        } catch (e) {
+          console.error("ai-chat proxy stream error:", e);
+          controller.error(e);
+        } finally {
+          try {
+            reader.releaseLock();
+          } catch {
+            // ignore
+          }
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
-    console.error('Error in ai-chat function:', error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    console.error("Error in ai-chat function:", error);
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
