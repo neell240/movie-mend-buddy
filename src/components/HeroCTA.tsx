@@ -44,15 +44,15 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
       <div className="flex flex-wrap gap-3">
         <Button
           onClick={handleGetRecommendation}
-          className={`flex-1 min-w-[140px] gap-2 rounded-xl font-semibold ${
+          className={`flex-1 min-w-[140px] gap-2 rounded-xl font-semibold text-sm sm:text-base px-3 sm:px-4 ${
             isChristmas 
               ? "bg-gradient-to-r from-[hsl(355,72%,45%)] to-[hsl(355,72%,40%)] hover:from-[hsl(355,72%,50%)] hover:to-[hsl(355,72%,45%)] text-white shadow-lg shadow-[hsl(355,72%,45%)/0.3]"
               : "bg-primary hover:bg-primary/90 text-primary-foreground"
           }`}
           size="lg"
         >
-          <Shuffle className="w-4 h-4" />
-          Get a Recommendation
+          <Shuffle className="w-4 h-4 shrink-0" />
+          <span className="truncate">Get a Recommendation</span>
         </Button>
         
         <Button
