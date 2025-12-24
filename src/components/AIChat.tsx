@@ -215,13 +215,10 @@ export const AIChat = () => {
     }, 0);
   };
 
-  // Verified TMDB IDs - only fetch these to prevent wrong movies
-  const VERIFIED_MOVIE_IDS = new Set([
-    313369, 787, 278, 238, 240, 27205, 155, 157336, 680, 13, 603, 769, 550, 597,
-    19995, 496243, 475557, 150540, 862, 12, 354912, 14160, 10681, 2062, 24428,
-    634649, 284054, 1726, 118340, 8587, 109445, 277834, 321612, 11036, 1397,
-    455207, 4951, 671, 120, 11, 329, 105
-  ]);
+  // Note: We intentionally do NOT restrict to a hardcoded "verified" list.
+  // The backend emits real TMDB ids, and we fetch details from TMDB to render the cards.
+  // (We still validate IDs are numeric before fetching.)
+
 
   const detectEmotionalState = (content: string): "celebrating" | "sympathetic" | "excited" | "focused" => {
     const lowerContent = content.toLowerCase();
@@ -320,23 +317,22 @@ export const AIChat = () => {
       
       const movieMatches = assistantContent.match(/\[MOVIE:(\d+)\]/g);
       if (movieMatches) {
-        const movieIds = [...new Set(movieMatches.map(m => m.match(/\d+/)?.[0]).filter(Boolean))];
-        
-        // Filter to only verified movie IDs to prevent showing wrong movies
-        const verifiedIds = movieIds.filter(id => VERIFIED_MOVIE_IDS.has(parseInt(id || '0')));
-        
-        if (verifiedIds.length !== movieIds.length) {
-          const invalidIds = movieIds.filter(id => !VERIFIED_MOVIE_IDS.has(parseInt(id || '0')));
-          console.warn('⚠️ Filtered out unverified movie IDs:', invalidIds);
-        }
-        
+        const movieIds = [...new Set(
+          movieMatches
+            .map((m) => m.match(/\d+/)?.[0])
+            .filter(Boolean)
+        )]
+          .map((id) => parseInt(id as string, 10))
+          .filter((id) => Number.isFinite(id) && id > 0)
+          .slice(0, 6);
+
         // Show loading state for movie fetching
         setIsFetchingMovies(true);
-        
+
         // Clean the content immediately so user sees the text
-        setMessages(prev => {
+        setMessages((prev) => {
           const newMessages = [...prev];
-          const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, '').trim();
+          const cleanContent = assistantContent.replace(/\[MOVIE:\d+\]/g, "").trim();
           const lastMessage = newMessages[newMessages.length - 1];
           if (lastMessage.role === "assistant") {
             lastMessage.content = cleanContent;
@@ -344,11 +340,11 @@ export const AIChat = () => {
           }
           return newMessages;
         });
-        
+
         const movies: TMDBMovie[] = [];
-        
+
         await Promise.all(
-          verifiedIds.map(async (id) => {
+          movieIds.map(async (id) => {
             try {
               const response = await fetch(
                 `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tmdb-details?id=${id}`,
@@ -358,12 +354,12 @@ export const AIChat = () => {
                   },
                 }
               );
-              
+
               if (response.ok) {
                 const movie = await response.json();
                 movies.push(movie);
               } else {
-                console.warn(`Movie ID ${id} not found in TMDB (404)`);
+                console.warn(`Movie ID ${id} not found in TMDB (${response.status})`);
               }
             } catch (error) {
               console.error(`Failed to fetch movie ${id}:`, error);
