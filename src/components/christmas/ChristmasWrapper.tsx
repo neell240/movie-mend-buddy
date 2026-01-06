@@ -1,5 +1,6 @@
 import { useSeasonal } from "@/hooks/useChristmasMode";
 import { useEffect } from "react";
+import { Fireworks } from "./Fireworks";
 
 export const ChristmasWrapper = () => {
   const { isChristmas, isNewYear } = useSeasonal();
@@ -23,6 +24,10 @@ export const ChristmasWrapper = () => {
     };
   }, [isChristmas, isNewYear]);
 
-  // Snowfall disabled (requested) to eliminate potential perf/crash source.
+  // Show fireworks during New Year
+  if (isNewYear) {
+    return <Fireworks />;
+  }
+
   return null;
 };
