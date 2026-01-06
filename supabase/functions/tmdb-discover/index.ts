@@ -14,15 +14,25 @@ serve(async (req) => {
   }
 
   try {
-    const { genres, sortBy = 'popularity.desc', page = 1, watchProviders, region = 'US' } = await req.json();
+    const { genres, sortBy = 'popularity.desc', page = 1, watchProviders, region = 'US', year, minVoteCount } = await req.json();
 
-    console.log('Discovering movies with filters:', { genres, sortBy, page, watchProviders, region });
+    console.log('Discovering movies with filters:', { genres, sortBy, page, watchProviders, region, year, minVoteCount });
 
     // Filter out invalid values (NaN, null, undefined)
     const validGenres = genres?.filter((g: number) => g != null && !isNaN(g) && g > 0);
     const validWatchProviders = watchProviders?.filter((p: number) => p != null && !isNaN(p) && p > 0);
 
     let url = `${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&sort_by=${sortBy}&page=${page}&include_adult=false&watch_region=${region}`;
+    
+    // Add year filter for primary release year
+    if (year) {
+      url += `&primary_release_year=${year}`;
+    }
+    
+    // Add minimum vote count filter
+    if (minVoteCount) {
+      url += `&vote_count.gte=${minVoteCount}`;
+    }
     
     // Add genres if valid
     if (validGenres && validGenres.length > 0) {

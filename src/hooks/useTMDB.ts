@@ -71,6 +71,8 @@ export const useDiscoverMovies = (params?: {
   sortBy?: string;
   watchProviders?: number[];
   region?: string;
+  year?: number;
+  minVoteCount?: number;
 }) => {
   return useQuery({
     queryKey: ['discover-movies', params],

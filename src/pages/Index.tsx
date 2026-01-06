@@ -20,6 +20,7 @@ import { ChristmasHeroBanner } from "@/components/christmas/ChristmasHeroBanner"
 import { ChristmasDailyPick } from "@/components/christmas/ChristmasDailyPick";
 import { ChristmasOnboarding, useChristmasOnboarding } from "@/components/christmas/ChristmasOnboarding";
 import { NewYearBanner } from "@/components/christmas/NewYearBanner";
+import { BestOf2025Section } from "@/components/christmas/BestOf2025Section";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -111,8 +112,11 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-          {/* New Year Banner with countdown */}
+          {/* New Year Banner */}
           {isNewYear && <NewYearBanner />}
+          
+          {/* Best of 2025 Section */}
+          {isNewYear && <BestOf2025Section />}
 
           {/* Christmas Hero Banner with CTA */}
           {isChristmas && (
