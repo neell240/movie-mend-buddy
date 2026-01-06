@@ -19,14 +19,13 @@ import { ChristmasBoovi } from "@/components/christmas/ChristmasBoovi";
 import { ChristmasHeroBanner } from "@/components/christmas/ChristmasHeroBanner";
 import { ChristmasDailyPick } from "@/components/christmas/ChristmasDailyPick";
 import { ChristmasOnboarding, useChristmasOnboarding } from "@/components/christmas/ChristmasOnboarding";
-// Snowfall disabled globally (see ChristmasWrapper)
-// import { Snowfall } from "@/components/christmas/Snowfall";
+import { NewYearBanner } from "@/components/christmas/NewYearBanner";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
   const { watchlist } = useWatchlist();
-  const { isChristmas } = useSeasonal();
+  const { isChristmas, isNewYear } = useSeasonal();
   const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
   const dailyPickRef = useRef<HTMLDivElement>(null);
   
@@ -112,6 +111,9 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+          {/* New Year Banner with countdown */}
+          {isNewYear && <NewYearBanner />}
+
           {/* Christmas Hero Banner with CTA */}
           {isChristmas && (
             <div className="space-y-4">
