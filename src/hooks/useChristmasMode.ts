@@ -16,14 +16,9 @@ const getSeasonalMode = (): SeasonalMode => {
   const month = now.getMonth(); // 0-indexed (11 = December, 0 = January)
   const day = now.getDate();
   
-  // Christmas mode: Dec 22 - Dec 31 (includes today for testing)
-  if (month === 11 && day >= 22 && day <= 31) {
+  // Christmas mode: Dec 22 - Jan 7 (extended holiday season with Santa red theme)
+  if ((month === 11 && day >= 22) || (month === 0 && day <= 7)) {
     return 'christmas';
-  }
-  
-  // New Year mode: Jan 1 - Jan 7
-  if (month === 0 && day >= 1 && day <= 7) {
-    return 'newyear';
   }
   
   return 'normal';
