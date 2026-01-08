@@ -22,7 +22,7 @@ const getSeasonalMode = (): SeasonalMode => {
   }
   
   // New Year mode: Jan 1 - Jan 7
-  if (month === 0 && day >= 1 && day <= 7) {
+  if (month === 0 && day >= 1 && day <= 15) {
     return 'newyear';
   }
   
