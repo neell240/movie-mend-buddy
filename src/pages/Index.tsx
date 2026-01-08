@@ -1,9 +1,7 @@
-import { useRef } from "react";
 import { BottomNav } from "@/components/BottomNav";
 import { EnhancedMovieCard } from "@/components/EnhancedMovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { ChatWidget } from "@/components/ChatWidget";
-import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings, Wrench } from "lucide-react";
@@ -12,23 +10,14 @@ import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
-import { useWatchlist } from "@/hooks/useWatchlist";
 import { useSeasonal } from "@/hooks/useChristmasMode";
-import { ChristmasMoviesSection } from "@/components/christmas/ChristmasMoviesSection";
-import { ChristmasBoovi } from "@/components/christmas/ChristmasBoovi";
-import { ChristmasHeroBanner } from "@/components/christmas/ChristmasHeroBanner";
-import { ChristmasDailyPick } from "@/components/christmas/ChristmasDailyPick";
-import { ChristmasOnboarding, useChristmasOnboarding } from "@/components/christmas/ChristmasOnboarding";
 import { NewYearBanner } from "@/components/christmas/NewYearBanner";
 import { BestOf2025Section } from "@/components/christmas/BestOf2025Section";
 
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
-  const { watchlist } = useWatchlist();
   const { isChristmas, isNewYear } = useSeasonal();
-  const { showOnboarding, completeOnboarding } = useChristmasOnboarding();
-  const dailyPickRef = useRef<HTMLDivElement>(null);
   
   // Parse preferences safely - filter out NaN values
   const watchProviders = preferences.platforms.length > 0 
@@ -45,17 +34,8 @@ const Index = () => {
     sortBy: 'popularity.desc',
   });
 
-  const scrollToDaily = () => {
-    dailyPickRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
   return (
     <>
-      {/* Christmas First-Launch Onboarding */}
-      {isChristmas && showOnboarding && (
-        <ChristmasOnboarding onComplete={completeOnboarding} />
-      )}
-      
       <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16 christmas-grain">
         {/* Header */}
         <header 
@@ -71,11 +51,7 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {isChristmas ? (
-                  <ChristmasBoovi size="sm" showGlow={false} />
-                ) : (
-                  <Sparkles className="w-6 h-6 text-primary" />
-                )}
+                <Sparkles className="w-6 h-6 text-primary" />
                 <h1 
                   className="text-xl font-bold"
                   style={isChristmas ? { 
@@ -83,7 +59,7 @@ const Index = () => {
                     textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
                   } : undefined}
                 >
-                  {isChristmas ? "MovieMend 🎄" : "MovieMend"}
+                  MovieMend
                 </h1>
               </div>
               <div className="flex items-center gap-2">
@@ -117,26 +93,6 @@ const Index = () => {
           
           {/* Best of 2025 Section */}
           {isNewYear && <BestOf2025Section />}
-
-          {/* Christmas Hero Banner with CTA */}
-          {isChristmas && (
-            <div className="space-y-4">
-              <ChristmasHeroBanner />
-              <HeroCTA onScrollToDaily={scrollToDaily} />
-            </div>
-          )}
-
-          {/* Christmas Daily Pick */}
-          {isChristmas && (
-            <div ref={dailyPickRef}>
-              <ChristmasDailyPick />
-            </div>
-          )}
-
-          {/* Christmas Movies Section - BEFORE Popular */}
-          {isChristmas && (
-            <ChristmasMoviesSection limit={6} />
-          )}
 
           {/* Personalized Recommendations - Always visible */}
           <PersonalizedRecommendations />
