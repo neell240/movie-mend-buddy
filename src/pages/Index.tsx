@@ -5,7 +5,7 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Wrench } from "lucide-react";
+import { Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +14,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { useSeasonal } from "@/hooks/useChristmasMode";
 import { NewYearBanner } from "@/components/christmas/NewYearBanner";
 import { BestOf2025Section } from "@/components/christmas/BestOf2025Section";
+import booviPopcorn from "@/assets/boovi-popcorn.png";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Sparkles className="w-6 h-6 text-primary" />
+                <img src={booviPopcorn} alt="Boovi" className="w-8 h-8 object-contain" />
                 <h1 
                   className="text-xl font-bold"
                   style={isChristmas ? { 
