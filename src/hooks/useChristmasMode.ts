@@ -16,8 +16,8 @@ const getSeasonalMode = (): SeasonalMode => {
   const month = now.getMonth(); // 0-indexed (11 = December, 0 = January)
   const day = now.getDate();
   
-  // Christmas mode: Dec 22 - Dec 31
-  if (month === 11 && day >= 22) {
+  // Christmas theme (red colors): Extended for styling
+  if (month === 0 && day >= 1 && day <= 31) {
     return 'christmas';
   }
   
