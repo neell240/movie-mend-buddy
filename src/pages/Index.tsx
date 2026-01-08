@@ -2,6 +2,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { EnhancedMovieCard } from "@/components/EnhancedMovieCard";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { ChatWidget } from "@/components/ChatWidget";
+import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings, Wrench } from "lucide-react";
@@ -93,6 +94,9 @@ const Index = () => {
           
           {/* Best of 2025 Section */}
           {isNewYear && <BestOf2025Section />}
+
+          {/* Hero CTA with buttons */}
+          <HeroCTA />
 
           {/* Personalized Recommendations - Always visible */}
           <PersonalizedRecommendations />

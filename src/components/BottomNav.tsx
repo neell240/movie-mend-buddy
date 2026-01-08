@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, Search, Bookmark, Sparkles, Users, TreePine } from "lucide-react";
+import { Home, Search, Bookmark, Sparkles, Users } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useSeasonal } from "@/hooks/useChristmasMode";
@@ -10,23 +10,13 @@ export const BottomNav = () => {
   const { isChristmas } = useSeasonal();
   const [tappedItem, setTappedItem] = useState<string | null>(null);
   
-  const baseNavItems = [
+  const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Search, label: "Search", path: "/search" },
     { icon: Sparkles, label: "AI Chat", path: "/ai-chat" },
     { icon: Bookmark, label: "Watchlist", path: "/watchlist" },
+    { icon: Users, label: "Social", path: "/social" },
   ];
-
-  // Add Christmas movies nav item during Christmas mode
-  const navItems = isChristmas 
-    ? [
-        baseNavItems[0],
-        { icon: TreePine, label: "Christmas", path: "/christmas-movies" },
-        baseNavItems[1],
-        baseNavItems[2],
-        baseNavItems[3],
-      ]
-    : [...baseNavItems, { icon: Users, label: "Social", path: "/social" }];
 
   const handleTap = (path: string) => {
     setTappedItem(path);
