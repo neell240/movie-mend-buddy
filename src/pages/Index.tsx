@@ -4,6 +4,7 @@ import { PersonalizedRecommendations } from "@/components/PersonalizedRecommenda
 import { ChatWidget } from "@/components/ChatWidget";
 import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
+import { WinterHeroBanner } from "@/components/WinterHeroBanner";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -12,9 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useSeasonal } from "@/hooks/useChristmasMode";
-import { NewYearBanner } from "@/components/christmas/NewYearBanner";
-import { BestOf2025Section } from "@/components/christmas/BestOf2025Section";
-
+import booviAvatar from "@/assets/boovi-avatar.png";
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
@@ -52,7 +51,11 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Sparkles className="w-6 h-6 text-primary" />
+                {isChristmas ? (
+                  <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain" />
+                ) : (
+                  <Sparkles className="w-6 h-6 text-primary" />
+                )}
                 <h1 
                   className="text-xl font-bold"
                   style={isChristmas ? { 
@@ -89,11 +92,8 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-          {/* New Year Banner */}
-          {isNewYear && <NewYearBanner />}
-          
-          {/* Best of 2025 Section */}
-          {isNewYear && <BestOf2025Section />}
+          {/* Winter Hero Banner */}
+          {isChristmas && <WinterHeroBanner />}
 
           {/* Hero CTA with buttons */}
           <HeroCTA />
