@@ -13,17 +13,17 @@ const SEASONAL_SETTINGS_KEY = 'moviemend_seasonal';
 // Get current seasonal mode based on date (automatic, no user control)
 const getSeasonalMode = (): SeasonalMode => {
   const now = new Date();
-  const month = now.getMonth(); // 0-indexed (11 = December, 0 = January)
+  const month = now.getMonth(); // 0-indexed (11 = December, 0 = January, 1 = February)
   const day = now.getDate();
-  
-  // Christmas theme (red colors): Extended for styling
-  if (month === 0 && day >= 1 && day <= 31) {
-    return 'christmas';
-  }
   
   // New Year mode: Jan 1 - Jan 7
   if (month === 0 && day >= 1 && day <= 7) {
     return 'newyear';
+  }
+  
+  // Winter theme (wine-red/gold colors): January and February
+  if (month === 0 || month === 1) {
+    return 'christmas';
   }
   
   return 'normal';
