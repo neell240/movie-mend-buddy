@@ -60,7 +60,7 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
           variant="outline"
           className={`flex-1 min-w-[140px] gap-2 rounded-xl font-semibold ${
             isChristmas 
-              ? "border-amber-400 text-amber-300 hover:bg-amber-400/10 hover:text-amber-200 bg-zinc-900/50"
+              ? "border-[hsl(42,85%,60%)] text-[hsl(42,85%,65%)] hover:bg-[hsl(42,85%,60%)/0.15] hover:text-[hsl(42,85%,70%)] bg-[hsl(355,50%,12%)/0.6]"
               : "border-primary text-primary hover:bg-primary/10"
           }`}
           size="lg"
@@ -94,7 +94,7 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
                 onChange={(e) => setMoodInput(e.target.value)}
                 className={`pl-10 pr-4 py-5 rounded-xl text-sm ${
                   isChristmas 
-                    ? "bg-zinc-900/80 border-amber-400/30 text-white placeholder:text-amber-200/60 focus:border-amber-400 focus:ring-amber-400/30 caret-white"
+                    ? "bg-[hsl(355,50%,12%)/0.8] border-[hsl(42,85%,60%)/0.4] text-[hsl(45,60%,96%)] placeholder:text-[hsl(42,70%,75%)/0.7] focus:border-[hsl(42,85%,60%)] focus:ring-[hsl(42,85%,60%)/0.3] caret-white"
                     : "bg-background border-border text-foreground placeholder:text-muted-foreground"
                 }`}
               />
@@ -123,7 +123,7 @@ export const HeroCTA = ({ onScrollToDaily, onRefreshPick }: HeroCTAProps) => {
             onClick={() => navigate(`/ai-chat?query=${encodeURIComponent(`I want something ${mood.toLowerCase()}`)}`)}
             className={`text-xs px-3 py-1.5 rounded-full transition-all ${
               isChristmas 
-                ? "bg-zinc-900/60 text-amber-100 hover:bg-amber-400/20 hover:text-amber-200 border border-amber-400/30"
+                ? "bg-[hsl(355,50%,12%)/0.6] text-[hsl(42,70%,80%)] hover:bg-[hsl(42,85%,60%)/0.2] hover:text-[hsl(42,85%,70%)] border border-[hsl(42,85%,60%)/0.35]"
                 : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-transparent"
             }`}
           >
