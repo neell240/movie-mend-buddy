@@ -151,6 +151,47 @@ All colors MUST be HSL.
     --newyear-gold: 43 90% 55%;
     --newyear-silver: 220 10% 80%;
   }
+
+  /* Valentine's Day Theme (Feb 8-14) - Romantic pink */
+  .theme-valentine {
+    --background: 350 45% 12%;
+    --foreground: 350 20% 95%;
+
+    --card: 350 35% 96%;
+    --card-foreground: 350 40% 20%;
+
+    --popover: 350 30% 94%;
+    --popover-foreground: 350 40% 20%;
+
+    /* Rose pink primary */
+    --primary: 350 70% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 350 35% 20%;
+    --secondary-foreground: 350 20% 95%;
+
+    --muted: 350 25% 88%;
+    --muted-foreground: 350 30% 40%;
+
+    /* Light pink accent */
+    --accent: 340 80% 65%;
+    --accent-foreground: 350 50% 15%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 350 30% 85%;
+    --input: 350 30% 92%;
+    --ring: 350 70% 55%;
+
+    --radius: 1.25rem;
+
+    /* Valentine specific colors */
+    --valentine-rose: 350 70% 55%;
+    --valentine-pink: 340 80% 65%;
+    --valentine-blush: 350 35% 96%;
+    --valentine-deep: 350 45% 12%;
+  }
 }
 
 @layer base {
@@ -165,7 +206,7 @@ All colors MUST be HSL.
   }
 
   /* Apply gradient only for default theme */
-  body:not(.theme-christmas):not(.theme-newyear) {
+  body:not(.theme-christmas):not(.theme-newyear):not(.theme-valentine) {
     background: linear-gradient(180deg, hsl(0, 25%, 10%), hsl(0, 20%, 8%));
   }
   
@@ -412,6 +453,100 @@ All colors MUST be HSL.
 
   .animate-snowfall {
     animation: snowfall linear infinite;
+  }
+
+  /* Heartfall keyframes for Valentine's Day */
+  @keyframes heartfall {
+    0% {
+      transform: translateY(-40px) translateX(0) rotate(var(--heart-rotation, 0deg));
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    25% {
+      transform: translateY(25vh) translateX(20px) rotate(calc(var(--heart-rotation, 0deg) + 15deg));
+    }
+    50% {
+      transform: translateY(50vh) translateX(-15px) rotate(calc(var(--heart-rotation, 0deg) - 10deg));
+    }
+    75% {
+      transform: translateY(75vh) translateX(25px) rotate(calc(var(--heart-rotation, 0deg) + 20deg));
+    }
+    95% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(105vh) translateX(-10px) rotate(calc(var(--heart-rotation, 0deg) + 30deg));
+      opacity: 0;
+    }
+  }
+
+  @keyframes heartfall-exit {
+    0% {
+      opacity: 1;
+      transform: translateY(var(--current-y, 0)) scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: translateY(calc(var(--current-y, 0) + 50px)) scale(0.5);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(calc(var(--current-y, 0) + 100px)) scale(0);
+    }
+  }
+
+  .heart-exit {
+    animation: heartfall-exit 0.6s ease-out forwards !important;
+  }
+
+  .animate-heartfall {
+    animation: heartfall linear infinite;
+  }
+
+  /* Valentine theme specific styles */
+  body.theme-valentine {
+    background: linear-gradient(
+      175deg, 
+      hsl(350 45% 16%) 0%, 
+      hsl(350 40% 12%) 50%, 
+      hsl(345 38% 10%) 100%
+    ) !important;
+    min-height: 100vh;
+  }
+
+  .theme-valentine .valentine-card {
+    background: linear-gradient(
+      155deg, 
+      hsl(350 40% 97%) 0%, 
+      hsl(345 35% 95%) 100%
+    );
+    border-radius: 1.25rem;
+    box-shadow: 
+      0 20px 50px -15px hsl(350 40% 8% / 0.25),
+      0 8px 20px -8px hsl(350 40% 8% / 0.15),
+      inset 0 2px 4px hsl(0 0% 100% / 0.9),
+      inset 0 -1px 2px hsl(350 70% 65% / 0.2);
+    border: 1px solid hsl(350 50% 90% / 0.7);
+  }
+
+  .theme-valentine .cta-valentine {
+    background: linear-gradient(135deg, hsl(350 70% 55%) 0%, hsl(340 70% 48%) 100%);
+    box-shadow: 
+      0 8px 25px hsl(350 70% 50% / 0.4),
+      0 4px 12px hsl(350 70% 50% / 0.25),
+      inset 0 1px 1px hsl(0 0% 100% / 0.25);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .theme-valentine .cta-valentine:hover {
+    background: linear-gradient(135deg, hsl(350 70% 60%) 0%, hsl(340 70% 52%) 100%);
+    box-shadow: 
+      0 12px 35px hsl(350 70% 50% / 0.5),
+      0 6px 18px hsl(350 70% 50% / 0.3),
+      inset 0 1px 1px hsl(0 0% 100% / 0.3);
+    transform: translateY(-2px) scale(1.02);
   }
 
   /* Icon bounce on tap */

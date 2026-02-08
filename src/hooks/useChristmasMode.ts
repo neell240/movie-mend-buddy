@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback, createContext, useContext, createElem
 import type { ReactNode } from 'react';
 import { safeJsonParse } from '@/lib/safeJsonParse';
 
-type SeasonalMode = 'normal' | 'christmas' | 'newyear';
+type SeasonalMode = 'normal' | 'christmas' | 'newyear' | 'valentine';
 
 interface SeasonalSettings {
   snowfall: boolean;
+  hearts: boolean;
 }
 
 const SEASONAL_SETTINGS_KEY = 'moviemend_seasonal';
@@ -21,8 +22,13 @@ const getSeasonalMode = (): SeasonalMode => {
     return 'newyear';
   }
   
-  // Winter theme (wine-red/gold colors): January and February
-  if (month === 0 || month === 1) {
+  // Valentine's Day mode: Feb 8 - Feb 14
+  if (month === 1 && day >= 8 && day <= 14) {
+    return 'valentine';
+  }
+  
+  // Winter theme (wine-red/gold colors): January and February (excluding Valentine's week)
+  if (month === 0 || (month === 1 && day < 8)) {
     return 'christmas';
   }
   
@@ -38,15 +44,31 @@ const getDaysUntilChristmas = (): number => {
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 };
 
+// Check days until Valentine's Day (Feb 14)
+const getDaysUntilValentine = (): number => {
+  const now = new Date();
+  const year = now.getMonth() <= 1 ? now.getFullYear() : now.getFullYear() + 1;
+  const valentine = new Date(year, 1, 14); // Feb 14
+  const diff = valentine.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+};
+
 // Check if it's Christmas Day
 const isChristmasDay = (): boolean => {
   const now = new Date();
   return now.getMonth() === 11 && now.getDate() === 25;
 };
 
+// Check if it's Valentine's Day
+const isValentineDay = (): boolean => {
+  const now = new Date();
+  return now.getMonth() === 1 && now.getDate() === 14;
+};
+
 const defaultSettings: SeasonalSettings = {
   // Disable by default (prevents extra animation load on fragile devices)
   snowfall: false,
+  hearts: true,
 };
 
 export const useSeasonalMode = () => {
@@ -86,21 +108,33 @@ export const useSeasonalMode = () => {
     updateSettings({ snowfall });
   }, [updateSettings]);
 
+  const toggleHearts = useCallback((hearts: boolean) => {
+    updateSettings({ hearts });
+  }, [updateSettings]);
+
   // Computed values
   const isChristmas = mode === 'christmas';
   const isNewYear = mode === 'newyear';
+  const isValentine = mode === 'valentine';
   const showSnowfall = isChristmas && settings.snowfall;
+  const showHearts = isValentine && settings.hearts;
   const daysUntilChristmas = getDaysUntilChristmas();
+  const daysUntilValentine = getDaysUntilValentine();
 
   return {
     mode,
     settings,
     isChristmas,
     isNewYear,
+    isValentine,
     isChristmasDay: isChristmasDay(),
+    isValentineDay: isValentineDay(),
     showSnowfall,
+    showHearts,
     daysUntilChristmas,
+    daysUntilValentine,
     toggleSnowfall,
+    toggleHearts,
   };
 };
 

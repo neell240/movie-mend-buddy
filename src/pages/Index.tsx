@@ -5,8 +5,10 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { WinterHeroBanner } from "@/components/WinterHeroBanner";
+import { ValentineHeroBanner } from "@/components/valentine/ValentineHeroBanner";
+import { ValentineDailyPick } from "@/components/valentine/ValentineDailyPick";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Wrench } from "lucide-react";
+import { Sparkles, Settings, Wrench, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +19,7 @@ import booviAvatar from "@/assets/boovi-avatar.png";
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
-  const { isChristmas, isNewYear } = useSeasonal();
+  const { isChristmas, isNewYear, isValentine } = useSeasonal();
   
   // Parse preferences safely - filter out NaN values
   const watchProviders = preferences.platforms.length > 0 
@@ -34,13 +36,19 @@ const Index = () => {
     sortBy: 'popularity.desc',
   });
 
+  // Determine theme for styling
+  const isSeasonalTheme = isChristmas || isValentine;
+
   return (
     <>
       <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16 christmas-grain">
         {/* Header */}
         <header 
           className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
-          style={isChristmas ? {
+          style={isValentine ? {
+            background: "linear-gradient(to right, hsl(350 45% 14% / 0.95), hsl(345 40% 12% / 0.95))",
+            borderColor: "hsl(350 40% 25%)",
+          } : isChristmas ? {
             background: "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
             borderColor: "hsl(355 40% 28%)",
           } : {
@@ -51,14 +59,16 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {isChristmas ? (
+                {isValentine ? (
+                  <Heart className="w-6 h-6 text-rose-400 fill-rose-400" />
+                ) : isChristmas ? (
                   <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain" />
                 ) : (
                   <Sparkles className="w-6 h-6 text-primary" />
                 )}
                 <h1 
                   className="text-xl font-bold"
-                  style={isChristmas ? { 
+                  style={isSeasonalTheme ? { 
                     color: "hsl(45 60% 96%)",
                     textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
                   } : undefined}
@@ -73,7 +83,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/preferences")}
                   title="Setup Preferences"
-                  className={isChristmas ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
+                  className={isSeasonalTheme ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
                 >
                   <Wrench className="w-5 h-5" />
                 </Button>
@@ -82,7 +92,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/settings")}
                   title="Settings"
-                  className={isChristmas ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
+                  className={isSeasonalTheme ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
                 >
                   <Settings className="w-5 h-5" />
                 </Button>
@@ -92,6 +102,14 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+          {/* Valentine Hero Banner & Daily Pick */}
+          {isValentine && (
+            <>
+              <ValentineHeroBanner />
+              <ValentineDailyPick />
+            </>
+          )}
+
           {/* Winter Hero Banner */}
           {isChristmas && <WinterHeroBanner />}
 
@@ -106,11 +124,11 @@ const Index = () => {
 
           {/* Movies Section */}
           <section 
-            className={isChristmas ? "cozy-card p-5" : ""}
+            className={isSeasonalTheme ? (isValentine ? "valentine-card p-5" : "cozy-card p-5") : ""}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 
-                className={isChristmas 
+                className={isSeasonalTheme
                   ? "text-base font-bold text-[hsl(120,32%,16%)]" 
                   : "text-sm font-semibold text-muted-foreground"
                 }
@@ -124,9 +142,11 @@ const Index = () => {
                   size="sm"
                   variant="default"
                   onClick={() => navigate("/preferences")}
-                  className={isChristmas 
-                    ? "text-xs bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white font-semibold shadow-lg animate-pulse" 
-                    : "text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md"
+                  className={isValentine 
+                    ? "text-xs bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-semibold shadow-lg animate-pulse"
+                    : isChristmas 
+                      ? "text-xs bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white font-semibold shadow-lg animate-pulse" 
+                      : "text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md"
                   }
                 >
                   Select Platforms
