@@ -22,13 +22,13 @@ const getSeasonalMode = (): SeasonalMode => {
     return 'newyear';
   }
   
-  // Valentine's Day mode: Feb 8 - Feb 14
-  if (month === 1 && day >= 8 && day <= 14) {
+  // Valentine's Day mode: Feb 7 - Feb 14 (Rose Day through Valentine's Day)
+  if (month === 1 && day >= 7 && day <= 14) {
     return 'valentine';
   }
   
   // Winter theme (wine-red/gold colors): January and February (excluding Valentine's week)
-  if (month === 0 || (month === 1 && day < 8)) {
+  if (month === 0 || (month === 1 && day < 7)) {
     return 'christmas';
   }
   
