@@ -152,45 +152,46 @@ All colors MUST be HSL.
     --newyear-silver: 220 10% 80%;
   }
 
-  /* Valentine's Day Theme (Feb 8-14) - Romantic pink */
+  /* Valentine's Day Theme (Feb 7-14) - Deep maroon + gold */
   .theme-valentine {
-    --background: 350 45% 12%;
-    --foreground: 350 20% 95%;
+    --background: 350 40% 10%;
+    --foreground: 40 50% 95%;
 
-    --card: 350 35% 96%;
+    --card: 35 45% 95%;
     --card-foreground: 350 40% 20%;
 
-    --popover: 350 30% 94%;
+    --popover: 35 40% 93%;
     --popover-foreground: 350 40% 20%;
 
-    /* Rose pink primary */
-    --primary: 350 70% 55%;
+    /* Deep rose primary */
+    --primary: 350 65% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 350 35% 20%;
-    --secondary-foreground: 350 20% 95%;
+    --secondary: 350 35% 18%;
+    --secondary-foreground: 40 50% 95%;
 
-    --muted: 350 25% 88%;
-    --muted-foreground: 350 30% 40%;
+    --muted: 35 25% 88%;
+    --muted-foreground: 350 25% 40%;
 
-    /* Light pink accent */
-    --accent: 340 80% 65%;
-    --accent-foreground: 350 50% 15%;
+    /* Soft gold accent */
+    --accent: 40 70% 58%;
+    --accent-foreground: 350 50% 12%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 350 30% 85%;
-    --input: 350 30% 92%;
-    --ring: 350 70% 55%;
+    --border: 35 35% 85%;
+    --input: 35 30% 90%;
+    --ring: 40 70% 58%;
 
     --radius: 1.25rem;
 
     /* Valentine specific colors */
-    --valentine-rose: 350 70% 55%;
-    --valentine-pink: 340 80% 65%;
-    --valentine-blush: 350 35% 96%;
-    --valentine-deep: 350 45% 12%;
+    --valentine-maroon: 350 40% 10%;
+    --valentine-maroon-light: 350 45% 18%;
+    --valentine-gold: 40 70% 58%;
+    --valentine-cream: 35 45% 95%;
+    --valentine-rose: 350 65% 48%;
   }
 }
 
@@ -506,12 +507,13 @@ All colors MUST be HSL.
   }
 
   /* Valentine theme specific styles */
+  /* Valentine theme gradient - DEEP MAROON */
   body.theme-valentine {
     background: linear-gradient(
       175deg, 
-      hsl(350 45% 16%) 0%, 
-      hsl(350 40% 12%) 50%, 
-      hsl(345 38% 10%) 100%
+      hsl(350 35% 9%) 0%, 
+      hsl(345 40% 14%) 50%, 
+      hsl(350 35% 10%) 100%
     ) !important;
     min-height: 100vh;
   }

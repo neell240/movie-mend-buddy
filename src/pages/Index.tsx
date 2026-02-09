@@ -7,6 +7,7 @@ import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { WinterHeroBanner } from "@/components/WinterHeroBanner";
 import { ValentineHeroBanner } from "@/components/valentine/ValentineHeroBanner";
 import { ValentineDailyPick } from "@/components/valentine/ValentineDailyPick";
+import { ValentineMovieSuggestions } from "@/components/valentine/ValentineMovieSuggestions";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Settings, Wrench, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -102,11 +103,12 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-          {/* Valentine Hero Banner & Daily Pick */}
+          {/* Valentine Hero Banner, Daily Pick & Suggestions */}
           {isValentine && (
             <>
               <ValentineHeroBanner />
               <ValentineDailyPick />
+              <ValentineMovieSuggestions />
             </>
           )}
 
