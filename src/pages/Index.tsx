@@ -105,6 +105,8 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+          {/* Gold section divider */}
+          <div className="gold-divider" />
           {/* Valentine Hero Banner, Daily Pick & Suggestions */}
           {isValentine && (
             <>
