@@ -133,8 +133,8 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 
                 className={isSeasonalTheme
-                  ? "text-base font-bold text-[hsl(120,32%,16%)]" 
-                  : "text-sm font-semibold text-muted-foreground"
+                  ? "text-base font-bold text-[hsl(120,32%,16%)] gold-underline-short" 
+                  : "text-sm font-semibold text-muted-foreground gold-underline-short"
                 }
               >
                 {preferences.platforms.length > 0 
