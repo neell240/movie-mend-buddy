@@ -63,9 +63,9 @@ const Index = () => {
                 {isValentine ? (
                   <Heart className="w-6 h-6 text-rose-400 fill-rose-400" />
                 ) : isChristmas ? (
-                  <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain" />
+                  <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain animate-gold-glow" />
                 ) : (
-                  <Sparkles className="w-6 h-6 text-primary" />
+                  <Sparkles className="w-6 h-6 text-accent animate-gold-glow" />
                 )}
                 <h1 
                   className="text-xl font-bold gold-underline"
