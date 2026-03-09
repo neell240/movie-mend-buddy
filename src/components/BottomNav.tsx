@@ -54,7 +54,7 @@ export const BottomNav = () => {
                     ? "text-amber-300" 
                     : "text-amber-100 hover:text-amber-200"
                   : isActive 
-                    ? "text-primary lg:bg-primary/10" 
+                    ? "text-accent lg:bg-accent/10" 
                     : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
               )}
             >
