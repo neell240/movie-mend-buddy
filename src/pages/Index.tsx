@@ -68,11 +68,13 @@ const Index = () => {
                   <Sparkles className="w-6 h-6 text-primary" />
                 )}
                 <h1 
-                  className="text-xl font-bold"
+                  className="text-xl font-bold gold-underline"
                   style={isSeasonalTheme ? { 
                     color: "hsl(45 60% 96%)",
                     textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
-                  } : undefined}
+                  } : {
+                    color: "hsl(45 60% 96%)",
+                  }}
                 >
                   MovieMend
                 </h1>
