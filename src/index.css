@@ -11,47 +11,51 @@ All colors MUST be HSL.
 @layer base {
   /* Default theme (normal mode) */
   :root {
-    --background: 0 10% 8%;
-    --foreground: 0 0% 95%;
+    --background: 355 45% 12%;
+    --foreground: 45 50% 95%;
 
-    --card: 0 15% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 355 35% 16%;
+    --card-foreground: 45 50% 95%;
 
-    --popover: 0 15% 10%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 355 35% 14%;
+    --popover-foreground: 45 50% 95%;
 
-    --primary: 0 100% 62%;
+    --primary: 355 75% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 20% 18%;
-    --secondary-foreground: 0 0% 90%;
+    --secondary: 355 30% 20%;
+    --secondary-foreground: 45 50% 92%;
 
-    --muted: 0 15% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 355 25% 18%;
+    --muted-foreground: 45 20% 60%;
 
-    --accent: 0 100% 62%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 42 85% 60%;
+    --accent-foreground: 355 40% 12%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 15% 20%;
-    --input: 0 15% 18%;
-    --ring: 0 100% 62%;
+    --border: 355 25% 22%;
+    --input: 355 25% 20%;
+    --ring: 42 85% 60%;
 
     --radius: 0.75rem;
 
     /* Custom MovieMend colors */
-    --burgundy-dark: 0 25% 10%;
-    --burgundy-base: 0 30% 17%;
-    --burgundy-light: 0 25% 25%;
+    --burgundy-dark: 355 45% 10%;
+    --burgundy-base: 355 35% 17%;
+    --burgundy-light: 355 30% 25%;
     
-    --red-bright: 0 100% 62%;
-    --red-hover: 0 100% 56%;
+    --red-bright: 355 75% 50%;
+    --red-hover: 355 75% 44%;
+    
+    /* Gold accents */
+    --gold: 42 85% 60%;
+    --gold-soft: 42 70% 75%;
     
     /* Gradients */
-    --gradient-dark: linear-gradient(180deg, hsl(0, 25%, 10%), hsl(0, 20%, 8%));
-    --gradient-card: linear-gradient(135deg, hsl(0, 25%, 15%), hsl(0, 20%, 12%));
+    --gradient-dark: linear-gradient(180deg, hsl(355, 45%, 14%), hsl(355, 40%, 10%));
+    --gradient-card: linear-gradient(135deg, hsl(355, 35%, 18%), hsl(355, 30%, 14%));
   }
 
   /* ============================================
