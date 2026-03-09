@@ -63,16 +63,18 @@ const Index = () => {
                 {isValentine ? (
                   <Heart className="w-6 h-6 text-rose-400 fill-rose-400" />
                 ) : isChristmas ? (
-                  <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain" />
+                  <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain animate-gold-glow" />
                 ) : (
-                  <Sparkles className="w-6 h-6 text-primary" />
+                  <Sparkles className="w-6 h-6 text-accent animate-gold-glow" />
                 )}
                 <h1 
-                  className="text-xl font-bold"
+                  className="text-xl font-bold gold-underline"
                   style={isSeasonalTheme ? { 
                     color: "hsl(45 60% 96%)",
                     textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
-                  } : undefined}
+                  } : {
+                    color: "hsl(45 60% 96%)",
+                  }}
                 >
                   MovieMend
                 </h1>
@@ -103,6 +105,8 @@ const Index = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+          {/* Gold section divider */}
+          <div className="gold-divider" />
           {/* Valentine Hero Banner, Daily Pick & Suggestions */}
           {isValentine && (
             <>
@@ -131,8 +135,8 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 
                 className={isSeasonalTheme
-                  ? "text-base font-bold text-[hsl(120,32%,16%)]" 
-                  : "text-sm font-semibold text-muted-foreground"
+                  ? "text-base font-bold text-[hsl(120,32%,16%)] gold-underline-short" 
+                  : "text-sm font-semibold text-muted-foreground gold-underline-short"
                 }
               >
                 {preferences.platforms.length > 0 

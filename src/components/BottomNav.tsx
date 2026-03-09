@@ -54,7 +54,7 @@ export const BottomNav = () => {
                     ? "text-amber-300" 
                     : "text-amber-100 hover:text-amber-200"
                   : isActive 
-                    ? "text-primary lg:bg-primary/10" 
+                    ? "text-accent lg:bg-accent/10" 
                     : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
               )}
             >
@@ -66,15 +66,15 @@ export const BottomNav = () => {
               </motion.div>
               <span className="text-xs lg:text-sm font-medium">{item.label}</span>
               
-              {/* Active indicator - Santa red */}
-              {isChristmas && isActive && (
+              {/* Active indicator - gold underline */}
+              {isActive && (
                 <motion.span 
                   className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-8 h-1.5 rounded-full"
                   style={{
                     background: "linear-gradient(90deg, hsl(42 85% 60%), hsl(42 85% 50%), hsl(42 85% 60%))",
                     boxShadow: "0 0 12px hsl(42 85% 60% / 0.6), 0 0 24px hsl(42 85% 60% / 0.3)",
                   }}
-                  layoutId="christmas-nav-indicator"
+                  layoutId="nav-indicator"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ type: "spring", bounce: 0.35 }}

@@ -588,4 +588,99 @@ All colors MUST be HSL.
   .animate-boovi-float {
     animation: boovi-float 3s ease-in-out infinite;
   }
+
+  /* ============================================
+     GOLD UNDERLINE & ACCENT UTILITIES
+     ============================================ */
+
+  /* Gold underline decoration for headings */
+  .gold-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .gold-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(42 85% 60%), hsl(42 70% 50%), hsl(42 85% 60%));
+    border-radius: 2px;
+    box-shadow: 0 0 8px hsl(42 85% 60% / 0.4);
+  }
+
+  /* Short gold underline for smaller headings */
+  .gold-underline-short {
+    position: relative;
+    display: inline-block;
+  }
+
+  .gold-underline-short::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(42 85% 60%), hsl(42 85% 60% / 0.3));
+    border-radius: 2px;
+  }
+
+  /* Animated gold underline that shimmers */
+  .gold-underline-shimmer {
+    position: relative;
+    display: inline-block;
+  }
+
+  .gold-underline-shimmer::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(42 85% 60% / 0.2), hsl(42 85% 65%), hsl(42 85% 60% / 0.2));
+    background-size: 200% 100%;
+    border-radius: 2px;
+    animation: gold-shimmer-line 3s ease-in-out infinite;
+  }
+
+  @keyframes gold-shimmer-line {
+    0%, 100% { background-position: 200% 0; }
+    50% { background-position: -200% 0; }
+  }
+
+  /* Gold glow pulse for icons/accents */
+  @keyframes gold-glow-pulse {
+    0%, 100% { 
+      filter: drop-shadow(0 0 4px hsl(42 85% 60% / 0.3));
+    }
+    50% { 
+      filter: drop-shadow(0 0 10px hsl(42 85% 60% / 0.6));
+    }
+  }
+
+  .animate-gold-glow {
+    animation: gold-glow-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* Gold border shimmer for cards */
+  @keyframes gold-border-shimmer {
+    0%, 100% { border-color: hsl(42 50% 40% / 0.3); }
+    50% { border-color: hsl(42 85% 60% / 0.5); }
+  }
+
+  .animate-gold-border {
+    animation: gold-border-shimmer 3s ease-in-out infinite;
+  }
+
+  /* Section divider with gold accent */
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(42 85% 60% / 0.4), transparent);
+    border: none;
+    margin: 1.5rem 0;
+  }
 }
