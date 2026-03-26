@@ -105,6 +105,7 @@ const App = () => {
               <Route path="/install" element={<Install />} />
               <Route path="/boovi-demo" element={<BooviDemo />} />
               <Route path="/christmas-movies" element={<ChristmasMovies />} />
+              <Route path="/ram-navami-movies" element={<RamNavamiMoviesPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

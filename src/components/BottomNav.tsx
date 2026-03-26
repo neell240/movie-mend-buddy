@@ -10,13 +10,22 @@ export const BottomNav = () => {
   const { isChristmas, isRamNavami } = useSeasonal();
   const [tappedItem, setTappedItem] = useState<string | null>(null);
   
-  const navItems = [
+  const baseItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Search, label: "Search", path: "/search" },
     { icon: Sparkles, label: "AI Chat", path: "/ai-chat" },
     { icon: Bookmark, label: "Watchlist", path: "/watchlist" },
-    { icon: Users, label: "Social", path: "/social" },
   ];
+
+  const navItems = isRamNavami
+    ? [
+        ...baseItems,
+        { icon: Flame, label: "Ram Navami", path: "/ram-navami-movies" },
+      ]
+    : [
+        ...baseItems,
+        { icon: Users, label: "Social", path: "/social" },
+      ];
 
   const handleTap = (path: string) => {
     setTappedItem(path);
