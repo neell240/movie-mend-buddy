@@ -55,11 +55,11 @@ const Index = () => {
                 <h1 
                   className="text-xl font-bold gold-underline"
                   style={{ 
-                    color: "hsl(45 60% 96%)",
-                    textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
+                    color: isRamNavami ? "hsl(25 40% 18%)" : "hsl(45 60% 96%)",
+                    textShadow: isRamNavami ? "none" : "0 2px 8px hsl(355 50% 10% / 0.4)"
                   }}
                 >
-                  MovieMend
+                  {isRamNavami ? "🪔 MovieMend" : "MovieMend"}
                 </h1>
               </div>
               <div className="flex items-center gap-2">
