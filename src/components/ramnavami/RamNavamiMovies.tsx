@@ -28,6 +28,13 @@ const RAMAYANA_MOVIES: RamayanaMovie[] = [
     description: "The iconic television retelling",
     poster: "https://image.tmdb.org/t/p/w300/5Gk2bOjaxjPLRyGRAPMPbhUmfUn.jpg",
   },
+  {
+    title: "Siya Ke Ram",
+    year: 2015,
+    rating: 8.4,
+    description: "A modern retelling from Sita's perspective",
+    poster: "https://image.tmdb.org/t/p/w300/uWeEiB9wOCfnooMQz7Iz2MXBHUV.jpg",
+  },
 ];
 
 export const RamNavamiMovies = () => {
