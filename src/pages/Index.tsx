@@ -5,7 +5,10 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { WinterHeroBanner } from "@/components/WinterHeroBanner";
+import { RamNavamiHeroBanner } from "@/components/ramnavami/RamNavamiHeroBanner";
+import { RamNavamiMovies } from "@/components/ramnavami/RamNavamiMovies";
 import { Button } from "@/components/ui/button";
+import { useSeasonal } from "@/hooks/useChristmasMode";
 import { Sparkles, Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
@@ -17,6 +20,7 @@ import booviAvatar from "@/assets/boovi-avatar.png";
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
+  const { isRamNavami } = useSeasonal();
   
   // Parse preferences safely - filter out NaN values
   const watchProviders = preferences.platforms.length > 0 
@@ -40,8 +44,10 @@ const Index = () => {
         <header 
           className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
           style={{
-            background: "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
-            borderColor: "hsl(355 40% 28%)",
+            background: isRamNavami 
+              ? "linear-gradient(to right, hsl(40 60% 92% / 0.97), hsl(35 65% 85% / 0.97))"
+              : "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
+            borderColor: isRamNavami ? "hsl(40 45% 78%)" : "hsl(355 40% 28%)",
           }}
         >
           <div className="max-w-7xl mx-auto px-4 py-4">
@@ -51,11 +57,11 @@ const Index = () => {
                 <h1 
                   className="text-xl font-bold gold-underline"
                   style={{ 
-                    color: "hsl(45 60% 96%)",
-                    textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
+                    color: isRamNavami ? "hsl(25 40% 18%)" : "hsl(45 60% 96%)",
+                    textShadow: isRamNavami ? "none" : "0 2px 8px hsl(355 50% 10% / 0.4)"
                   }}
                 >
-                  MovieMend
+                  {isRamNavami ? "🪔 MovieMend" : "MovieMend"}
                 </h1>
               </div>
               <div className="flex items-center gap-2">
@@ -87,8 +93,11 @@ const Index = () => {
           {/* Gold section divider */}
           <div className="gold-divider" />
 
-          {/* Hero Banner - always show */}
-          <WinterHeroBanner />
+          {/* Hero Banner */}
+          {isRamNavami ? <RamNavamiHeroBanner /> : <WinterHeroBanner />}
+
+          {/* Ram Navami curated section */}
+          {isRamNavami && <RamNavamiMovies />}
 
           {/* Hero CTA with buttons */}
           <HeroCTA />

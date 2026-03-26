@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, createContext, useContext, createElem
 import type { ReactNode } from 'react';
 import { safeJsonParse } from '@/lib/safeJsonParse';
 
-type SeasonalMode = 'normal' | 'christmas' | 'newyear' | 'valentine';
+type SeasonalMode = 'normal' | 'christmas' | 'newyear' | 'valentine' | 'ramnavami';
 
 interface SeasonalSettings {
   snowfall: boolean;
@@ -25,6 +25,11 @@ const getSeasonalMode = (): SeasonalMode => {
   // Valentine's Day mode: Feb 7 - Feb 14 (Rose Day through Valentine's Day)
   if (month === 1 && day >= 7 && day <= 14) {
     return 'valentine';
+  }
+
+  // Ram Navami mode: March 25 - March 28
+  if (month === 2 && day >= 25 && day <= 28) {
+    return 'ramnavami';
   }
   
   // Winter theme (wine-red/gold colors): January and February (excluding Valentine's week)
@@ -116,6 +121,7 @@ export const useSeasonalMode = () => {
   const isChristmas = mode === 'christmas';
   const isNewYear = mode === 'newyear';
   const isValentine = mode === 'valentine';
+  const isRamNavami = mode === 'ramnavami';
   const showSnowfall = isChristmas && settings.snowfall;
   const showHearts = isValentine && settings.hearts;
   const daysUntilChristmas = getDaysUntilChristmas();
@@ -127,6 +133,7 @@ export const useSeasonalMode = () => {
     isChristmas,
     isNewYear,
     isValentine,
+    isRamNavami,
     isChristmasDay: isChristmasDay(),
     isValentineDay: isValentineDay(),
     showSnowfall,
