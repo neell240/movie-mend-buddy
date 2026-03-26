@@ -75,6 +75,7 @@ const App = () => {
             />
           )}
           <ChristmasWrapper />
+          <RamNavamiWelcomeGate />
           
           <OfflineIndicator />
           <Toaster />
