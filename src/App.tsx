@@ -27,6 +27,7 @@ import Social from "./pages/Social";
 import Install from "./pages/Install";
 import BooviDemo from "./pages/BooviDemo";
 import ChristmasMovies from "./pages/ChristmasMovies";
+import RamNavamiMoviesPage from "./pages/RamNavamiMovies";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
