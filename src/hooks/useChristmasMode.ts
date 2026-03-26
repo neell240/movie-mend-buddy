@@ -26,6 +26,11 @@ const getSeasonalMode = (): SeasonalMode => {
   if (month === 1 && day >= 7 && day <= 14) {
     return 'valentine';
   }
+
+  // Ram Navami mode: March 25 - March 28
+  if (month === 2 && day >= 25 && day <= 28) {
+    return 'ramnavami';
+  }
   
   // Winter theme (wine-red/gold colors): January and February (excluding Valentine's week)
   if (month === 0 || (month === 1 && day < 7)) {
