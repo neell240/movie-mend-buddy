@@ -91,8 +91,12 @@ export const BottomNav = () => {
                 <motion.span 
                   className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-8 h-1.5 rounded-full"
                   style={{
-                    background: "linear-gradient(90deg, hsl(42 85% 60%), hsl(42 85% 50%), hsl(42 85% 60%))",
-                    boxShadow: "0 0 12px hsl(42 85% 60% / 0.6), 0 0 24px hsl(42 85% 60% / 0.3)",
+                    background: isRamNavami
+                      ? "linear-gradient(90deg, hsl(35 75% 58%), hsl(30 80% 50%), hsl(35 75% 58%))"
+                      : "linear-gradient(90deg, hsl(42 85% 60%), hsl(42 85% 50%), hsl(42 85% 60%))",
+                    boxShadow: isRamNavami
+                      ? "0 0 10px hsl(35 75% 58% / 0.5), 0 0 20px hsl(35 75% 58% / 0.25)"
+                      : "0 0 12px hsl(42 85% 60% / 0.6), 0 0 24px hsl(42 85% 60% / 0.3)",
                   }}
                   layoutId="nav-indicator"
                   initial={{ opacity: 0, scale: 0.8 }}
