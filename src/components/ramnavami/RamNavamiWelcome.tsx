@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import booviRamNavami from "@/assets/boovi-ramnavami.png";
 
-const STORAGE_KEY = "moviemend_ramnavami_welcome_2026_v2";
+const STORAGE_KEY = "moviemend_ramnavami_welcome_2026_v3";
 
 export const RamNavamiWelcome = () => {
   const [show, setShow] = useState(false);
