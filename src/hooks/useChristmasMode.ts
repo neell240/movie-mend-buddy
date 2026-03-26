@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, createContext, useContext, createElem
 import type { ReactNode } from 'react';
 import { safeJsonParse } from '@/lib/safeJsonParse';
 
-type SeasonalMode = 'normal' | 'christmas' | 'newyear' | 'valentine';
+type SeasonalMode = 'normal' | 'christmas' | 'newyear' | 'valentine' | 'ramnavami';
 
 interface SeasonalSettings {
   snowfall: boolean;
