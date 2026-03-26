@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export const BottomNav = () => {
   const location = useLocation();
-  const { isChristmas } = useSeasonal();
+  const { isChristmas, isRamNavami } = useSeasonal();
   const [tappedItem, setTappedItem] = useState<string | null>(null);
   
   const navItems = [
