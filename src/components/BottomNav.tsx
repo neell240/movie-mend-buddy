@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, Search, Bookmark, Sparkles, Users } from "lucide-react";
+import { Home, Search, Bookmark, Sparkles, Users, Film, Flame } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useSeasonal } from "@/hooks/useChristmasMode";
