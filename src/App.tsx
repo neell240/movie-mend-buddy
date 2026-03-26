@@ -39,6 +39,12 @@ const queryClient = new QueryClient({
     },
   },
 });
+// Gate component that uses seasonal context
+const RamNavamiWelcomeGate = () => {
+  const { isRamNavami } = useSeasonal();
+  if (!isRamNavami) return null;
+  return <RamNavamiWelcome />;
+};
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
