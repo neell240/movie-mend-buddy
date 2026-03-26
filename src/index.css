@@ -549,6 +549,17 @@ All colors MUST be HSL.
     animation: heartfall linear infinite;
   }
 
+  /* Ram Navami theme gradient - SAFFRON TO CREAM */
+  body.theme-ramnavami {
+    background: linear-gradient(
+      175deg,
+      #F4C27A 0%,
+      #FFF6E8 60%,
+      #FFF9F0 100%
+    ) !important;
+    min-height: 100vh;
+  }
+
   /* Valentine theme specific styles */
   /* Valentine theme gradient - DEEP MAROON */
   body.theme-valentine {

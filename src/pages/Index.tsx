@@ -44,8 +44,10 @@ const Index = () => {
         <header 
           className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
           style={{
-            background: "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
-            borderColor: "hsl(355 40% 28%)",
+            background: isRamNavami 
+              ? "linear-gradient(to right, hsl(40 60% 92% / 0.97), hsl(35 65% 85% / 0.97))"
+              : "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
+            borderColor: isRamNavami ? "hsl(40 45% 78%)" : "hsl(355 40% 28%)",
           }}
         >
           <div className="max-w-7xl mx-auto px-4 py-4">

@@ -107,4 +107,11 @@ const App = () => {
   );
 };
 
+// Gate component that uses seasonal context
+const RamNavamiWelcomeGate = () => {
+  const { isRamNavami } = useSeasonal();
+  if (!isRamNavami) return null;
+  return <RamNavamiWelcome />;
+};
+
 export default App;

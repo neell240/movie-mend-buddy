@@ -133,6 +133,7 @@ export const useSeasonalMode = () => {
     isChristmas,
     isNewYear,
     isValentine,
+    isRamNavami,
     isChristmasDay: isChristmasDay(),
     isValentineDay: isValentineDay(),
     showSnowfall,
