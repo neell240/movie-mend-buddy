@@ -20,6 +20,7 @@ import booviAvatar from "@/assets/boovi-avatar.png";
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
+  const { isRamNavami } = useSeasonal();
   
   // Parse preferences safely - filter out NaN values
   const watchProviders = preferences.platforms.length > 0 
