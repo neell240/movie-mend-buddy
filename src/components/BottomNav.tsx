@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export const BottomNav = () => {
   const location = useLocation();
-  const { isChristmas } = useSeasonal();
+  const { isChristmas, isRamNavami } = useSeasonal();
   const [tappedItem, setTappedItem] = useState<string | null>(null);
   
   const navItems = [
@@ -27,11 +27,18 @@ export const BottomNav = () => {
     <nav 
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50 border-t lg:top-0 lg:bottom-auto lg:border-t-0 lg:border-b transition-colors duration-300",
-        isChristmas 
-          ? "border-[hsl(355,40%,25%)]" 
-          : "bg-burgundy-base border-burgundy-light"
+        isRamNavami
+          ? "border-[hsl(25,30%,75%)]"
+          : isChristmas 
+            ? "border-[hsl(355,40%,25%)]" 
+            : "bg-burgundy-base border-burgundy-light"
       )}
-      style={isChristmas ? {
+      style={isRamNavami ? {
+        background: "linear-gradient(to right, hsl(20 25% 22%), hsl(15 28% 18%), hsl(20 25% 22%))",
+        boxShadow: "0 -4px 16px hsl(20 30% 10% / 0.4)",
+        borderTopLeftRadius: "16px",
+        borderTopRightRadius: "16px",
+      } : isChristmas ? {
         background: "linear-gradient(to right, hsl(355 50% 16%), hsl(355 45% 14%), hsl(355 50% 16%))",
         boxShadow: "0 -4px 20px hsl(355 50% 6% / 0.5)",
       } : undefined}
@@ -49,13 +56,17 @@ export const BottomNav = () => {
               onClick={() => handleTap(item.path)}
               className={cn(
                 "relative flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 flex-1 lg:flex-none py-2 lg:px-4 lg:py-2 lg:rounded-lg transition-all duration-200",
-                isChristmas
-                  ? isActive 
-                    ? "text-amber-300" 
-                    : "text-amber-100 hover:text-amber-200"
-                  : isActive 
-                    ? "text-accent lg:bg-accent/10" 
-                    : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
+                isRamNavami
+                  ? isActive
+                    ? "text-[hsl(35,70%,65%)]"
+                    : "text-[hsl(30,20%,60%)] hover:text-[hsl(35,50%,70%)]"
+                  : isChristmas
+                    ? isActive 
+                      ? "text-amber-300" 
+                      : "text-amber-100 hover:text-amber-200"
+                    : isActive 
+                      ? "text-accent lg:bg-accent/10" 
+                      : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
               )}
             >
               <motion.div
