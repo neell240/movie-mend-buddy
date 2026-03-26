@@ -27,11 +27,18 @@ export const BottomNav = () => {
     <nav 
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50 border-t lg:top-0 lg:bottom-auto lg:border-t-0 lg:border-b transition-colors duration-300",
-        isChristmas 
-          ? "border-[hsl(355,40%,25%)]" 
-          : "bg-burgundy-base border-burgundy-light"
+        isRamNavami
+          ? "border-[hsl(25,30%,75%)]"
+          : isChristmas 
+            ? "border-[hsl(355,40%,25%)]" 
+            : "bg-burgundy-base border-burgundy-light"
       )}
-      style={isChristmas ? {
+      style={isRamNavami ? {
+        background: "linear-gradient(to right, hsl(20 25% 22%), hsl(15 28% 18%), hsl(20 25% 22%))",
+        boxShadow: "0 -4px 16px hsl(20 30% 10% / 0.4)",
+        borderTopLeftRadius: "16px",
+        borderTopRightRadius: "16px",
+      } : isChristmas ? {
         background: "linear-gradient(to right, hsl(355 50% 16%), hsl(355 45% 14%), hsl(355 50% 16%))",
         boxShadow: "0 -4px 20px hsl(355 50% 6% / 0.5)",
       } : undefined}
