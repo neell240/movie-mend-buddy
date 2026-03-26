@@ -121,6 +121,7 @@ export const useSeasonalMode = () => {
   const isChristmas = mode === 'christmas';
   const isNewYear = mode === 'newyear';
   const isValentine = mode === 'valentine';
+  const isRamNavami = mode === 'ramnavami';
   const showSnowfall = isChristmas && settings.snowfall;
   const showHearts = isValentine && settings.hearts;
   const daysUntilChristmas = getDaysUntilChristmas();
