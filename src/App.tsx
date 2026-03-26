@@ -73,7 +73,7 @@ const App = () => {
             />
           )}
           <ChristmasWrapper />
-          <ValentineWelcome />
+          
           <OfflineIndicator />
           <Toaster />
           <Sonner />
