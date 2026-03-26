@@ -91,8 +91,11 @@ const Index = () => {
           {/* Gold section divider */}
           <div className="gold-divider" />
 
-          {/* Hero Banner - always show */}
-          <WinterHeroBanner />
+          {/* Hero Banner */}
+          {isRamNavami ? <RamNavamiHeroBanner /> : <WinterHeroBanner />}
+
+          {/* Ram Navami curated section */}
+          {isRamNavami && <RamNavamiMovies />}
 
           {/* Hero CTA with buttons */}
           <HeroCTA />
