@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { ChristmasProvider } from "@/hooks/useChristmasMode";
 import { ChristmasWrapper } from "@/components/christmas/ChristmasWrapper";
-import { ValentineWelcome } from "@/components/valentine/ValentineWelcome";
+
 import { PWASplashScreen } from "@/components/PWASplashScreen";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
