@@ -5,22 +5,18 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { HeroCTA } from "@/components/HeroCTA";
 import { SimilarToWatchlistSection } from "@/components/ForYouSection";
 import { WinterHeroBanner } from "@/components/WinterHeroBanner";
-import { ValentineHeroBanner } from "@/components/valentine/ValentineHeroBanner";
-import { ValentineDailyPick } from "@/components/valentine/ValentineDailyPick";
-import { ValentineMovieSuggestions } from "@/components/valentine/ValentineMovieSuggestions";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Settings, Wrench, Heart } from "lucide-react";
+import { Sparkles, Settings, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDiscoverMovies } from "@/hooks/useTMDB";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreferences } from "@/hooks/usePreferences";
 import { NotificationBell } from "@/components/NotificationBell";
-import { useSeasonal } from "@/hooks/useChristmasMode";
 import booviAvatar from "@/assets/boovi-avatar.png";
+
 const Index = () => {
   const navigate = useNavigate();
   const { preferences } = usePreferences();
-  const { isChristmas, isNewYear, isValentine } = useSeasonal();
   
   // Parse preferences safely - filter out NaN values
   const watchProviders = preferences.platforms.length > 0 
@@ -37,43 +33,26 @@ const Index = () => {
     sortBy: 'popularity.desc',
   });
 
-  // Determine theme for styling
-  const isSeasonalTheme = isChristmas || isValentine;
-
   return (
     <>
       <div className="min-h-screen pb-20 lg:pb-6 lg:pt-16 christmas-grain">
         {/* Header */}
         <header 
           className="sticky top-0 z-40 backdrop-blur-lg border-b lg:top-16"
-          style={isValentine ? {
-            background: "linear-gradient(to right, hsl(350 45% 14% / 0.95), hsl(345 40% 12% / 0.95))",
-            borderColor: "hsl(350 40% 25%)",
-          } : isChristmas ? {
+          style={{
             background: "linear-gradient(to right, hsl(355 50% 18% / 0.95), hsl(355 45% 15% / 0.95))",
             borderColor: "hsl(355 40% 28%)",
-          } : {
-            background: "hsl(var(--background) / 0.8)",
-            borderColor: "hsl(var(--border))",
           }}
         >
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {isValentine ? (
-                  <Heart className="w-6 h-6 text-rose-400 fill-rose-400" />
-                ) : isChristmas ? (
-                  <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain animate-gold-glow" />
-                ) : (
-                  <Sparkles className="w-6 h-6 text-accent animate-gold-glow" />
-                )}
+                <img src={booviAvatar} alt="Boovi" className="w-10 h-10 object-contain animate-gold-glow" />
                 <h1 
                   className="text-xl font-bold gold-underline"
-                  style={isSeasonalTheme ? { 
+                  style={{ 
                     color: "hsl(45 60% 96%)",
                     textShadow: "0 2px 8px hsl(355 50% 10% / 0.4)"
-                  } : {
-                    color: "hsl(45 60% 96%)",
                   }}
                 >
                   MovieMend
@@ -86,7 +65,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/preferences")}
                   title="Setup Preferences"
-                  className={isSeasonalTheme ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
+                  className="text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]"
                 >
                   <Wrench className="w-5 h-5" />
                 </Button>
@@ -95,7 +74,7 @@ const Index = () => {
                   variant="ghost"
                   onClick={() => navigate("/settings")}
                   title="Settings"
-                  className={isSeasonalTheme ? "text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]" : ""}
+                  className="text-[hsl(45,60%,92%)] hover:text-[hsl(42,85%,70%)] hover:bg-[hsl(355,45%,25%)]"
                 >
                   <Settings className="w-5 h-5" />
                 </Button>
@@ -107,38 +86,23 @@ const Index = () => {
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-8">
           {/* Gold section divider */}
           <div className="gold-divider" />
-          {/* Valentine Hero Banner, Daily Pick & Suggestions */}
-          {isValentine && (
-            <>
-              <ValentineHeroBanner />
-              <ValentineDailyPick />
-              <ValentineMovieSuggestions />
-            </>
-          )}
 
-          {/* Winter Hero Banner */}
-          {isChristmas && <WinterHeroBanner />}
+          {/* Hero Banner - always show */}
+          <WinterHeroBanner />
 
           {/* Hero CTA with buttons */}
           <HeroCTA />
 
-          {/* Personalized Recommendations - Always visible */}
+          {/* Personalized Recommendations */}
           <PersonalizedRecommendations />
 
           {/* Similar to Watchlist Section */}
           <SimilarToWatchlistSection />
 
           {/* Movies Section */}
-          <section 
-            className={isSeasonalTheme ? (isValentine ? "valentine-card p-5" : "cozy-card p-5") : ""}
-          >
+          <section className="cozy-card p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 
-                className={isSeasonalTheme
-                  ? "text-base font-bold text-[hsl(120,32%,16%)] gold-underline-short" 
-                  : "text-sm font-semibold text-muted-foreground gold-underline-short"
-                }
-              >
+              <h3 className="text-base font-bold text-[hsl(45,60%,96%)] gold-underline-short">
                 {preferences.platforms.length > 0 
                   ? `Available on Your Platforms` 
                   : 'Popular Movies'}
@@ -148,12 +112,7 @@ const Index = () => {
                   size="sm"
                   variant="default"
                   onClick={() => navigate("/preferences")}
-                  className={isValentine 
-                    ? "text-xs bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-semibold shadow-lg animate-pulse"
-                    : isChristmas 
-                      ? "text-xs bg-gradient-to-r from-red-500 to-green-500 hover:from-red-600 hover:to-green-600 text-white font-semibold shadow-lg animate-pulse" 
-                      : "text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md"
-                  }
+                  className="text-xs bg-gradient-to-r from-accent to-amber-500 hover:from-amber-500 hover:to-accent text-black font-semibold shadow-lg"
                 >
                   Select Platforms
                 </Button>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import booviImage from "@/assets/boovi-transparent.png";
+import booviImage from "@/assets/boovi-loading.png";
 
 interface PWASplashScreenProps {
   onComplete?: () => void;
@@ -29,37 +29,20 @@ export const PWASplashScreen = ({
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b from-[#1a0a0a] via-[#2d1010] to-[#1a0a0a] overflow-hidden px-4 safe-area-inset"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden px-4 safe-area-inset"
+          style={{
+            background: "linear-gradient(155deg, hsl(355 45% 14%) 0%, hsl(355 40% 10%) 50%, hsl(355 38% 8%) 100%)",
+          }}
         >
-          {/* Christmas decorations */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Snowflakes disabled to reduce animation load */}
-
-            {/* Christmas lights - responsive count */}
-            <div className="absolute top-0 left-0 right-0 flex justify-center gap-2 sm:gap-3 md:gap-4 py-3 sm:py-4 px-2">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-2 h-3 sm:w-3 sm:h-4 rounded-full flex-shrink-0"
-                  style={{
-                    backgroundColor: ['#ff4444', '#44ff44', '#ffaa00', '#4444ff', '#ff44ff'][i % 5],
-                    boxShadow: `0 0 8px ${['#ff4444', '#44ff44', '#ffaa00', '#4444ff', '#ff44ff'][i % 5]}`
-                  }}
-                  animate={{
-                    opacity: [0.4, 1, 0.4],
-                    scale: [0.9, 1.1, 0.9]
-                  }}
-                  transition={{
-                    duration: 0.8 + Math.random() * 0.5,
-                    repeat: Infinity,
-                    delay: i * 0.15
-                  }}
-                />
-              ))}
-            </div>
+          {/* Subtle gold ambient glow */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div 
+              className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full blur-3xl opacity-15"
+              style={{ background: "hsl(42 85% 60%)" }}
+            />
           </div>
 
-          {/* Boovi Character - responsive sizing */}
+          {/* Boovi Character */}
           <motion.div
             initial={{ scale: 0, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
@@ -71,13 +54,10 @@ export const PWASplashScreen = ({
             }}
             className="relative mb-4 sm:mb-6"
           >
-            {/* Glow effect */}
-            <div className="absolute inset-0 blur-2xl bg-primary/30 rounded-full scale-150" />
-            
             <motion.img
               src={booviImage}
               alt="Boovi - Your Movie Buddy"
-              className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 object-contain drop-shadow-2xl"
+              className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 object-contain drop-shadow-2xl"
               animate={{
                 y: [0, -8, 0],
               }}
@@ -88,14 +68,15 @@ export const PWASplashScreen = ({
               }}
             />
 
-            {/* Sparkles around Boovi - fewer on mobile */}
+            {/* Gold sparkles */}
             {Array.from({ length: 4 }).map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-1.5 h-1.5 sm:w-2 sm:h-2 bg-yellow-300 rounded-full"
+                className="absolute w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
                 style={{
                   top: '50%',
                   left: '50%',
+                  background: "hsl(42 85% 60%)",
                 }}
                 animate={{
                   x: [0, Math.cos(i * 90 * Math.PI / 180) * 60],
@@ -113,27 +94,33 @@ export const PWASplashScreen = ({
             ))}
           </motion.div>
 
-          {/* App Name - responsive text */}
+          {/* App Name */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-red-400 via-white to-green-400 bg-clip-text text-transparent mb-1 sm:mb-2 text-center"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 text-center"
+            style={{
+              background: "linear-gradient(135deg, hsl(42 85% 65%), hsl(42 70% 80%), hsl(42 85% 60%))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
           >
             MovieMend
           </motion.h1>
 
-          {/* Tagline - responsive text */}
+          {/* Tagline */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6 sm:mb-8 text-center"
+            className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 text-center"
+            style={{ color: "hsl(45 50% 85%)" }}
           >
             Your AI Movie Buddy 🎬
           </motion.p>
 
-          {/* Loading indicator - responsive sizing */}
+          {/* Loading dots */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -143,7 +130,8 @@ export const PWASplashScreen = ({
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                className="w-2 h-2 sm:w-3 sm:h-3 bg-primary rounded-full"
+                className="w-2 h-2 sm:w-3 sm:h-3 rounded-full"
+                style={{ background: "hsl(42 85% 60%)" }}
                 animate={{
                   y: [0, -10, 0],
                   opacity: [0.5, 1, 0.5]
@@ -157,16 +145,6 @@ export const PWASplashScreen = ({
               />
             ))}
           </motion.div>
-
-          {/* Christmas greeting - responsive positioning */}
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2 }}
-            className="absolute bottom-6 sm:bottom-8 md:bottom-10 text-xs sm:text-sm text-muted-foreground text-center px-4"
-          >
-            🎄 Merry Christmas & Happy Watching! 🎄
-          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>
