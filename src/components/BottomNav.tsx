@@ -56,13 +56,17 @@ export const BottomNav = () => {
               onClick={() => handleTap(item.path)}
               className={cn(
                 "relative flex flex-col lg:flex-row items-center justify-center gap-1 lg:gap-2 flex-1 lg:flex-none py-2 lg:px-4 lg:py-2 lg:rounded-lg transition-all duration-200",
-                isChristmas
-                  ? isActive 
-                    ? "text-amber-300" 
-                    : "text-amber-100 hover:text-amber-200"
-                  : isActive 
-                    ? "text-accent lg:bg-accent/10" 
-                    : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
+                isRamNavami
+                  ? isActive
+                    ? "text-[hsl(35,70%,65%)]"
+                    : "text-[hsl(30,20%,60%)] hover:text-[hsl(35,50%,70%)]"
+                  : isChristmas
+                    ? isActive 
+                      ? "text-amber-300" 
+                      : "text-amber-100 hover:text-amber-200"
+                    : isActive 
+                      ? "text-accent lg:bg-accent/10" 
+                      : "text-muted-foreground hover:text-foreground lg:hover:bg-muted/50"
               )}
             >
               <motion.div
